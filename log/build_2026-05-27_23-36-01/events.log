@@ -1,0 +1,8 @@
+[0.000000] (-) TimerEvent: {}
+[0.000070] (-) JobUnselected: {'identifier': 'lslidar_driver'}
+[0.000090] (-) JobUnselected: {'identifier': 'lslidar_msgs'}
+[0.000104] (-) JobUnselected: {'identifier': 'n10p_bringup'}
+[0.000121] (n10p_slam) JobQueued: {'identifier': 'n10p_slam', 'dependencies': OrderedDict([('n10p_bringup', '/home/ubuntu22/ROS2/n10p_leishen/install/n10p_bringup')])}
+[0.000139] (n10p_slam) JobStarted: {'identifier': 'n10p_slam'}
+[0.003543] (n10p_slam) JobEnded: {'identifier': 'n10p_slam', 'rc': 1}
+[0.013764] (-) EventReactorShutdown: {}

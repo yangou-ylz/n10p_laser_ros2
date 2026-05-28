@@ -1,0 +1,184 @@
+[0.010s] Invoking command in '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver': CMAKE_PREFIX_PATH=/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs:/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup:/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver:/home/ubuntu22/ws_ros2/install/px4_ros_com:/home/ubuntu22/ws_ros2/install/px4_msgs:/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_slam:/opt/ros/humble LD_LIBRARY_PATH=/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib:/home/ubuntu22/ws_ros2/install/px4_ros_com/lib:/home/ubuntu22/ws_ros2/install/px4_msgs/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda/lib64:/usr/local/cuda/lib64:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins /home/ubuntu22/.local/bin/cmake /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver -DCMAKE_INSTALL_PREFIX=/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver
+[0.066s] [0mCMake Deprecation Warning at CMakeLists.txt:1 (cmake_minimum_required):
+[0.066s]   Compatibility with CMake < 3.10 will be removed from a future version of
+[0.066s]   CMake.
+[0.066s] 
+[0.066s]   Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+[0.066s]   to tell CMake that the project requires at least <min> but has been updated
+[0.066s]   to work with policies introduced by <max> or earlier.
+[0.066s] 
+[0.066s] [0m
+[0.106s] -- The C compiler identification is GNU 11.4.0
+[0.153s] -- The CXX compiler identification is GNU 11.4.0
+[0.161s] -- Detecting C compiler ABI info
+[0.204s] -- Detecting C compiler ABI info - done
+[0.214s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.214s] -- Detecting C compile features
+[0.215s] -- Detecting C compile features - done
+[0.226s] -- Detecting CXX compiler ABI info
+[0.272s] -- Detecting CXX compiler ABI info - done
+[0.282s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.282s] -- Detecting CXX compile features
+[0.282s] -- Detecting CXX compile features - done
+[0.288s] [33mCMake Warning (dev) at CMakeLists.txt:19 (find_package):
+[0.288s]   Policy CMP0167 is not set: The FindBoost module is removed.  Run "cmake
+[0.288s]   --help-policy CMP0167" for policy details.  Use the cmake_policy command to
+[0.288s]   set the policy and suppress this warning.
+[0.288s] 
+[0.288s] This warning is for project developers.  Use -Wno-dev to suppress it.
+[0.288s] [0m
+[0.294s] -- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.74.0/BoostConfig.cmake (found version "1.74.0") found components: thread
+[0.295s] -- Found rclcpp: 16.0.19 (/opt/ros/humble/share/rclcpp/cmake)
+[0.381s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter
+[0.417s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.447s] -- Found rosidl_generator_c: 3.1.8 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[0.449s] -- Found rosidl_adapter: 3.1.8 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[0.453s] -- Found rosidl_generator_cpp: 3.1.8 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[0.460s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.469s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.494s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[0.495s] -- Found rmw_fastrtps_cpp: 6.2.10 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[0.527s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")
+[0.592s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[0.637s] [33mCMake Warning (dev) at /usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfig.cmake:146 (find_package):
+[0.637s]   Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+[0.637s]   variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+[0.637s]   cmake_policy command to set the policy and suppress this warning.
+[0.637s] 
+[0.638s]   CMake variable EIGEN_ROOT is set to:
+[0.638s] 
+[0.638s]     /usr/include/eigen3
+[0.638s] 
+[0.638s]   For compatibility, find_package is ignoring the variable, but code in a
+[0.638s]   .cmake module might still use it.
+[0.638s] Call Stack (most recent call first):
+[0.638s]   /usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfig.cmake:299 (find_eigen)
+[0.638s]   /usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfig.cmake:543 (find_external_library)
+[0.638s]   CMakeLists.txt:21 (find_package)
+[0.638s] This warning is for project developers.  Use -Wno-dev to suppress it.
+[0.638s] [0m
+[0.641s] -- Eigen found (include: /usr/include/eigen3, version: 3.4.0)
+[0.641s] [33mCMake Warning (dev) at /usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfig.cmake:128 (find_package):
+[0.641s]   Policy CMP0167 is not set: The FindBoost module is removed.  Run "cmake
+[0.641s]   --help-policy CMP0167" for policy details.  Use the cmake_policy command to
+[0.641s]   set the policy and suppress this warning.
+[0.641s] 
+[0.641s] Call Stack (most recent call first):
+[0.641s]   /usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfig.cmake:297 (find_boost)
+[0.641s]   /usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfig.cmake:543 (find_external_library)
+[0.641s]   CMakeLists.txt:21 (find_package)
+[0.641s] This warning is for project developers.  Use -Wno-dev to suppress it.
+[0.641s] [0m
+[0.647s] -- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.74.0/BoostConfig.cmake (found suitable version "1.74.0", minimum required is "1.65.0") found components: system filesystem date_time iostreams serialization
+[0.648s] [33mCMake Warning (dev) at /usr/lib/x86_64-linux-gnu/cmake/pcl/Modules/FindFLANN.cmake:44 (find_package):
+[0.648s]   Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+[0.648s]   variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+[0.648s]   cmake_policy command to set the policy and suppress this warning.
+[0.648s] 
+[0.648s]   CMake variable FLANN_ROOT is set to:
+[0.648s] 
+[0.648s]     /usr
+[0.648s] 
+[0.648s]   For compatibility, find_package is ignoring the variable, but code in a
+[0.648s]   .cmake module might still use it.
+[0.648s] Call Stack (most recent call first):
+[0.648s]   /usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfig.cmake:256 (find_package)
+[0.648s]   /usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfig.cmake:301 (find_flann)
+[0.648s]   /usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfig.cmake:543 (find_external_library)
+[0.648s]   CMakeLists.txt:21 (find_package)
+[0.648s] This warning is for project developers.  Use -Wno-dev to suppress it.
+[0.648s] [0m
+[0.670s] -- FLANN found (include: /usr/include, lib: /usr/lib/x86_64-linux-gnu/libflann_cpp.so)
+[0.696s] -- Found OpenGL: /usr/lib/x86_64-linux-gnu/libOpenGL.so  found components: OpenGL GLX
+[0.764s] -- Found MPI: TRUE (found version "3.1") found components: C
+[0.782s] -- Found ZLIB: /usr/lib/x86_64-linux-gnu/libz.so (found version "1.2.11")
+[0.897s] -- Found X11: /usr/include
+[1.005s] -- Found TIFF: /usr/lib/x86_64-linux-gnu/libtiff.so (found version "4.3.0")
+[1.039s] -- OpenNI found (version: 1.5.4.0, include: /usr/include/ni, lib: /usr/lib/libOpenNI.so;libusb::libusb)
+[1.044s] -- OpenNI2 found (version: 2.2.0.33, include: /usr/include/openni2, lib: /usr/lib/x86_64-linux-gnu/libOpenNI2.so;libusb::libusb)
+[1.044s] [0m** WARNING ** io features related to pcap will be disabled[0m
+[1.254s] [33mCMake Warning (dev) at /usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfig.cmake:128 (find_package):
+[1.254s]   Policy CMP0167 is not set: The FindBoost module is removed.  Run "cmake
+[1.254s]   --help-policy CMP0167" for policy details.  Use the cmake_policy command to
+[1.254s]   set the policy and suppress this warning.
+[1.254s] 
+[1.254s] Call Stack (most recent call first):
+[1.254s]   /usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfig.cmake:297 (find_boost)
+[1.254s]   /usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfig.cmake:543 (find_external_library)
+[1.254s]   CMakeLists.txt:21 (find_package)
+[1.254s] This warning is for project developers.  Use -Wno-dev to suppress it.
+[1.254s] [0m
+[1.263s] -- Eigen found (include: /usr/include/eigen3, version: 3.4.0)
+[1.269s] -- OpenNI found (version: 1.5.4.0, include: /usr/include/ni, lib: /usr/lib/libOpenNI.so;libusb::libusb)
+[1.274s] -- OpenNI2 found (version: 2.2.0.33, include: /usr/include/openni2, lib: /usr/lib/x86_64-linux-gnu/libOpenNI2.so;libusb::libusb)
+[1.489s] -- Found Qhull version 8.0.2
+[1.716s] -- OpenNI found (version: 1.5.4.0, include: /usr/include/ni, lib: /usr/lib/libOpenNI.so;libusb::libusb)
+[1.930s] -- looking for PCL_COMMON
+[1.930s] -- looking for PCL_KDTREE
+[1.930s] -- looking for PCL_OCTREE
+[1.930s] -- looking for PCL_SEARCH
+[1.931s] -- looking for PCL_SAMPLE_CONSENSUS
+[1.931s] -- looking for PCL_FILTERS
+[1.931s] -- looking for PCL_2D
+[1.931s] -- looking for PCL_GEOMETRY
+[1.931s] -- looking for PCL_IO
+[1.932s] -- looking for PCL_FEATURES
+[1.932s] -- looking for PCL_ML
+[1.932s] -- looking for PCL_SEGMENTATION
+[1.932s] -- looking for PCL_VISUALIZATION
+[1.932s] -- looking for PCL_SURFACE
+[1.933s] -- looking for PCL_REGISTRATION
+[1.933s] -- looking for PCL_KEYPOINTS
+[1.933s] -- looking for PCL_TRACKING
+[1.933s] -- looking for PCL_RECOGNITION
+[1.934s] -- looking for PCL_STEREO
+[1.934s] -- looking for PCL_APPS
+[1.934s] -- looking for PCL_IN_HAND_SCANNER
+[1.934s] -- looking for PCL_MODELER
+[1.934s] -- looking for PCL_POINT_CLOUD_EDITOR
+[1.935s] -- looking for PCL_OUTOFCORE
+[1.935s] -- looking for PCL_PEOPLE
+[1.936s] -- Found diagnostic_updater: 4.0.6 (/opt/ros/humble/share/diagnostic_updater/cmake)
+[1.950s] -- Found lslidar_msgs: 1.2.0 (/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake)
+[1.962s] -- Found pluginlib: 5.1.3 (/opt/ros/humble/share/pluginlib/cmake)
+[1.976s] -- Found pcl_conversions: 2.4.5 (/opt/ros/humble/share/pcl_conversions/cmake)
+[2.072s] -- Configuring done (2.0s)
+[2.142s] -- Generating done (0.1s)
+[2.145s] -- Build files have been written to: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver
+[2.158s] Invoked command in '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver' returned '0': CMAKE_PREFIX_PATH=/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs:/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup:/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver:/home/ubuntu22/ws_ros2/install/px4_ros_com:/home/ubuntu22/ws_ros2/install/px4_msgs:/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_slam:/opt/ros/humble LD_LIBRARY_PATH=/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib:/home/ubuntu22/ws_ros2/install/px4_ros_com/lib:/home/ubuntu22/ws_ros2/install/px4_msgs/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda/lib64:/usr/local/cuda/lib64:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins /home/ubuntu22/.local/bin/cmake /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver -DCMAKE_INSTALL_PREFIX=/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver
+[2.160s] Invoking command in '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver': CMAKE_PREFIX_PATH=/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs:/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup:/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver:/home/ubuntu22/ws_ros2/install/px4_ros_com:/home/ubuntu22/ws_ros2/install/px4_msgs:/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_slam:/opt/ros/humble LD_LIBRARY_PATH=/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib:/home/ubuntu22/ws_ros2/install/px4_ros_com/lib:/home/ubuntu22/ws_ros2/install/px4_msgs/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda/lib64:/usr/local/cuda/lib64:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins /home/ubuntu22/.local/bin/cmake --build /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver -- -j32 -l32
+[2.262s] [ 20%] [32mBuilding CXX object CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver_node.cc.o[0m
+[2.263s] [ 40%] [32mBuilding CXX object CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o[0m
+[2.263s] [ 60%] [32mBuilding CXX object CMakeFiles/lslidar_driver_node.dir/src/input.cc.o[0m
+[2.263s] [ 80%] [32mBuilding CXX object CMakeFiles/lslidar_driver_node.dir/src/lsiosr.cpp.o[0m
+[10.843s] [100%] [1m[32mLinking CXX executable lslidar_driver_node[0m
+[11.578s] [100%] Built target lslidar_driver_node
+[11.592s] Invoked command in '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver' returned '0': CMAKE_PREFIX_PATH=/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs:/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup:/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver:/home/ubuntu22/ws_ros2/install/px4_ros_com:/home/ubuntu22/ws_ros2/install/px4_msgs:/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_slam:/opt/ros/humble LD_LIBRARY_PATH=/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib:/home/ubuntu22/ws_ros2/install/px4_ros_com/lib:/home/ubuntu22/ws_ros2/install/px4_msgs/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda/lib64:/usr/local/cuda/lib64:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins /home/ubuntu22/.local/bin/cmake --build /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver -- -j32 -l32
+[11.640s] Invoking command in '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver': CMAKE_PREFIX_PATH=/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs:/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup:/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver:/home/ubuntu22/ws_ros2/install/px4_ros_com:/home/ubuntu22/ws_ros2/install/px4_msgs:/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_slam:/opt/ros/humble LD_LIBRARY_PATH=/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib:/home/ubuntu22/ws_ros2/install/px4_ros_com/lib:/home/ubuntu22/ws_ros2/install/px4_msgs/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda/lib64:/usr/local/cuda/lib64:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins /home/ubuntu22/.local/bin/cmake --install /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver
+[11.687s] -- Install configuration: ""
+[11.688s] -- Execute custom install script
+[11.688s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/launch/lslidar_double_launch.py
+[11.688s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/launch/lslidar_launch.py
+[11.688s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/params/lsx10.yaml
+[11.688s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/params/lsx10_1.yaml
+[11.688s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/params/lsx10_2.yaml
+[11.688s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/rviz/lslidar.rviz
+[11.689s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/lib/lslidar_driver/lslidar_driver_node
+[11.689s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/ament_index/resource_index/package_run_dependencies/lslidar_driver
+[11.689s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/ament_index/resource_index/parent_prefix_path/lslidar_driver
+[11.689s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/environment/ament_prefix_path.sh
+[11.689s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/environment/ament_prefix_path.dsv
+[11.689s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/environment/path.sh
+[11.689s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/environment/path.dsv
+[11.689s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/local_setup.bash
+[11.689s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/local_setup.sh
+[11.689s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/local_setup.zsh
+[11.689s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/local_setup.dsv
+[11.689s] -- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/package.dsv
+[11.692s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/ament_index/resource_index/packages/lslidar_driver
+[11.692s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/cmake/ament_cmake_export_dependencies-extras.cmake
+[11.692s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/cmake/ament_cmake_export_include_directories-extras.cmake
+[11.692s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/cmake/lslidar_driverConfig.cmake
+[11.692s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/cmake/lslidar_driverConfig-version.cmake
+[11.692s] -- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/package.xml
+[11.694s] Invoked command in '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver' returned '0': CMAKE_PREFIX_PATH=/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs:/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup:/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver:/home/ubuntu22/ws_ros2/install/px4_ros_com:/home/ubuntu22/ws_ros2/install/px4_msgs:/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_slam:/opt/ros/humble LD_LIBRARY_PATH=/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib:/home/ubuntu22/ws_ros2/install/px4_ros_com/lib:/home/ubuntu22/ws_ros2/install/px4_msgs/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda/lib64:/usr/local/cuda/lib64:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins /home/ubuntu22/.local/bin/cmake --install /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver

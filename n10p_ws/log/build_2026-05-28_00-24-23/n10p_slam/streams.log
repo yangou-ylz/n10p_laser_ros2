@@ -1,0 +1,26 @@
+[0.467s] Invoking command in '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/n10p_slam': AMENT_PREFIX_PATH=/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup:${AMENT_PREFIX_PATH} PYTHONPATH=/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/n10p_slam/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_slam/lib/python3.10/site-packages:/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/n10p_slam build --build-base /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/n10p_slam/build install --record /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/n10p_slam/install.log --single-version-externally-managed install_data
+[0.605s] running egg_info
+[0.613s] creating ../../build/n10p_slam/n10p_slam.egg-info
+[0.614s] writing ../../build/n10p_slam/n10p_slam.egg-info/PKG-INFO
+[0.614s] writing dependency_links to ../../build/n10p_slam/n10p_slam.egg-info/dependency_links.txt
+[0.614s] writing requirements to ../../build/n10p_slam/n10p_slam.egg-info/requires.txt
+[0.614s] writing top-level names to ../../build/n10p_slam/n10p_slam.egg-info/top_level.txt
+[0.614s] writing manifest file '../../build/n10p_slam/n10p_slam.egg-info/SOURCES.txt'
+[0.623s] reading manifest file '../../build/n10p_slam/n10p_slam.egg-info/SOURCES.txt'
+[0.624s] writing manifest file '../../build/n10p_slam/n10p_slam.egg-info/SOURCES.txt'
+[0.624s] running build
+[0.624s] running install
+[0.626s] running install_data
+[0.626s] creating /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_slam/share/ament_index/resource_index/packages
+[0.626s] copying resource/n10p_slam -> /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_slam/share/ament_index/resource_index/packages
+[0.626s] copying package.xml -> /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_slam/share/n10p_slam
+[0.626s] creating /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_slam/share/n10p_slam/launch
+[0.626s] copying launch/slam_launch.py -> /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_slam/share/n10p_slam/launch
+[0.627s] creating /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_slam/share/n10p_slam/config
+[0.627s] copying config/mapper_params_online_async.yaml -> /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_slam/share/n10p_slam/config
+[0.627s] copying config/n10p_slam.rviz -> /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_slam/share/n10p_slam/config
+[0.627s] running install_egg_info
+[0.645s] Copying ../../build/n10p_slam/n10p_slam.egg-info to /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_slam/lib/python3.10/site-packages/n10p_slam-0.1.0-py3.10.egg-info
+[0.646s] running install_scripts
+[0.664s] writing list of installed files to '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/n10p_slam/install.log'
+[0.677s] Invoked command in '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/n10p_slam' returned '0': AMENT_PREFIX_PATH=/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup:${AMENT_PREFIX_PATH} PYTHONPATH=/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/n10p_slam/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_slam/lib/python3.10/site-packages:/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/n10p_slam build --build-base /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/n10p_slam/build install --record /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/n10p_slam/install.log --single-version-externally-managed install_data

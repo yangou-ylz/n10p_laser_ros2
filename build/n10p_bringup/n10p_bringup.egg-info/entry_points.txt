@@ -1,0 +1,2 @@
+[console_scripts]
+ano_bridge_node = n10p_bringup.ano_bridge_node:main

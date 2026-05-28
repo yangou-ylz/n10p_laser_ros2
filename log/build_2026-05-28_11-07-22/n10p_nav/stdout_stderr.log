@@ -1,0 +1,31 @@
+running egg_info
+creating ../../../build/n10p_nav/n10p_nav.egg-info
+writing ../../../build/n10p_nav/n10p_nav.egg-info/PKG-INFO
+writing dependency_links to ../../../build/n10p_nav/n10p_nav.egg-info/dependency_links.txt
+writing requirements to ../../../build/n10p_nav/n10p_nav.egg-info/requires.txt
+writing top-level names to ../../../build/n10p_nav/n10p_nav.egg-info/top_level.txt
+writing manifest file '../../../build/n10p_nav/n10p_nav.egg-info/SOURCES.txt'
+reading manifest file '../../../build/n10p_nav/n10p_nav.egg-info/SOURCES.txt'
+writing manifest file '../../../build/n10p_nav/n10p_nav.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/ubuntu22/ROS2/n10p_leishen/build/n10p_nav/build/lib/n10p_nav
+copying n10p_nav/__init__.py -> /home/ubuntu22/ROS2/n10p_leishen/build/n10p_nav/build/lib/n10p_nav
+running install
+running install_lib
+creating /home/ubuntu22/ROS2/n10p_leishen/install/n10p_nav/lib/python3.10/site-packages/n10p_nav
+copying /home/ubuntu22/ROS2/n10p_leishen/build/n10p_nav/build/lib/n10p_nav/__init__.py -> /home/ubuntu22/ROS2/n10p_leishen/install/n10p_nav/lib/python3.10/site-packages/n10p_nav
+byte-compiling /home/ubuntu22/ROS2/n10p_leishen/install/n10p_nav/lib/python3.10/site-packages/n10p_nav/__init__.py to __init__.cpython-310.pyc
+running install_data
+creating /home/ubuntu22/ROS2/n10p_leishen/install/n10p_nav/share/ament_index/resource_index/packages
+copying resource/n10p_nav -> /home/ubuntu22/ROS2/n10p_leishen/install/n10p_nav/share/ament_index/resource_index/packages
+copying package.xml -> /home/ubuntu22/ROS2/n10p_leishen/install/n10p_nav/share/n10p_nav
+creating /home/ubuntu22/ROS2/n10p_leishen/install/n10p_nav/share/n10p_nav/launch
+copying launch/nav_launch.py -> /home/ubuntu22/ROS2/n10p_leishen/install/n10p_nav/share/n10p_nav/launch
+creating /home/ubuntu22/ROS2/n10p_leishen/install/n10p_nav/share/n10p_nav/config
+copying config/nav2_params_n10p.yaml -> /home/ubuntu22/ROS2/n10p_leishen/install/n10p_nav/share/n10p_nav/config
+copying config/n10p_nav.rviz -> /home/ubuntu22/ROS2/n10p_leishen/install/n10p_nav/share/n10p_nav/config
+running install_egg_info
+Copying ../../../build/n10p_nav/n10p_nav.egg-info to /home/ubuntu22/ROS2/n10p_leishen/install/n10p_nav/lib/python3.10/site-packages/n10p_nav-0.1.0-py3.10.egg-info
+running install_scripts
+writing list of installed files to '/home/ubuntu22/ROS2/n10p_leishen/build/n10p_nav/install.log'

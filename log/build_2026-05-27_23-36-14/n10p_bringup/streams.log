@@ -1,0 +1,37 @@
+[0.438s] Invoking command in '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/n10p_bringup': PYTHONPATH=/home/ubuntu22/ROS2/n10p_leishen/build/n10p_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ubuntu22/ROS2/n10p_leishen/install/n10p_bringup/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../build/n10p_bringup build --build-base /home/ubuntu22/ROS2/n10p_leishen/build/n10p_bringup/build install --record /home/ubuntu22/ROS2/n10p_leishen/build/n10p_bringup/install.log --single-version-externally-managed install_data
+[0.571s] running egg_info
+[0.579s] creating ../../../build/n10p_bringup/n10p_bringup.egg-info
+[0.579s] writing ../../../build/n10p_bringup/n10p_bringup.egg-info/PKG-INFO
+[0.579s] writing dependency_links to ../../../build/n10p_bringup/n10p_bringup.egg-info/dependency_links.txt
+[0.579s] writing entry points to ../../../build/n10p_bringup/n10p_bringup.egg-info/entry_points.txt
+[0.579s] writing requirements to ../../../build/n10p_bringup/n10p_bringup.egg-info/requires.txt
+[0.579s] writing top-level names to ../../../build/n10p_bringup/n10p_bringup.egg-info/top_level.txt
+[0.579s] writing manifest file '../../../build/n10p_bringup/n10p_bringup.egg-info/SOURCES.txt'
+[0.596s] reading manifest file '../../../build/n10p_bringup/n10p_bringup.egg-info/SOURCES.txt'
+[0.597s] writing manifest file '../../../build/n10p_bringup/n10p_bringup.egg-info/SOURCES.txt'
+[0.597s] running build
+[0.597s] running build_py
+[0.597s] creating /home/ubuntu22/ROS2/n10p_leishen/build/n10p_bringup/build/lib/n10p_bringup
+[0.597s] copying n10p_bringup/ano_bridge_node.py -> /home/ubuntu22/ROS2/n10p_leishen/build/n10p_bringup/build/lib/n10p_bringup
+[0.597s] copying n10p_bringup/__init__.py -> /home/ubuntu22/ROS2/n10p_leishen/build/n10p_bringup/build/lib/n10p_bringup
+[0.598s] running install
+[0.600s] running install_lib
+[0.608s] creating /home/ubuntu22/ROS2/n10p_leishen/install/n10p_bringup/lib/python3.10/site-packages/n10p_bringup
+[0.608s] copying /home/ubuntu22/ROS2/n10p_leishen/build/n10p_bringup/build/lib/n10p_bringup/ano_bridge_node.py -> /home/ubuntu22/ROS2/n10p_leishen/install/n10p_bringup/lib/python3.10/site-packages/n10p_bringup
+[0.608s] copying /home/ubuntu22/ROS2/n10p_leishen/build/n10p_bringup/build/lib/n10p_bringup/__init__.py -> /home/ubuntu22/ROS2/n10p_leishen/install/n10p_bringup/lib/python3.10/site-packages/n10p_bringup
+[0.609s] byte-compiling /home/ubuntu22/ROS2/n10p_leishen/install/n10p_bringup/lib/python3.10/site-packages/n10p_bringup/ano_bridge_node.py to ano_bridge_node.cpython-310.pyc
+[0.610s] byte-compiling /home/ubuntu22/ROS2/n10p_leishen/install/n10p_bringup/lib/python3.10/site-packages/n10p_bringup/__init__.py to __init__.cpython-310.pyc
+[0.610s] running install_data
+[0.610s] creating /home/ubuntu22/ROS2/n10p_leishen/install/n10p_bringup/share/ament_index/resource_index/packages
+[0.610s] copying resource/n10p_bringup -> /home/ubuntu22/ROS2/n10p_leishen/install/n10p_bringup/share/ament_index/resource_index/packages
+[0.610s] copying package.xml -> /home/ubuntu22/ROS2/n10p_leishen/install/n10p_bringup/share/n10p_bringup
+[0.611s] creating /home/ubuntu22/ROS2/n10p_leishen/install/n10p_bringup/share/n10p_bringup/launch
+[0.611s] copying launch/n10p_bringup_launch.py -> /home/ubuntu22/ROS2/n10p_leishen/install/n10p_bringup/share/n10p_bringup/launch
+[0.611s] creating /home/ubuntu22/ROS2/n10p_leishen/install/n10p_bringup/share/n10p_bringup/params
+[0.611s] copying params/ano_bridge.yaml -> /home/ubuntu22/ROS2/n10p_leishen/install/n10p_bringup/share/n10p_bringup/params
+[0.611s] running install_egg_info
+[0.620s] Copying ../../../build/n10p_bringup/n10p_bringup.egg-info to /home/ubuntu22/ROS2/n10p_leishen/install/n10p_bringup/lib/python3.10/site-packages/n10p_bringup-0.1.0-py3.10.egg-info
+[0.620s] running install_scripts
+[0.637s] Installing ano_bridge_node script to /home/ubuntu22/ROS2/n10p_leishen/install/n10p_bringup/lib/n10p_bringup
+[0.637s] writing list of installed files to '/home/ubuntu22/ROS2/n10p_leishen/build/n10p_bringup/install.log'
+[0.650s] Invoked command in '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/n10p_bringup' returned '0': PYTHONPATH=/home/ubuntu22/ROS2/n10p_leishen/build/n10p_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ubuntu22/ROS2/n10p_leishen/install/n10p_bringup/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../build/n10p_bringup build --build-base /home/ubuntu22/ROS2/n10p_leishen/build/n10p_bringup/build install --record /home/ubuntu22/ROS2/n10p_leishen/build/n10p_bringup/install.log --single-version-externally-managed install_data

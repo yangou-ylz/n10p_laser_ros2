@@ -1,0 +1,672 @@
+[0.000000] (-) TimerEvent: {}
+[0.000452] (lslidar_msgs) JobQueued: {'identifier': 'lslidar_msgs', 'dependencies': OrderedDict()}
+[0.000476] (lslidar_driver) JobQueued: {'identifier': 'lslidar_driver', 'dependencies': OrderedDict([('lslidar_msgs', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs')])}
+[0.000494] (lslidar_msgs) JobStarted: {'identifier': 'lslidar_msgs'}
+[0.006635] (lslidar_msgs) JobProgress: {'identifier': 'lslidar_msgs', 'progress': 'cmake'}
+[0.006973] (lslidar_msgs) Command: {'cmd': ['/usr/bin/cmake', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_msgs', '-DAMENT_CMAKE_SYMLINK_INSTALL=1', '-DCMAKE_INSTALL_PREFIX=/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs'], 'cwd': '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs', 'env': OrderedDict([('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('VSCODE_CWD', '/home/ubuntu22'), ('ANTHROPIC_MODEL', 'deepseek-v4-pro'), ('VSCODE_ESM_ENTRYPOINT', 'vs/workbench/api/node/extensionHostProcess'), ('AI_AGENT', 'claude-code_2-1-152_agent'), ('LANGUAGE', 'zh_CN:zh'), ('USER', 'ubuntu22'), ('CLAUDE_CODE_ENTRYPOINT', 'claude-vscode'), ('VSCODE_NLS_CONFIG', '{"userLocale":"zh-cn","osLocale":"zh-cn","resolvedLanguage":"zh-cn","defaultMessagesFile":"/usr/share/code/resources/app/out/nls.messages.json","languagePack":{"translationsConfigFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/tcf.json","messagesFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/560a9dba96f961efea7b1612916f89e5d5d4d679/nls.messages.json","corruptMarkerFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/corrupted.info"},"locale":"zh-cn","availableLanguages":{"*":"zh-cn"},"_languagePackId":"8a51db726da852292d1c80f7afa92629.zh-cn","_languagePackSupport":true,"_translationsConfigFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/tcf.json","_cacheRoot":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn","_resolvedLanguagePackCoreLocation":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/560a9dba96f961efea7b1612916f89e5d5d4d679","_corruptedFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/corrupted.info"}'), ('GIT_EDITOR', 'true'), ('VSCODE_HANDLES_UNCAUGHT_ERRORS', 'true'), ('XDG_SESSION_TYPE', 'x11'), ('CLAUDE_AGENT_SDK_VERSION', '0.3.152'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ubuntu22/ws_ros2/install/px4_ros_com/lib:/home/ubuntu22/ws_ros2/install/px4_msgs/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda/lib64:/usr/local/cuda/lib64:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins:'), ('CLAUDE_CODE_MAX_OUTPUT_TOKENS', '6000'), ('HOME', '/home/ubuntu22'), ('CHROME_DESKTOP', 'code.desktop'), ('DESKTOP_SESSION', 'ubuntu'), ('NVM_BIN', '/home/ubuntu22/.nvm/versions/node/v20.20.2/bin'), ('NVM_INC', '/home/ubuntu22/.nvm/versions/node/v20.20.2/include/node'), ('VSCODE_IPC_HOOK', '/run/user/1000/vscode-f1441c07-1.11-main.sock'), ('ANTHROPIC_DEFAULT_SONNET_MODEL', 'deepseek-v4-pro'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/code.desktop'), ('GAZEBO_MASTER_URI', 'http://localhost:11345'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('MANAGERPID', '2258'), ('SYSTEMD_EXEC_PID', '2680'), ('ANTHROPIC_SMALL_FAST_MODEL', 'deepseek-v4-flash'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '24317'), ('NVM_DIR', '/home/ubuntu22/.nvm'), ('VSCODE_CRASH_REPORTER_PROCESS_TYPE', 'extensionHost'), ('MANDATORY_PATH', '/usr/share/gconf/ubuntu.mandatory.path'), ('VSCODE_L10N_BUNDLE_LOCATION', 'file:///home/ubuntu22/.vscode/extensions/ms-ceintl.vscode-language-pack-zh-hans-1.121.2026052214/translations/extensions/vscode.markdown-language-features.i18n.json'), ('COLCON_PREFIX_PATH', '/home/ubuntu22/ws_ros2/install'), ('ROS_DISTRO', 'humble'), ('GTK_IM_MODULE', 'ibus'), ('LOGNAME', 'ubuntu22'), ('JOURNAL_STREAM', '8:15699'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('DEFAULTS_PATH', '/usr/share/gconf/ubuntu.default.path'), ('USERNAME', 'ubuntu22'), ('ANTHROPIC_BASE_URL', 'https://api.deepseek.com/anthropic'), ('GAZEBO_MODEL_PATH', '/usr/share/gazebo-11/models:/home/ubuntu22/.gazebo/models'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('FC_FONTATIONS', '1'), ('ROS_LOCALHOST_ONLY', '0'), ('WINDOWPATH', '2'), ('ANTHROPIC_DEFAULT_OPUS_MODEL', 'deepseek-v4-pro'), ('MCP_CONNECTION_NONBLOCKING', 'true'), ('OGRE_RESOURCE_PATH', '/usr/lib/x86_64-linux-gnu/OGRE-1.9.0'), ('PATH', '/opt/ros/humble/bin:/usr/bin:/opt/gcc-arm-none-eabi-9-2020-q2-update/bin:/home/ubuntu22/.local/bin:/home/ubuntu22/.npm-global/bin:/home/ubuntu22/.local/bin:/opt/gcc-arm-none-eabi-9-2020-q2-update/bin:/home/ubuntu22/.local/bin:/home/ubuntu22/.nvm/versions/node/v20.20.2/bin:/home/ubuntu22/.npm-global/bin:/home/ubuntu22/.local/bin:/opt/ros/humble/bin:/opt/gcc-arm-none-eabi-9-2020-q2-update/bin:/home/ubuntu22/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/usr/local/cuda/bin:/usr/local/cuda/bin:/home/ubuntu22/android-sdk/cmdline-tools/latest/bin:/home/ubuntu22/android-sdk/platform-tools:/home/ubuntu22/android-sdk/build-tools/34.0.0:/usr/local/cuda/bin:/usr/local/cuda/bin:/home/ubuntu22/android-sdk/cmdline-tools/latest/bin:/home/ubuntu22/android-sdk/platform-tools:/home/ubuntu22/android-sdk/build-tools/34.0.0:/home/ubuntu22/.fishros/bin/'), ('SESSION_MANAGER', 'local/ubuntu22:@/tmp/.ICE-unix/2651,unix/ubuntu22:/tmp/.ICE-unix/2651'), ('INVOCATION_ID', 'f59f9f4354fb416991c11cc49d07289f'), ('COREPACK_ENABLE_AUTO_PIN', '0'), ('XDG_MENU_PREFIX', 'gnome-'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GDK_BACKEND', 'x11'), ('CLAUDE_EFFORT', 'high'), ('DISPLAY', ':1'), ('NoDefaultCurrentDirectoryInExePath', '1'), ('LANG', 'zh_CN.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/home/ubuntu22/ws_ros2/install/px4_ros_com:/home/ubuntu22/ws_ros2/install/px4_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('ANTHROPIC_AUTH_TOKEN', 'sk-88114a3a3aed43db8df22fc6a0ce6136'), ('QT_ACCESSIBILITY', '1'), ('ELECTRON_RUN_AS_NODE', '1'), ('GDMSESSION', 'ubuntu'), ('CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING', 'true'), ('CLAUDE_CODE_SESSION_ID', '35a02ef1-f38c-443e-b930-b448a379d091'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('CLAUDECODE', '1'), ('GPG_AGENT_INFO', '/run/user/1000/gnupg/S.gpg-agent:0:1'), ('GAZEBO_RESOURCE_PATH', '/usr/share/gazebo/../../share/gazebo-11:'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('ANDROID_SDK_ROOT', '/home/ubuntu22/android-sdk'), ('GAZEBO_MODEL_DATABASE_URI', 'http://models.gazebosim.org'), ('VIRTUAL_ENV', '/usr'), ('QT_IM_MODULE', 'ibus'), ('JAVA_HOME', '/usr/lib/jvm/java-17-openjdk-amd64'), ('PWD', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs'), ('QT_QPA_PLATFORM', 'xcb'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('VSCODE_CODE_CACHE_PATH', '/home/ubuntu22/.config/Code/CachedData/560a9dba96f961efea7b1612916f89e5d5d4d679'), ('GAZEBO_PLUGIN_PATH', '/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins:'), ('ANDROID_HOME', '/home/ubuntu22/android-sdk'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('CLAUDE_CODE_EXECPATH', '/home/ubuntu22/.vscode/extensions/anthropic.claude-code-2.1.152-linux-x64/resources/native-binary/claude'), ('CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC', '1'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('CLAUDE_CODE_ENABLE_TASKS', '0'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ubuntu22/ws_ros2/install/px4_ros_com:/home/ubuntu22/ws_ros2/install/px4_msgs:/opt/ros/humble'), ('VSCODE_PID', '24317')]), 'shell': False}
+[0.082553] (lslidar_msgs) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[0.099824] (-) TimerEvent: {}
+[0.140369] (lslidar_msgs) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[0.147272] (lslidar_msgs) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[0.199918] (-) TimerEvent: {}
+[0.201783] (lslidar_msgs) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[0.205575] (lslidar_msgs) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[0.206057] (lslidar_msgs) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[0.206434] (lslidar_msgs) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[0.208525] (lslidar_msgs) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[0.266025] (lslidar_msgs) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[0.269916] (lslidar_msgs) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[0.270101] (lslidar_msgs) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[0.270392] (lslidar_msgs) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[0.274265] (lslidar_msgs) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.14 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[0.300000] (-) TimerEvent: {}
+[0.400149] (-) TimerEvent: {}
+[0.477157] (lslidar_msgs) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[0.500240] (-) TimerEvent: {}
+[0.526930] (lslidar_msgs) StdoutLine: {'line': b'-- Override CMake install command with custom implementation using symlinks instead of copying resources\n'}
+[0.551179] (lslidar_msgs) StdoutLine: {'line': b'-- Found std_msgs: 4.9.1 (/opt/ros/humble/share/std_msgs/cmake)\n'}
+[0.580899] (lslidar_msgs) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.8 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[0.584882] (lslidar_msgs) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.8 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[0.591234] (lslidar_msgs) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.8 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[0.599849] (lslidar_msgs) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.600285] (-) TimerEvent: {}
+[0.611358] (lslidar_msgs) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.630330] (lslidar_msgs) StdoutLine: {'line': b'-- Found sensor_msgs: 4.9.1 (/opt/ros/humble/share/sensor_msgs/cmake)\n'}
+[0.651810] (lslidar_msgs) StdoutLine: {'line': b'-- Found rosidl_default_generators: 1.2.1 (/opt/ros/humble/share/rosidl_default_generators/cmake)\n'}
+[0.661537] (lslidar_msgs) StdoutLine: {'line': b'-- Found ament_lint_auto: 0.12.15 (/opt/ros/humble/share/ament_lint_auto/cmake)\n'}
+[0.700351] (-) TimerEvent: {}
+[0.800423] (-) TimerEvent: {}
+[0.844121] (lslidar_msgs) StdoutLine: {'line': b'-- Found ament_cmake_ros: 0.10.0 (/opt/ros/humble/share/ament_cmake_ros/cmake)\n'}
+[0.900516] (-) TimerEvent: {}
+[1.000664] (-) TimerEvent: {}
+[1.076653] (lslidar_msgs) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[1.100741] (-) TimerEvent: {}
+[1.166705] (lslidar_msgs) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[1.182142] (lslidar_msgs) StdoutLine: {'line': b'-- Found PythonInterp: /usr/bin/python3 (found suitable version "3.10.12", minimum required is "3.6") \n'}
+[1.183788] (lslidar_msgs) StdoutLine: {'line': b'-- Found python_cmake_module: 0.10.0 (/opt/ros/humble/share/python_cmake_module/cmake)\n'}
+[1.200814] (-) TimerEvent: {}
+[1.201961] (lslidar_msgs) StdoutLine: {'line': b'-- Found PythonLibs: /usr/lib/x86_64-linux-gnu/libpython3.10.so (found suitable version "3.10.12", minimum required is "3.5") \n'}
+[1.202035] (lslidar_msgs) StdoutLine: {'line': b'-- Using PYTHON_EXECUTABLE: /usr/bin/python3\n'}
+[1.202105] (lslidar_msgs) StdoutLine: {'line': b'-- Using PYTHON_INCLUDE_DIRS: /usr/include/python3.10\n'}
+[1.202156] (lslidar_msgs) StdoutLine: {'line': b'-- Using PYTHON_LIBRARIES: /usr/lib/x86_64-linux-gnu/libpython3.10.so\n'}
+[1.216092] (lslidar_msgs) StdoutLine: {'line': b'-- Found PythonExtra: .so  \n'}
+[1.294141] (lslidar_msgs) StdoutLine: {'line': b"-- Added test 'copyright' to check source files copyright and LICENSE\n"}
+[1.295619] (lslidar_msgs) StdoutLine: {'line': b"-- Added test 'lint_cmake' to check CMake code style\n"}
+[1.296538] (lslidar_msgs) StdoutLine: {'line': b"-- Added test 'xmllint' to check XML markup files\n"}
+[1.300884] (-) TimerEvent: {}
+[1.301222] (lslidar_msgs) StdoutLine: {'line': b'-- Configuring done\n'}
+[1.326062] (lslidar_msgs) StdoutLine: {'line': b'-- Generating done\n'}
+[1.332495] (lslidar_msgs) StdoutLine: {'line': b'-- Build files have been written to: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs\n'}
+[1.339131] (lslidar_msgs) CommandEnded: {'returncode': 0}
+[1.340284] (lslidar_msgs) JobProgress: {'identifier': 'lslidar_msgs', 'progress': 'build'}
+[1.340307] (lslidar_msgs) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs', '--', '-j32', '-l32'], 'cwd': '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs', 'env': OrderedDict([('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('VSCODE_CWD', '/home/ubuntu22'), ('ANTHROPIC_MODEL', 'deepseek-v4-pro'), ('VSCODE_ESM_ENTRYPOINT', 'vs/workbench/api/node/extensionHostProcess'), ('AI_AGENT', 'claude-code_2-1-152_agent'), ('LANGUAGE', 'zh_CN:zh'), ('USER', 'ubuntu22'), ('CLAUDE_CODE_ENTRYPOINT', 'claude-vscode'), ('VSCODE_NLS_CONFIG', '{"userLocale":"zh-cn","osLocale":"zh-cn","resolvedLanguage":"zh-cn","defaultMessagesFile":"/usr/share/code/resources/app/out/nls.messages.json","languagePack":{"translationsConfigFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/tcf.json","messagesFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/560a9dba96f961efea7b1612916f89e5d5d4d679/nls.messages.json","corruptMarkerFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/corrupted.info"},"locale":"zh-cn","availableLanguages":{"*":"zh-cn"},"_languagePackId":"8a51db726da852292d1c80f7afa92629.zh-cn","_languagePackSupport":true,"_translationsConfigFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/tcf.json","_cacheRoot":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn","_resolvedLanguagePackCoreLocation":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/560a9dba96f961efea7b1612916f89e5d5d4d679","_corruptedFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/corrupted.info"}'), ('GIT_EDITOR', 'true'), ('VSCODE_HANDLES_UNCAUGHT_ERRORS', 'true'), ('XDG_SESSION_TYPE', 'x11'), ('CLAUDE_AGENT_SDK_VERSION', '0.3.152'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ubuntu22/ws_ros2/install/px4_ros_com/lib:/home/ubuntu22/ws_ros2/install/px4_msgs/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda/lib64:/usr/local/cuda/lib64:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins:'), ('CLAUDE_CODE_MAX_OUTPUT_TOKENS', '6000'), ('HOME', '/home/ubuntu22'), ('CHROME_DESKTOP', 'code.desktop'), ('DESKTOP_SESSION', 'ubuntu'), ('NVM_BIN', '/home/ubuntu22/.nvm/versions/node/v20.20.2/bin'), ('NVM_INC', '/home/ubuntu22/.nvm/versions/node/v20.20.2/include/node'), ('VSCODE_IPC_HOOK', '/run/user/1000/vscode-f1441c07-1.11-main.sock'), ('ANTHROPIC_DEFAULT_SONNET_MODEL', 'deepseek-v4-pro'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/code.desktop'), ('GAZEBO_MASTER_URI', 'http://localhost:11345'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('MANAGERPID', '2258'), ('SYSTEMD_EXEC_PID', '2680'), ('ANTHROPIC_SMALL_FAST_MODEL', 'deepseek-v4-flash'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '24317'), ('NVM_DIR', '/home/ubuntu22/.nvm'), ('VSCODE_CRASH_REPORTER_PROCESS_TYPE', 'extensionHost'), ('MANDATORY_PATH', '/usr/share/gconf/ubuntu.mandatory.path'), ('VSCODE_L10N_BUNDLE_LOCATION', 'file:///home/ubuntu22/.vscode/extensions/ms-ceintl.vscode-language-pack-zh-hans-1.121.2026052214/translations/extensions/vscode.markdown-language-features.i18n.json'), ('COLCON_PREFIX_PATH', '/home/ubuntu22/ws_ros2/install'), ('ROS_DISTRO', 'humble'), ('GTK_IM_MODULE', 'ibus'), ('LOGNAME', 'ubuntu22'), ('JOURNAL_STREAM', '8:15699'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('DEFAULTS_PATH', '/usr/share/gconf/ubuntu.default.path'), ('USERNAME', 'ubuntu22'), ('ANTHROPIC_BASE_URL', 'https://api.deepseek.com/anthropic'), ('GAZEBO_MODEL_PATH', '/usr/share/gazebo-11/models:/home/ubuntu22/.gazebo/models'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('FC_FONTATIONS', '1'), ('ROS_LOCALHOST_ONLY', '0'), ('WINDOWPATH', '2'), ('ANTHROPIC_DEFAULT_OPUS_MODEL', 'deepseek-v4-pro'), ('MCP_CONNECTION_NONBLOCKING', 'true'), ('OGRE_RESOURCE_PATH', '/usr/lib/x86_64-linux-gnu/OGRE-1.9.0'), ('PATH', '/opt/ros/humble/bin:/usr/bin:/opt/gcc-arm-none-eabi-9-2020-q2-update/bin:/home/ubuntu22/.local/bin:/home/ubuntu22/.npm-global/bin:/home/ubuntu22/.local/bin:/opt/gcc-arm-none-eabi-9-2020-q2-update/bin:/home/ubuntu22/.local/bin:/home/ubuntu22/.nvm/versions/node/v20.20.2/bin:/home/ubuntu22/.npm-global/bin:/home/ubuntu22/.local/bin:/opt/ros/humble/bin:/opt/gcc-arm-none-eabi-9-2020-q2-update/bin:/home/ubuntu22/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/usr/local/cuda/bin:/usr/local/cuda/bin:/home/ubuntu22/android-sdk/cmdline-tools/latest/bin:/home/ubuntu22/android-sdk/platform-tools:/home/ubuntu22/android-sdk/build-tools/34.0.0:/usr/local/cuda/bin:/usr/local/cuda/bin:/home/ubuntu22/android-sdk/cmdline-tools/latest/bin:/home/ubuntu22/android-sdk/platform-tools:/home/ubuntu22/android-sdk/build-tools/34.0.0:/home/ubuntu22/.fishros/bin/'), ('SESSION_MANAGER', 'local/ubuntu22:@/tmp/.ICE-unix/2651,unix/ubuntu22:/tmp/.ICE-unix/2651'), ('INVOCATION_ID', 'f59f9f4354fb416991c11cc49d07289f'), ('COREPACK_ENABLE_AUTO_PIN', '0'), ('XDG_MENU_PREFIX', 'gnome-'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GDK_BACKEND', 'x11'), ('CLAUDE_EFFORT', 'high'), ('DISPLAY', ':1'), ('NoDefaultCurrentDirectoryInExePath', '1'), ('LANG', 'zh_CN.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/home/ubuntu22/ws_ros2/install/px4_ros_com:/home/ubuntu22/ws_ros2/install/px4_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('ANTHROPIC_AUTH_TOKEN', 'sk-88114a3a3aed43db8df22fc6a0ce6136'), ('QT_ACCESSIBILITY', '1'), ('ELECTRON_RUN_AS_NODE', '1'), ('GDMSESSION', 'ubuntu'), ('CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING', 'true'), ('CLAUDE_CODE_SESSION_ID', '35a02ef1-f38c-443e-b930-b448a379d091'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('CLAUDECODE', '1'), ('GPG_AGENT_INFO', '/run/user/1000/gnupg/S.gpg-agent:0:1'), ('GAZEBO_RESOURCE_PATH', '/usr/share/gazebo/../../share/gazebo-11:'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('ANDROID_SDK_ROOT', '/home/ubuntu22/android-sdk'), ('GAZEBO_MODEL_DATABASE_URI', 'http://models.gazebosim.org'), ('VIRTUAL_ENV', '/usr'), ('QT_IM_MODULE', 'ibus'), ('JAVA_HOME', '/usr/lib/jvm/java-17-openjdk-amd64'), ('PWD', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs'), ('QT_QPA_PLATFORM', 'xcb'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('VSCODE_CODE_CACHE_PATH', '/home/ubuntu22/.config/Code/CachedData/560a9dba96f961efea7b1612916f89e5d5d4d679'), ('GAZEBO_PLUGIN_PATH', '/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins:'), ('ANDROID_HOME', '/home/ubuntu22/android-sdk'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('CLAUDE_CODE_EXECPATH', '/home/ubuntu22/.vscode/extensions/anthropic.claude-code-2.1.152-linux-x64/resources/native-binary/claude'), ('CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC', '1'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('CLAUDE_CODE_ENABLE_TASKS', '0'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ubuntu22/ws_ros2/install/px4_ros_com:/home/ubuntu22/ws_ros2/install/px4_msgs:/opt/ros/humble'), ('VSCODE_PID', '24317')]), 'shell': False}
+[1.374414] (lslidar_msgs) StdoutLine: {'line': b'[  1%] Generating C code for ROS interfaces\n'}
+[1.383055] (lslidar_msgs) StdoutLine: {'line': b'[  3%] Generating Rust code for ROS interfaces\n'}
+[1.383245] (lslidar_msgs) StdoutLine: {'line': b'[  4%] Generating C++ code for ROS interfaces\n'}
+[1.388834] (lslidar_msgs) StdoutLine: {'line': b'[  4%] Built target ament_cmake_python_symlink_lslidar_msgs\n'}
+[1.400966] (-) TimerEvent: {}
+[1.501069] (-) TimerEvent: {}
+[1.521123] (lslidar_msgs) StdoutLine: {'line': b'running egg_info\n'}
+[1.530704] (lslidar_msgs) StdoutLine: {'line': b'creating lslidar_msgs.egg-info\n'}
+[1.530808] (lslidar_msgs) StdoutLine: {'line': b'writing lslidar_msgs.egg-info/PKG-INFO\n'}
+[1.530945] (lslidar_msgs) StdoutLine: {'line': b'writing dependency_links to lslidar_msgs.egg-info/dependency_links.txt\n'}
+[1.531096] (lslidar_msgs) StdoutLine: {'line': b'writing top-level names to lslidar_msgs.egg-info/top_level.txt\n'}
+[1.531154] (lslidar_msgs) StdoutLine: {'line': b"writing manifest file 'lslidar_msgs.egg-info/SOURCES.txt'\n"}
+[1.559012] (lslidar_msgs) StdoutLine: {'line': b"reading manifest file 'lslidar_msgs.egg-info/SOURCES.txt'\n"}
+[1.559479] (lslidar_msgs) StdoutLine: {'line': b"writing manifest file 'lslidar_msgs.egg-info/SOURCES.txt'\n"}
+[1.580084] (lslidar_msgs) StdoutLine: {'line': b'[  4%] Built target ament_cmake_python_build_lslidar_msgs_egg\n'}
+[1.590852] (lslidar_msgs) StdoutLine: {'line': b'[  4%] Built target lslidar_msgs__rs\n'}
+[1.601142] (-) TimerEvent: {}
+[1.672691] (lslidar_msgs) StdoutLine: {'line': b'[  4%] Built target lslidar_msgs__cpp\n'}
+[1.672906] (lslidar_msgs) StdoutLine: {'line': b'[  6%] Building C object CMakeFiles/lslidar_msgs__rosidl_generator_c.dir/rosidl_generator_c/lslidar_msgs/msg/detail/lslidar_difop__functions.c.o\n'}
+[1.673874] (lslidar_msgs) StdoutLine: {'line': b'[  7%] Building C object CMakeFiles/lslidar_msgs__rosidl_generator_c.dir/rosidl_generator_c/lslidar_msgs/msg/detail/lslidar_packet__functions.c.o\n'}
+[1.674093] (lslidar_msgs) StdoutLine: {'line': b'[  9%] Building C object CMakeFiles/lslidar_msgs__rosidl_generator_c.dir/rosidl_generator_c/lslidar_msgs/msg/detail/lslidar_point__functions.c.o\n'}
+[1.674187] (lslidar_msgs) StdoutLine: {'line': b'[ 10%] Building C object CMakeFiles/lslidar_msgs__rosidl_generator_c.dir/rosidl_generator_c/lslidar_msgs/msg/detail/lslidar_scan__functions.c.o\n'}
+[1.674485] (lslidar_msgs) StdoutLine: {'line': b'[ 12%] Building C object CMakeFiles/lslidar_msgs__rosidl_generator_c.dir/rosidl_generator_c/lslidar_msgs/msg/detail/lslidar_sweep__functions.c.o\n'}
+[1.681104] (lslidar_msgs) StdoutLine: {'line': b'[ 14%] Generating C++ type support for eProsima Fast-RTPS\n'}
+[1.681238] (lslidar_msgs) StdoutLine: {'line': b'[ 15%] Generating C++ type support dispatch for ROS interfaces\n'}
+[1.681421] (lslidar_msgs) StdoutLine: {'line': b'[ 17%] Generating C++ introspection for ROS interfaces\n'}
+[1.701267] (-) TimerEvent: {}
+[1.717963] (lslidar_msgs) StdoutLine: {'line': b'[ 18%] Linking C shared library liblslidar_msgs__rosidl_generator_c.so\n'}
+[1.751486] (lslidar_msgs) StdoutLine: {'line': b'[ 18%] Built target lslidar_msgs__rosidl_generator_c\n'}
+[1.760762] (lslidar_msgs) StdoutLine: {'line': b'[ 20%] Generating C introspection for ROS interfaces\n'}
+[1.760989] (lslidar_msgs) StdoutLine: {'line': b'[ 21%] Generating C type support for eProsima Fast-RTPS\n'}
+[1.761237] (lslidar_msgs) StdoutLine: {'line': b'[ 23%] Generating C type support dispatch for ROS interfaces\n'}
+[1.801344] (-) TimerEvent: {}
+[1.901506] (-) TimerEvent: {}
+[1.905510] (lslidar_msgs) StdoutLine: {'line': b'[ 25%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/lslidar_msgs/msg/lslidar_difop__type_support.cpp.o\n'}
+[1.907666] (lslidar_msgs) StdoutLine: {'line': b'[ 26%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/lslidar_msgs/msg/lslidar_packet__type_support.cpp.o\n'}
+[1.907942] (lslidar_msgs) StdoutLine: {'line': b'[ 28%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/lslidar_msgs/msg/lslidar_point__type_support.cpp.o\n'}
+[1.908455] (lslidar_msgs) StdoutLine: {'line': b'[ 29%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/lslidar_msgs/msg/lslidar_scan__type_support.cpp.o\n'}
+[1.908857] (lslidar_msgs) StdoutLine: {'line': b'[ 31%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/lslidar_msgs/msg/lslidar_sweep__type_support.cpp.o\n'}
+[1.937266] (lslidar_msgs) StdoutLine: {'line': b'[ 37%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/lslidar_msgs/msg/detail/lslidar_point__type_support.cpp.o\n'}
+[1.937417] (lslidar_msgs) StdoutLine: {'line': b'[ 34%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/lslidar_msgs/msg/detail/lslidar_scan__type_support.cpp.o\n'}
+[1.937476] (lslidar_msgs) StdoutLine: {'line': b'[ 37%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/lslidar_msgs/msg/detail/lslidar_difop__type_support.cpp.o\n'}
+[1.937530] (lslidar_msgs) StdoutLine: {'line': b'[ 37%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/lslidar_msgs/msg/detail/lslidar_packet__type_support.cpp.o\n'}
+[1.938245] (lslidar_msgs) StdoutLine: {'line': b'[ 39%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/lslidar_msgs/msg/detail/lslidar_sweep__type_support.cpp.o\n'}
+[1.953278] (lslidar_msgs) StdoutLine: {'line': b'[ 40%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/lslidar_msgs/msg/detail/dds_fastrtps/lslidar_point__type_support.cpp.o\n'}
+[1.953668] (lslidar_msgs) StdoutLine: {'line': b'[ 42%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/lslidar_msgs/msg/detail/dds_fastrtps/lslidar_packet__type_support.cpp.o\n'}
+[1.953740] (lslidar_msgs) StdoutLine: {'line': b'[ 45%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/lslidar_msgs/msg/detail/dds_fastrtps/lslidar_difop__type_support.cpp.o\n'}
+[1.953787] (lslidar_msgs) StdoutLine: {'line': b'[ 45%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/lslidar_msgs/msg/detail/dds_fastrtps/lslidar_scan__type_support.cpp.o\n'}
+[1.955330] (lslidar_msgs) StdoutLine: {'line': b'[ 46%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/lslidar_msgs/msg/detail/dds_fastrtps/lslidar_sweep__type_support.cpp.o\n'}
+[2.001654] (-) TimerEvent: {}
+[2.010122] (lslidar_msgs) StdoutLine: {'line': b'[ 51%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/lslidar_msgs/msg/lslidar_difop__type_support.cpp.o\n'}
+[2.010363] (lslidar_msgs) StdoutLine: {'line': b'[ 51%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/lslidar_msgs/msg/lslidar_packet__type_support.cpp.o\n'}
+[2.010454] (lslidar_msgs) StdoutLine: {'line': b'[ 51%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/lslidar_msgs/msg/lslidar_sweep__type_support.cpp.o\n'}
+[2.011704] (lslidar_msgs) StdoutLine: {'line': b'[ 54%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/lslidar_msgs/msg/lslidar_scan__type_support.cpp.o\n'}
+[2.011834] (lslidar_msgs) StdoutLine: {'line': b'[ 54%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/lslidar_msgs/msg/lslidar_point__type_support.cpp.o\n'}
+[2.053950] (lslidar_msgs) StdoutLine: {'line': b'[ 56%] Building C object CMakeFiles/lslidar_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/lslidar_msgs/msg/detail/lslidar_scan__type_support.c.o\n'}
+[2.054604] (lslidar_msgs) StdoutLine: {'line': b'[ 57%] Building C object CMakeFiles/lslidar_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/lslidar_msgs/msg/detail/lslidar_packet__type_support.c.o\n'}
+[2.054737] (lslidar_msgs) StdoutLine: {'line': b'[ 59%] Building C object CMakeFiles/lslidar_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/lslidar_msgs/msg/detail/lslidar_point__type_support.c.o\n'}
+[2.055010] (lslidar_msgs) StdoutLine: {'line': b'[ 60%] Building C object CMakeFiles/lslidar_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/lslidar_msgs/msg/detail/lslidar_difop__type_support.c.o\n'}
+[2.055994] (lslidar_msgs) StdoutLine: {'line': b'[ 62%] Building C object CMakeFiles/lslidar_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/lslidar_msgs/msg/detail/lslidar_sweep__type_support.c.o\n'}
+[2.056571] (lslidar_msgs) StdoutLine: {'line': b'[ 64%] Linking CXX shared library liblslidar_msgs__rosidl_typesupport_c.so\n'}
+[2.077655] (lslidar_msgs) StdoutLine: {'line': b'[ 67%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/lslidar_msgs/msg/detail/lslidar_scan__type_support_c.cpp.o\n'}
+[2.077902] (lslidar_msgs) StdoutLine: {'line': b'[ 67%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/lslidar_msgs/msg/detail/lslidar_point__type_support_c.cpp.o\n'}
+[2.080298] (lslidar_msgs) StdoutLine: {'line': b'[ 68%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/lslidar_msgs/msg/detail/lslidar_packet__type_support_c.cpp.o\n'}
+[2.080455] (lslidar_msgs) StdoutLine: {'line': b'[ 70%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/lslidar_msgs/msg/detail/lslidar_sweep__type_support_c.cpp.o\n'}
+[2.083374] (lslidar_msgs) StdoutLine: {'line': b'[ 71%] Building CXX object CMakeFiles/lslidar_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/lslidar_msgs/msg/detail/lslidar_difop__type_support_c.cpp.o\n'}
+[2.101843] (-) TimerEvent: {}
+[2.107632] (lslidar_msgs) StdoutLine: {'line': b'[ 73%] Linking C shared library liblslidar_msgs__rosidl_typesupport_introspection_c.so\n'}
+[2.109212] (lslidar_msgs) StdoutLine: {'line': b'[ 73%] Built target lslidar_msgs__rosidl_typesupport_c\n'}
+[2.145892] (lslidar_msgs) StdoutLine: {'line': b'[ 73%] Built target lslidar_msgs__rosidl_typesupport_introspection_c\n'}
+[2.152666] (lslidar_msgs) StdoutLine: {'line': b'[ 75%] Linking CXX shared library liblslidar_msgs__rosidl_typesupport_cpp.so\n'}
+[2.193446] (lslidar_msgs) StdoutLine: {'line': b'[ 75%] Built target lslidar_msgs__rosidl_typesupport_cpp\n'}
+[2.201939] (-) TimerEvent: {}
+[2.285024] (lslidar_msgs) StdoutLine: {'line': b'[ 76%] Linking CXX shared library liblslidar_msgs__rosidl_typesupport_introspection_cpp.so\n'}
+[2.302053] (-) TimerEvent: {}
+[2.341091] (lslidar_msgs) StdoutLine: {'line': b'[ 78%] Linking CXX shared library liblslidar_msgs__rosidl_typesupport_fastrtps_cpp.so\n'}
+[2.346256] (lslidar_msgs) StdoutLine: {'line': b'[ 78%] Built target lslidar_msgs__rosidl_typesupport_introspection_cpp\n'}
+[2.361781] (lslidar_msgs) StdoutLine: {'line': b'[ 79%] Linking CXX shared library liblslidar_msgs__rosidl_typesupport_fastrtps_c.so\n'}
+[2.392674] (lslidar_msgs) StdoutLine: {'line': b'[ 79%] Built target lslidar_msgs__rosidl_typesupport_fastrtps_cpp\n'}
+[2.402112] (-) TimerEvent: {}
+[2.415457] (lslidar_msgs) StdoutLine: {'line': b'[ 79%] Built target lslidar_msgs__rosidl_typesupport_fastrtps_c\n'}
+[2.431066] (lslidar_msgs) StdoutLine: {'line': b'[ 79%] Built target lslidar_msgs\n'}
+[2.446668] (lslidar_msgs) StdoutLine: {'line': b'[ 81%] Generating Python code for ROS interfaces\n'}
+[2.502202] (-) TimerEvent: {}
+[2.602299] (-) TimerEvent: {}
+[2.702412] (-) TimerEvent: {}
+[2.802485] (-) TimerEvent: {}
+[2.866277] (lslidar_msgs) StdoutLine: {'line': b'[ 81%] Built target lslidar_msgs__py\n'}
+[2.882265] (lslidar_msgs) StdoutLine: {'line': b'[ 82%] Building C object CMakeFiles/lslidar_msgs__rosidl_generator_py.dir/rosidl_generator_py/lslidar_msgs/msg/_lslidar_difop_s.c.o\n'}
+[2.882552] (lslidar_msgs) StdoutLine: {'line': b'[ 85%] Building C object CMakeFiles/lslidar_msgs__rosidl_generator_py.dir/rosidl_generator_py/lslidar_msgs/msg/_lslidar_point_s.c.o\n'}
+[2.882603] (lslidar_msgs) StdoutLine: {'line': b'[ 85%] Building C object CMakeFiles/lslidar_msgs__rosidl_generator_py.dir/rosidl_generator_py/lslidar_msgs/msg/_lslidar_packet_s.c.o\n'}
+[2.882817] (lslidar_msgs) StdoutLine: {'line': b'[ 89%] Building C object CMakeFiles/lslidar_msgs__rosidl_generator_py.dir/rosidl_generator_py/lslidar_msgs/msg/_lslidar_sweep_s.c.o\n'}
+[2.882857] (lslidar_msgs) StdoutLine: {'line': b'[ 89%] Building C object CMakeFiles/lslidar_msgs__rosidl_generator_py.dir/rosidl_generator_py/lslidar_msgs/msg/_lslidar_scan_s.c.o\n'}
+[2.902567] (-) TimerEvent: {}
+[2.960939] (lslidar_msgs) StdoutLine: {'line': b'[ 90%] Linking C shared library rosidl_generator_py/lslidar_msgs/liblslidar_msgs__rosidl_generator_py.so\n'}
+[2.993607] (lslidar_msgs) StdoutLine: {'line': b'[ 90%] Built target lslidar_msgs__rosidl_generator_py\n'}
+[3.002676] (-) TimerEvent: {}
+[3.010165] (lslidar_msgs) StdoutLine: {'line': b'[ 92%] Building C object CMakeFiles/lslidar_msgs__rosidl_typesupport_fastrtps_c__pyext.dir/rosidl_generator_py/lslidar_msgs/_lslidar_msgs_s.ep.rosidl_typesupport_fastrtps_c.c.o\n'}
+[3.011426] (lslidar_msgs) StdoutLine: {'line': b'[ 95%] Building C object CMakeFiles/lslidar_msgs__rosidl_typesupport_c__pyext.dir/rosidl_generator_py/lslidar_msgs/_lslidar_msgs_s.ep.rosidl_typesupport_c.c.o\n'}
+[3.011488] (lslidar_msgs) StdoutLine: {'line': b'[ 95%] Building C object CMakeFiles/lslidar_msgs__rosidl_typesupport_introspection_c__pyext.dir/rosidl_generator_py/lslidar_msgs/_lslidar_msgs_s.ep.rosidl_typesupport_introspection_c.c.o\n'}
+[3.081765] (lslidar_msgs) StdoutLine: {'line': b'[ 96%] Linking C shared library rosidl_generator_py/lslidar_msgs/lslidar_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so\n'}
+[3.082034] (lslidar_msgs) StdoutLine: {'line': b'[100%] Linking C shared library rosidl_generator_py/lslidar_msgs/lslidar_msgs_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so\n'}
+[3.082110] (lslidar_msgs) StdoutLine: {'line': b'[100%] Linking C shared library rosidl_generator_py/lslidar_msgs/lslidar_msgs_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so\n'}
+[3.102752] (-) TimerEvent: {}
+[3.110612] (lslidar_msgs) StdoutLine: {'line': b'[100%] Built target lslidar_msgs__rosidl_typesupport_introspection_c__pyext\n'}
+[3.110793] (lslidar_msgs) StdoutLine: {'line': b'[100%] Built target lslidar_msgs__rosidl_typesupport_c__pyext\n'}
+[3.110844] (lslidar_msgs) StdoutLine: {'line': b'[100%] Built target lslidar_msgs__rosidl_typesupport_fastrtps_c__pyext\n'}
+[3.120060] (lslidar_msgs) CommandEnded: {'returncode': 0}
+[3.120571] (lslidar_msgs) JobProgress: {'identifier': 'lslidar_msgs', 'progress': 'install'}
+[3.126766] (lslidar_msgs) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs'], 'cwd': '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs', 'env': OrderedDict([('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('VSCODE_CWD', '/home/ubuntu22'), ('ANTHROPIC_MODEL', 'deepseek-v4-pro'), ('VSCODE_ESM_ENTRYPOINT', 'vs/workbench/api/node/extensionHostProcess'), ('AI_AGENT', 'claude-code_2-1-152_agent'), ('LANGUAGE', 'zh_CN:zh'), ('USER', 'ubuntu22'), ('CLAUDE_CODE_ENTRYPOINT', 'claude-vscode'), ('VSCODE_NLS_CONFIG', '{"userLocale":"zh-cn","osLocale":"zh-cn","resolvedLanguage":"zh-cn","defaultMessagesFile":"/usr/share/code/resources/app/out/nls.messages.json","languagePack":{"translationsConfigFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/tcf.json","messagesFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/560a9dba96f961efea7b1612916f89e5d5d4d679/nls.messages.json","corruptMarkerFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/corrupted.info"},"locale":"zh-cn","availableLanguages":{"*":"zh-cn"},"_languagePackId":"8a51db726da852292d1c80f7afa92629.zh-cn","_languagePackSupport":true,"_translationsConfigFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/tcf.json","_cacheRoot":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn","_resolvedLanguagePackCoreLocation":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/560a9dba96f961efea7b1612916f89e5d5d4d679","_corruptedFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/corrupted.info"}'), ('GIT_EDITOR', 'true'), ('VSCODE_HANDLES_UNCAUGHT_ERRORS', 'true'), ('XDG_SESSION_TYPE', 'x11'), ('CLAUDE_AGENT_SDK_VERSION', '0.3.152'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ubuntu22/ws_ros2/install/px4_ros_com/lib:/home/ubuntu22/ws_ros2/install/px4_msgs/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda/lib64:/usr/local/cuda/lib64:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins:'), ('CLAUDE_CODE_MAX_OUTPUT_TOKENS', '6000'), ('HOME', '/home/ubuntu22'), ('CHROME_DESKTOP', 'code.desktop'), ('DESKTOP_SESSION', 'ubuntu'), ('NVM_BIN', '/home/ubuntu22/.nvm/versions/node/v20.20.2/bin'), ('NVM_INC', '/home/ubuntu22/.nvm/versions/node/v20.20.2/include/node'), ('VSCODE_IPC_HOOK', '/run/user/1000/vscode-f1441c07-1.11-main.sock'), ('ANTHROPIC_DEFAULT_SONNET_MODEL', 'deepseek-v4-pro'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/code.desktop'), ('GAZEBO_MASTER_URI', 'http://localhost:11345'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('MANAGERPID', '2258'), ('SYSTEMD_EXEC_PID', '2680'), ('ANTHROPIC_SMALL_FAST_MODEL', 'deepseek-v4-flash'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '24317'), ('NVM_DIR', '/home/ubuntu22/.nvm'), ('VSCODE_CRASH_REPORTER_PROCESS_TYPE', 'extensionHost'), ('MANDATORY_PATH', '/usr/share/gconf/ubuntu.mandatory.path'), ('VSCODE_L10N_BUNDLE_LOCATION', 'file:///home/ubuntu22/.vscode/extensions/ms-ceintl.vscode-language-pack-zh-hans-1.121.2026052214/translations/extensions/vscode.markdown-language-features.i18n.json'), ('COLCON_PREFIX_PATH', '/home/ubuntu22/ws_ros2/install'), ('ROS_DISTRO', 'humble'), ('GTK_IM_MODULE', 'ibus'), ('LOGNAME', 'ubuntu22'), ('JOURNAL_STREAM', '8:15699'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('DEFAULTS_PATH', '/usr/share/gconf/ubuntu.default.path'), ('USERNAME', 'ubuntu22'), ('ANTHROPIC_BASE_URL', 'https://api.deepseek.com/anthropic'), ('GAZEBO_MODEL_PATH', '/usr/share/gazebo-11/models:/home/ubuntu22/.gazebo/models'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('FC_FONTATIONS', '1'), ('ROS_LOCALHOST_ONLY', '0'), ('WINDOWPATH', '2'), ('ANTHROPIC_DEFAULT_OPUS_MODEL', 'deepseek-v4-pro'), ('MCP_CONNECTION_NONBLOCKING', 'true'), ('OGRE_RESOURCE_PATH', '/usr/lib/x86_64-linux-gnu/OGRE-1.9.0'), ('PATH', '/opt/ros/humble/bin:/usr/bin:/opt/gcc-arm-none-eabi-9-2020-q2-update/bin:/home/ubuntu22/.local/bin:/home/ubuntu22/.npm-global/bin:/home/ubuntu22/.local/bin:/opt/gcc-arm-none-eabi-9-2020-q2-update/bin:/home/ubuntu22/.local/bin:/home/ubuntu22/.nvm/versions/node/v20.20.2/bin:/home/ubuntu22/.npm-global/bin:/home/ubuntu22/.local/bin:/opt/ros/humble/bin:/opt/gcc-arm-none-eabi-9-2020-q2-update/bin:/home/ubuntu22/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/usr/local/cuda/bin:/usr/local/cuda/bin:/home/ubuntu22/android-sdk/cmdline-tools/latest/bin:/home/ubuntu22/android-sdk/platform-tools:/home/ubuntu22/android-sdk/build-tools/34.0.0:/usr/local/cuda/bin:/usr/local/cuda/bin:/home/ubuntu22/android-sdk/cmdline-tools/latest/bin:/home/ubuntu22/android-sdk/platform-tools:/home/ubuntu22/android-sdk/build-tools/34.0.0:/home/ubuntu22/.fishros/bin/'), ('SESSION_MANAGER', 'local/ubuntu22:@/tmp/.ICE-unix/2651,unix/ubuntu22:/tmp/.ICE-unix/2651'), ('INVOCATION_ID', 'f59f9f4354fb416991c11cc49d07289f'), ('COREPACK_ENABLE_AUTO_PIN', '0'), ('XDG_MENU_PREFIX', 'gnome-'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GDK_BACKEND', 'x11'), ('CLAUDE_EFFORT', 'high'), ('DISPLAY', ':1'), ('NoDefaultCurrentDirectoryInExePath', '1'), ('LANG', 'zh_CN.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/home/ubuntu22/ws_ros2/install/px4_ros_com:/home/ubuntu22/ws_ros2/install/px4_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('ANTHROPIC_AUTH_TOKEN', 'sk-88114a3a3aed43db8df22fc6a0ce6136'), ('QT_ACCESSIBILITY', '1'), ('ELECTRON_RUN_AS_NODE', '1'), ('GDMSESSION', 'ubuntu'), ('CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING', 'true'), ('CLAUDE_CODE_SESSION_ID', '35a02ef1-f38c-443e-b930-b448a379d091'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('CLAUDECODE', '1'), ('GPG_AGENT_INFO', '/run/user/1000/gnupg/S.gpg-agent:0:1'), ('GAZEBO_RESOURCE_PATH', '/usr/share/gazebo/../../share/gazebo-11:'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('ANDROID_SDK_ROOT', '/home/ubuntu22/android-sdk'), ('GAZEBO_MODEL_DATABASE_URI', 'http://models.gazebosim.org'), ('VIRTUAL_ENV', '/usr'), ('QT_IM_MODULE', 'ibus'), ('JAVA_HOME', '/usr/lib/jvm/java-17-openjdk-amd64'), ('PWD', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs'), ('QT_QPA_PLATFORM', 'xcb'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('VSCODE_CODE_CACHE_PATH', '/home/ubuntu22/.config/Code/CachedData/560a9dba96f961efea7b1612916f89e5d5d4d679'), ('GAZEBO_PLUGIN_PATH', '/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins:'), ('ANDROID_HOME', '/home/ubuntu22/android-sdk'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('CLAUDE_CODE_EXECPATH', '/home/ubuntu22/.vscode/extensions/anthropic.claude-code-2.1.152-linux-x64/resources/native-binary/claude'), ('CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC', '1'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('CLAUDE_CODE_ENABLE_TASKS', '0'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ubuntu22/ws_ros2/install/px4_ros_com:/home/ubuntu22/ws_ros2/install/px4_msgs:/opt/ros/humble'), ('VSCODE_PID', '24317')]), 'shell': False}
+[3.133004] (lslidar_msgs) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[3.133387] (lslidar_msgs) StdoutLine: {'line': b'-- Execute custom install script\n'}
+[3.133605] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/ament_index/resource_index/rosidl_interfaces/lslidar_msgs\n'}
+[3.140673] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_difop__functions.h\n'}
+[3.146846] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_difop__struct.h\n'}
+[3.152941] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_difop__type_support.h\n'}
+[3.159300] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_packet__functions.h\n'}
+[3.165396] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_packet__struct.h\n'}
+[3.172257] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_packet__type_support.h\n'}
+[3.178769] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_point__functions.h\n'}
+[3.185382] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_point__struct.h\n'}
+[3.191438] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_point__type_support.h\n'}
+[3.197451] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_scan__functions.h\n'}
+[3.202823] (-) TimerEvent: {}
+[3.204166] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_scan__struct.h\n'}
+[3.210722] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_scan__type_support.h\n'}
+[3.216765] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_sweep__functions.h\n'}
+[3.223009] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_sweep__struct.h\n'}
+[3.229115] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_sweep__type_support.h\n'}
+[3.235827] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/lslidar_difop.h\n'}
+[3.242345] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/lslidar_packet.h\n'}
+[3.249197] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/lslidar_point.h\n'}
+[3.255696] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/lslidar_scan.h\n'}
+[3.261736] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/lslidar_sweep.h\n'}
+[3.268374] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/rosidl_generator_c__visibility_control.h\n'}
+[3.275019] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/environment/library_path.sh\n'}
+[3.281297] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/environment/library_path.dsv\n'}
+[3.287681] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_difop__rosidl_typesupport_fastrtps_c.h\n'}
+[3.293824] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_packet__rosidl_typesupport_fastrtps_c.h\n'}
+[3.300116] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_point__rosidl_typesupport_fastrtps_c.h\n'}
+[3.302919] (-) TimerEvent: {}
+[3.306675] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_scan__rosidl_typesupport_fastrtps_c.h\n'}
+[3.312832] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_sweep__rosidl_typesupport_fastrtps_c.h\n'}
+[3.319458] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/rosidl_typesupport_fastrtps_c__visibility_control.h\n'}
+[3.325998] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_difop__builder.hpp\n'}
+[3.332094] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_difop__struct.hpp\n'}
+[3.338264] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_difop__traits.hpp\n'}
+[3.344647] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_difop__type_support.hpp\n'}
+[3.350811] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_packet__builder.hpp\n'}
+[3.356893] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_packet__struct.hpp\n'}
+[3.363497] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_packet__traits.hpp\n'}
+[3.369551] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_packet__type_support.hpp\n'}
+[3.375605] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_point__builder.hpp\n'}
+[3.381795] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_point__struct.hpp\n'}
+[3.388010] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_point__traits.hpp\n'}
+[3.395007] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_point__type_support.hpp\n'}
+[3.401309] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_scan__builder.hpp\n'}
+[3.403010] (-) TimerEvent: {}
+[3.407297] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_scan__struct.hpp\n'}
+[3.413333] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_scan__traits.hpp\n'}
+[3.419409] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_scan__type_support.hpp\n'}
+[3.426103] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_sweep__builder.hpp\n'}
+[3.432426] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_sweep__struct.hpp\n'}
+[3.438405] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_sweep__traits.hpp\n'}
+[3.444835] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_sweep__type_support.hpp\n'}
+[3.450851] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/lslidar_difop.hpp\n'}
+[3.458040] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/lslidar_packet.hpp\n'}
+[3.464708] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/lslidar_point.hpp\n'}
+[3.471170] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/lslidar_scan.hpp\n'}
+[3.477205] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/lslidar_sweep.hpp\n'}
+[3.483295] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/rosidl_generator_cpp__visibility_control.hpp\n'}
+[3.489696] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_difop__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[3.496718] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_packet__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[3.503088] (-) TimerEvent: {}
+[3.503213] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_point__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[3.509334] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_scan__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[3.515392] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_sweep__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[3.521460] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h\n'}
+[3.528302] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_difop__rosidl_typesupport_introspection_c.h\n'}
+[3.534703] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_packet__rosidl_typesupport_introspection_c.h\n'}
+[3.540762] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_point__rosidl_typesupport_introspection_c.h\n'}
+[3.546956] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_scan__rosidl_typesupport_introspection_c.h\n'}
+[3.554236] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_sweep__rosidl_typesupport_introspection_c.h\n'}
+[3.560531] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/rosidl_typesupport_introspection_c__visibility_control.h\n'}
+[3.566699] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_difop__rosidl_typesupport_introspection_cpp.hpp\n'}
+[3.573316] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_packet__rosidl_typesupport_introspection_cpp.hpp\n'}
+[3.579736] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_point__rosidl_typesupport_introspection_cpp.hpp\n'}
+[3.585837] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_scan__rosidl_typesupport_introspection_cpp.hpp\n'}
+[3.592261] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/include/lslidar_msgs/lslidar_msgs/msg/detail/lslidar_sweep__rosidl_typesupport_introspection_cpp.hpp\n'}
+[3.599264] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/environment/pythonpath.sh\n'}
+[3.603156] (-) TimerEvent: {}
+[3.605401] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/environment/pythonpath.dsv\n'}
+[3.611650] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs-1.2.0-py3.10.egg-info/PKG-INFO\n'}
+[3.617742] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs-1.2.0-py3.10.egg-info/SOURCES.txt\n'}
+[3.624124] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs-1.2.0-py3.10.egg-info/dependency_links.txt\n'}
+[3.631077] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs-1.2.0-py3.10.egg-info/top_level.txt\n'}
+[3.638156] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/__init__.py\n'}
+[3.644377] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/_lslidar_msgs_s.ep.rosidl_typesupport_c.c\n'}
+[3.650792] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/_lslidar_msgs_s.ep.rosidl_typesupport_fastrtps_c.c\n'}
+[3.656895] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/_lslidar_msgs_s.ep.rosidl_typesupport_introspection_c.c\n'}
+[3.663020] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/liblslidar_msgs__rosidl_generator_py.so\n'}
+[3.669086] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/lslidar_msgs_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so\n'}
+[3.675253] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/lslidar_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so\n'}
+[3.681277] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/lslidar_msgs_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so\n'}
+[3.688270] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/msg/__init__.py\n'}
+[3.694779] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/msg/_lslidar_difop.py\n'}
+[3.701656] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/msg/_lslidar_difop_s.c\n'}
+[3.703234] (-) TimerEvent: {}
+[3.708134] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/msg/_lslidar_packet.py\n'}
+[3.714354] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/msg/_lslidar_packet_s.c\n'}
+[3.721133] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/msg/_lslidar_point.py\n'}
+[3.727764] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/msg/_lslidar_point_s.c\n'}
+[3.734094] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/msg/_lslidar_scan.py\n'}
+[3.740260] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/msg/_lslidar_scan_s.c\n'}
+[3.746338] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/msg/_lslidar_sweep.py\n'}
+[3.752920] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/msg/_lslidar_sweep_s.c\n'}
+[3.759843] (lslidar_msgs) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/lslidar_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so\n'}
+[3.759980] (lslidar_msgs) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/lslidar_msgs_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so\n'}
+[3.760135] (lslidar_msgs) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/lslidar_msgs_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so\n'}
+[3.760238] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/ament_index/resource_index/rust_packages/lslidar_msgs\n'}
+[3.766701] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/rust/Cargo.toml\n'}
+[3.773011] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/rust/build.rs\n'}
+[3.779674] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/rust/src/lib.rs\n'}
+[3.786183] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/rust/src/msg.rs\n'}
+[3.792319] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/rust/src/msg/rmw.rs\n'}
+[3.798392] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/msg/LslidarDifop.idl\n'}
+[3.803272] (-) TimerEvent: {}
+[3.805274] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/msg/LslidarPacket.idl\n'}
+[3.811801] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/msg/LslidarPoint.idl\n'}
+[3.818170] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/msg/LslidarScan.idl\n'}
+[3.824620] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/msg/LslidarSweep.idl\n'}
+[3.830843] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/msg/LslidarDifop.msg\n'}
+[3.837140] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/msg/LslidarPacket.msg\n'}
+[3.843185] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/msg/LslidarPoint.msg\n'}
+[3.849347] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/msg/LslidarScan.msg\n'}
+[3.855392] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/msg/LslidarSweep.msg\n'}
+[3.861506] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/ament_index/resource_index/package_run_dependencies/lslidar_msgs\n'}
+[3.868834] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/ament_index/resource_index/parent_prefix_path/lslidar_msgs\n'}
+[3.875533] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/environment/ament_prefix_path.sh\n'}
+[3.882548] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/environment/ament_prefix_path.dsv\n'}
+[3.889014] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/environment/path.sh\n'}
+[3.895129] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/environment/path.dsv\n'}
+[3.901283] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/local_setup.bash\n'}
+[3.903349] (-) TimerEvent: {}
+[3.907498] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/local_setup.sh\n'}
+[3.913590] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/local_setup.zsh\n'}
+[3.919778] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/local_setup.dsv\n'}
+[3.925794] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/package.dsv\n'}
+[3.933081] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/ament_index/resource_index/packages/lslidar_msgs\n'}
+[3.939946] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/rosidl_cmake-extras.cmake\n'}
+[3.946449] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/ament_cmake_export_dependencies-extras.cmake\n'}
+[3.952821] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/ament_cmake_export_include_directories-extras.cmake\n'}
+[3.959458] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/ament_cmake_export_libraries-extras.cmake\n'}
+[3.965851] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/ament_cmake_export_targets-extras.cmake\n'}
+[3.972033] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake\n'}
+[3.978670] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake\n'}
+[3.985142] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/lslidar_msgsConfig.cmake\n'}
+[3.991314] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/lslidar_msgsConfig-version.cmake\n'}
+[3.997570] (lslidar_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/package.xml\n'}
+[4.003432] (-) TimerEvent: {}
+[4.003821] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib/liblslidar_msgs__rosidl_generator_c.so\n'}
+[4.004150] (lslidar_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib/liblslidar_msgs__rosidl_generator_c.so" to ""\n'}
+[4.004267] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib/liblslidar_msgs__rosidl_typesupport_fastrtps_c.so\n'}
+[4.004544] (lslidar_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib/liblslidar_msgs__rosidl_typesupport_fastrtps_c.so" to ""\n'}
+[4.004580] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib/liblslidar_msgs__rosidl_typesupport_fastrtps_cpp.so\n'}
+[4.004901] (lslidar_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib/liblslidar_msgs__rosidl_typesupport_fastrtps_cpp.so" to ""\n'}
+[4.004988] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib/liblslidar_msgs__rosidl_typesupport_introspection_c.so\n'}
+[4.005224] (lslidar_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib/liblslidar_msgs__rosidl_typesupport_introspection_c.so" to ""\n'}
+[4.005321] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib/liblslidar_msgs__rosidl_typesupport_c.so\n'}
+[4.005508] (lslidar_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib/liblslidar_msgs__rosidl_typesupport_c.so" to ""\n'}
+[4.005609] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib/liblslidar_msgs__rosidl_typesupport_introspection_cpp.so\n'}
+[4.005910] (lslidar_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib/liblslidar_msgs__rosidl_typesupport_introspection_cpp.so" to ""\n'}
+[4.005994] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib/liblslidar_msgs__rosidl_typesupport_cpp.so\n'}
+[4.006216] (lslidar_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib/liblslidar_msgs__rosidl_typesupport_cpp.so" to ""\n'}
+[4.040536] (lslidar_msgs) StdoutLine: {'line': b"Listing '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs'...\n"}
+[4.040610] (lslidar_msgs) StdoutLine: {'line': b"Compiling '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/__init__.py'...\n"}
+[4.040648] (lslidar_msgs) StdoutLine: {'line': b"Listing '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/msg'...\n"}
+[4.040679] (lslidar_msgs) StdoutLine: {'line': b"Compiling '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/msg/__init__.py'...\n"}
+[4.040708] (lslidar_msgs) StdoutLine: {'line': b"Compiling '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/msg/_lslidar_difop.py'...\n"}
+[4.040737] (lslidar_msgs) StdoutLine: {'line': b"Compiling '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/msg/_lslidar_packet.py'...\n"}
+[4.040764] (lslidar_msgs) StdoutLine: {'line': b"Compiling '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/msg/_lslidar_point.py'...\n"}
+[4.040791] (lslidar_msgs) StdoutLine: {'line': b"Compiling '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/msg/_lslidar_scan.py'...\n"}
+[4.040818] (lslidar_msgs) StdoutLine: {'line': b"Compiling '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages/lslidar_msgs/msg/_lslidar_sweep.py'...\n"}
+[4.042922] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib/liblslidar_msgs__rosidl_generator_py.so\n'}
+[4.043336] (lslidar_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib/liblslidar_msgs__rosidl_generator_py.so" to ""\n'}
+[4.043508] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/export_lslidar_msgs__rosidl_generator_cExport.cmake\n'}
+[4.043579] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/export_lslidar_msgs__rosidl_generator_cExport-noconfig.cmake\n'}
+[4.043673] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/export_lslidar_msgs__rosidl_typesupport_fastrtps_cExport.cmake\n'}
+[4.043786] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/export_lslidar_msgs__rosidl_typesupport_fastrtps_cExport-noconfig.cmake\n'}
+[4.043920] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/export_lslidar_msgs__rosidl_generator_cppExport.cmake\n'}
+[4.044061] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/export_lslidar_msgs__rosidl_typesupport_fastrtps_cppExport.cmake\n'}
+[4.044269] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/export_lslidar_msgs__rosidl_typesupport_fastrtps_cppExport-noconfig.cmake\n'}
+[4.044404] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/lslidar_msgs__rosidl_typesupport_introspection_cExport.cmake\n'}
+[4.044557] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/lslidar_msgs__rosidl_typesupport_introspection_cExport-noconfig.cmake\n'}
+[4.044684] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/lslidar_msgs__rosidl_typesupport_cExport.cmake\n'}
+[4.044791] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/lslidar_msgs__rosidl_typesupport_cExport-noconfig.cmake\n'}
+[4.044901] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/lslidar_msgs__rosidl_typesupport_introspection_cppExport.cmake\n'}
+[4.045038] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/lslidar_msgs__rosidl_typesupport_introspection_cppExport-noconfig.cmake\n'}
+[4.045173] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/lslidar_msgs__rosidl_typesupport_cppExport.cmake\n'}
+[4.045311] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/lslidar_msgs__rosidl_typesupport_cppExport-noconfig.cmake\n'}
+[4.045433] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/export_lslidar_msgs__rosidl_generator_pyExport.cmake\n'}
+[4.045556] (lslidar_msgs) StdoutLine: {'line': b'-- Installing: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake/export_lslidar_msgs__rosidl_generator_pyExport-noconfig.cmake\n'}
+[4.047368] (lslidar_msgs) CommandEnded: {'returncode': 0}
+[4.061508] (lslidar_msgs) JobEnded: {'identifier': 'lslidar_msgs', 'rc': 0}
+[4.061803] (lslidar_driver) JobStarted: {'identifier': 'lslidar_driver'}
+[4.067489] (lslidar_driver) JobProgress: {'identifier': 'lslidar_driver', 'progress': 'cmake'}
+[4.067776] (lslidar_driver) Command: {'cmd': ['/usr/bin/cmake', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver', '-DAMENT_CMAKE_SYMLINK_INSTALL=1', '-DCMAKE_INSTALL_PREFIX=/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver'], 'cwd': '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver', 'env': OrderedDict([('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('VSCODE_CWD', '/home/ubuntu22'), ('ANTHROPIC_MODEL', 'deepseek-v4-pro'), ('VSCODE_ESM_ENTRYPOINT', 'vs/workbench/api/node/extensionHostProcess'), ('AI_AGENT', 'claude-code_2-1-152_agent'), ('LANGUAGE', 'zh_CN:zh'), ('USER', 'ubuntu22'), ('CLAUDE_CODE_ENTRYPOINT', 'claude-vscode'), ('VSCODE_NLS_CONFIG', '{"userLocale":"zh-cn","osLocale":"zh-cn","resolvedLanguage":"zh-cn","defaultMessagesFile":"/usr/share/code/resources/app/out/nls.messages.json","languagePack":{"translationsConfigFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/tcf.json","messagesFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/560a9dba96f961efea7b1612916f89e5d5d4d679/nls.messages.json","corruptMarkerFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/corrupted.info"},"locale":"zh-cn","availableLanguages":{"*":"zh-cn"},"_languagePackId":"8a51db726da852292d1c80f7afa92629.zh-cn","_languagePackSupport":true,"_translationsConfigFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/tcf.json","_cacheRoot":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn","_resolvedLanguagePackCoreLocation":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/560a9dba96f961efea7b1612916f89e5d5d4d679","_corruptedFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/corrupted.info"}'), ('GIT_EDITOR', 'true'), ('VSCODE_HANDLES_UNCAUGHT_ERRORS', 'true'), ('XDG_SESSION_TYPE', 'x11'), ('CLAUDE_AGENT_SDK_VERSION', '0.3.152'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib:/home/ubuntu22/ws_ros2/install/px4_ros_com/lib:/home/ubuntu22/ws_ros2/install/px4_msgs/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda/lib64:/usr/local/cuda/lib64:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins'), ('CLAUDE_CODE_MAX_OUTPUT_TOKENS', '6000'), ('HOME', '/home/ubuntu22'), ('CHROME_DESKTOP', 'code.desktop'), ('DESKTOP_SESSION', 'ubuntu'), ('NVM_BIN', '/home/ubuntu22/.nvm/versions/node/v20.20.2/bin'), ('NVM_INC', '/home/ubuntu22/.nvm/versions/node/v20.20.2/include/node'), ('VSCODE_IPC_HOOK', '/run/user/1000/vscode-f1441c07-1.11-main.sock'), ('ANTHROPIC_DEFAULT_SONNET_MODEL', 'deepseek-v4-pro'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/code.desktop'), ('GAZEBO_MASTER_URI', 'http://localhost:11345'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('MANAGERPID', '2258'), ('SYSTEMD_EXEC_PID', '2680'), ('ANTHROPIC_SMALL_FAST_MODEL', 'deepseek-v4-flash'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '24317'), ('NVM_DIR', '/home/ubuntu22/.nvm'), ('VSCODE_CRASH_REPORTER_PROCESS_TYPE', 'extensionHost'), ('MANDATORY_PATH', '/usr/share/gconf/ubuntu.mandatory.path'), ('VSCODE_L10N_BUNDLE_LOCATION', 'file:///home/ubuntu22/.vscode/extensions/ms-ceintl.vscode-language-pack-zh-hans-1.121.2026052214/translations/extensions/vscode.markdown-language-features.i18n.json'), ('COLCON_PREFIX_PATH', '/home/ubuntu22/ws_ros2/install'), ('ROS_DISTRO', 'humble'), ('GTK_IM_MODULE', 'ibus'), ('LOGNAME', 'ubuntu22'), ('JOURNAL_STREAM', '8:15699'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('DEFAULTS_PATH', '/usr/share/gconf/ubuntu.default.path'), ('USERNAME', 'ubuntu22'), ('ANTHROPIC_BASE_URL', 'https://api.deepseek.com/anthropic'), ('GAZEBO_MODEL_PATH', '/usr/share/gazebo-11/models:/home/ubuntu22/.gazebo/models'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('FC_FONTATIONS', '1'), ('ROS_LOCALHOST_ONLY', '0'), ('WINDOWPATH', '2'), ('ANTHROPIC_DEFAULT_OPUS_MODEL', 'deepseek-v4-pro'), ('MCP_CONNECTION_NONBLOCKING', 'true'), ('OGRE_RESOURCE_PATH', '/usr/lib/x86_64-linux-gnu/OGRE-1.9.0'), ('PATH', '/opt/ros/humble/bin:/usr/bin:/opt/gcc-arm-none-eabi-9-2020-q2-update/bin:/home/ubuntu22/.local/bin:/home/ubuntu22/.npm-global/bin:/home/ubuntu22/.local/bin:/opt/gcc-arm-none-eabi-9-2020-q2-update/bin:/home/ubuntu22/.local/bin:/home/ubuntu22/.nvm/versions/node/v20.20.2/bin:/home/ubuntu22/.npm-global/bin:/home/ubuntu22/.local/bin:/opt/ros/humble/bin:/opt/gcc-arm-none-eabi-9-2020-q2-update/bin:/home/ubuntu22/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/usr/local/cuda/bin:/usr/local/cuda/bin:/home/ubuntu22/android-sdk/cmdline-tools/latest/bin:/home/ubuntu22/android-sdk/platform-tools:/home/ubuntu22/android-sdk/build-tools/34.0.0:/usr/local/cuda/bin:/usr/local/cuda/bin:/home/ubuntu22/android-sdk/cmdline-tools/latest/bin:/home/ubuntu22/android-sdk/platform-tools:/home/ubuntu22/android-sdk/build-tools/34.0.0:/home/ubuntu22/.fishros/bin/'), ('SESSION_MANAGER', 'local/ubuntu22:@/tmp/.ICE-unix/2651,unix/ubuntu22:/tmp/.ICE-unix/2651'), ('INVOCATION_ID', 'f59f9f4354fb416991c11cc49d07289f'), ('COREPACK_ENABLE_AUTO_PIN', '0'), ('XDG_MENU_PREFIX', 'gnome-'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GDK_BACKEND', 'x11'), ('CLAUDE_EFFORT', 'high'), ('DISPLAY', ':1'), ('NoDefaultCurrentDirectoryInExePath', '1'), ('LANG', 'zh_CN.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs:/home/ubuntu22/ws_ros2/install/px4_ros_com:/home/ubuntu22/ws_ros2/install/px4_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('ANTHROPIC_AUTH_TOKEN', 'sk-88114a3a3aed43db8df22fc6a0ce6136'), ('QT_ACCESSIBILITY', '1'), ('ELECTRON_RUN_AS_NODE', '1'), ('GDMSESSION', 'ubuntu'), ('CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING', 'true'), ('CLAUDE_CODE_SESSION_ID', '35a02ef1-f38c-443e-b930-b448a379d091'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('CLAUDECODE', '1'), ('GPG_AGENT_INFO', '/run/user/1000/gnupg/S.gpg-agent:0:1'), ('GAZEBO_RESOURCE_PATH', '/usr/share/gazebo/../../share/gazebo-11:'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('ANDROID_SDK_ROOT', '/home/ubuntu22/android-sdk'), ('GAZEBO_MODEL_DATABASE_URI', 'http://models.gazebosim.org'), ('VIRTUAL_ENV', '/usr'), ('QT_IM_MODULE', 'ibus'), ('JAVA_HOME', '/usr/lib/jvm/java-17-openjdk-amd64'), ('PWD', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver'), ('QT_QPA_PLATFORM', 'xcb'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('VSCODE_CODE_CACHE_PATH', '/home/ubuntu22/.config/Code/CachedData/560a9dba96f961efea7b1612916f89e5d5d4d679'), ('GAZEBO_PLUGIN_PATH', '/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins:'), ('ANDROID_HOME', '/home/ubuntu22/android-sdk'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('CLAUDE_CODE_EXECPATH', '/home/ubuntu22/.vscode/extensions/anthropic.claude-code-2.1.152-linux-x64/resources/native-binary/claude'), ('CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC', '1'), ('PYTHONPATH', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('CLAUDE_CODE_ENABLE_TASKS', '0'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs:/home/ubuntu22/ws_ros2/install/px4_ros_com:/home/ubuntu22/ws_ros2/install/px4_msgs:/opt/ros/humble'), ('VSCODE_PID', '24317')]), 'shell': False}
+[4.103502] (-) TimerEvent: {}
+[4.104681] (lslidar_driver) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[4.139870] (lslidar_driver) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[4.144887] (lslidar_driver) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[4.192127] (lslidar_driver) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[4.195748] (lslidar_driver) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[4.195888] (lslidar_driver) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[4.196103] (lslidar_driver) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[4.197811] (lslidar_driver) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[4.203579] (-) TimerEvent: {}
+[4.250225] (lslidar_driver) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[4.254577] (lslidar_driver) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[4.254718] (lslidar_driver) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[4.254959] (lslidar_driver) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[4.303689] (-) TimerEvent: {}
+[4.367060] (lslidar_driver) StdoutLine: {'line': b'-- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.74.0/BoostConfig.cmake (found version "1.74.0") found components: thread \n'}
+[4.369303] (lslidar_driver) StdoutLine: {'line': b'-- Found rclcpp: 16.0.19 (/opt/ros/humble/share/rclcpp/cmake)\n'}
+[4.403764] (-) TimerEvent: {}
+[4.503942] (-) TimerEvent: {}
+[4.576086] (lslidar_driver) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[4.604014] (-) TimerEvent: {}
+[4.611409] (lslidar_driver) StdoutLine: {'line': b'-- Override CMake install command with custom implementation using symlinks instead of copying resources\n'}
+[4.674517] (lslidar_driver) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.8 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[4.677792] (lslidar_driver) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.8 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[4.682989] (lslidar_driver) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.8 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[4.689853] (lslidar_driver) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[4.699263] (lslidar_driver) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[4.704094] (-) TimerEvent: {}
+[4.731798] (lslidar_driver) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[4.734157] (lslidar_driver) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.10 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[4.804202] (-) TimerEvent: {}
+[4.811689] (lslidar_driver) StdoutLine: {'line': b'-- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  \n'}
+[4.833091] (lslidar_driver) StdoutLine: {'line': b'-- Found FastRTPS: /opt/ros/humble/include  \n'}
+[4.866748] (lslidar_driver) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[4.874007] (lslidar_driver) StdoutLine: {'line': b'-- Found Threads: TRUE  \n'}
+[4.904287] (-) TimerEvent: {}
+[4.914691] (lslidar_driver) StdoutLine: {'line': b"-- Checking for module 'eigen3'\n"}
+[4.926809] (lslidar_driver) StdoutLine: {'line': b'--   Found eigen3, version 3.4.0\n'}
+[4.958104] (lslidar_driver) StdoutLine: {'line': b'-- Found Eigen: /usr/include/eigen3 (Required is at least version "3.1") \n'}
+[4.958199] (lslidar_driver) StdoutLine: {'line': b'-- Eigen found (include: /usr/include/eigen3, version: 3.4.0)\n'}
+[4.970711] (lslidar_driver) StdoutLine: {'line': b'-- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.74.0/BoostConfig.cmake (found suitable version "1.74.0", minimum required is "1.65.0") found components: system filesystem date_time iostreams serialization \n'}
+[4.983330] (lslidar_driver) StdoutLine: {'line': b"-- Checking for module 'flann'\n"}
+[4.995791] (lslidar_driver) StdoutLine: {'line': b'--   Found flann, version 1.9.1\n'}
+[5.004370] (-) TimerEvent: {}
+[5.032199] (lslidar_driver) StdoutLine: {'line': b'-- Found FLANN: /usr/lib/x86_64-linux-gnu/libflann_cpp.so  \n'}
+[5.032398] (lslidar_driver) StdoutLine: {'line': b'-- FLANN found (include: /usr/include, lib: /usr/lib/x86_64-linux-gnu/libflann_cpp.so)\n'}
+[5.052718] (lslidar_driver) StdoutLine: {'line': b'-- Found GLEW: /usr/lib/x86_64-linux-gnu/libGLEW.so  \n'}
+[5.056185] (lslidar_driver) StdoutLine: {'line': b'-- Found OpenGL: /usr/lib/x86_64-linux-gnu/libOpenGL.so  found components: OpenGL GLX \n'}
+[5.104463] (-) TimerEvent: {}
+[5.166020] (lslidar_driver) StdoutLine: {'line': b'-- Found MPI_C: /usr/lib/x86_64-linux-gnu/libmpi.so (found version "3.1") \n'}
+[5.166178] (lslidar_driver) StdoutLine: {'line': b'-- Found MPI: TRUE (found version "3.1") found components: C \n'}
+[5.167838] (lslidar_driver) StdoutLine: {'line': b'-- Found JsonCpp: /usr/lib/x86_64-linux-gnu/libjsoncpp.so (found suitable version "1.9.5", minimum required is "0.7.0") \n'}
+[5.174548] (lslidar_driver) StdoutLine: {'line': b'-- Found ZLIB: /usr/lib/x86_64-linux-gnu/libz.so (found version "1.2.11") \n'}
+[5.185629] (lslidar_driver) StdoutLine: {'line': b'-- Found PNG: /usr/lib/x86_64-linux-gnu/libpng.so (found version "1.6.37") \n'}
+[5.196012] (lslidar_driver) StdoutLine: {'line': b'-- Found Eigen3: /usr/include/eigen3 (found version "3.4.0") \n'}
+[5.204555] (-) TimerEvent: {}
+[5.270723] (lslidar_driver) StdoutLine: {'line': b'-- Found X11: /usr/include   \n'}
+[5.271147] (lslidar_driver) StdoutLine: {'line': b'-- Looking for XOpenDisplay in /usr/lib/x86_64-linux-gnu/libX11.so;/usr/lib/x86_64-linux-gnu/libXext.so\n'}
+[5.304649] (-) TimerEvent: {}
+[5.325453] (lslidar_driver) StdoutLine: {'line': b'-- Looking for XOpenDisplay in /usr/lib/x86_64-linux-gnu/libX11.so;/usr/lib/x86_64-linux-gnu/libXext.so - found\n'}
+[5.325594] (lslidar_driver) StdoutLine: {'line': b'-- Looking for gethostbyname\n'}
+[5.373695] (lslidar_driver) StdoutLine: {'line': b'-- Looking for gethostbyname - found\n'}
+[5.373847] (lslidar_driver) StdoutLine: {'line': b'-- Looking for connect\n'}
+[5.404746] (-) TimerEvent: {}
+[5.421858] (lslidar_driver) StdoutLine: {'line': b'-- Looking for connect - found\n'}
+[5.421966] (lslidar_driver) StdoutLine: {'line': b'-- Looking for remove\n'}
+[5.469728] (lslidar_driver) StdoutLine: {'line': b'-- Looking for remove - found\n'}
+[5.469889] (lslidar_driver) StdoutLine: {'line': b'-- Looking for shmat\n'}
+[5.504846] (-) TimerEvent: {}
+[5.518009] (lslidar_driver) StdoutLine: {'line': b'-- Looking for shmat - found\n'}
+[5.518196] (lslidar_driver) StdoutLine: {'line': b'-- Looking for IceConnectionNumber in ICE\n'}
+[5.566507] (lslidar_driver) StdoutLine: {'line': b'-- Looking for IceConnectionNumber in ICE - found\n'}
+[5.604930] (-) TimerEvent: {}
+[5.634979] (lslidar_driver) StdoutLine: {'line': b'-- Found EXPAT: /usr/lib/x86_64-linux-gnu/libexpat.so (found version "2.4.7") \n'}
+[5.635908] (lslidar_driver) StdoutLine: {'line': b'-- Found double-conversion: /usr/lib/x86_64-linux-gnu/libdouble-conversion.so  \n'}
+[5.637265] (lslidar_driver) StdoutLine: {'line': b'-- Found LZ4: /usr/lib/x86_64-linux-gnu/liblz4.so (found version "1.9.3") \n'}
+[5.638233] (lslidar_driver) StdoutLine: {'line': b'-- Found LZMA: /usr/lib/x86_64-linux-gnu/liblzma.so (found version "5.2.5") \n'}
+[5.647837] (lslidar_driver) StdoutLine: {'line': b'-- Found JPEG: /usr/lib/x86_64-linux-gnu/libjpeg.so (found version "80") \n'}
+[5.651088] (lslidar_driver) StdoutLine: {'line': b'-- Found TIFF: /usr/lib/x86_64-linux-gnu/libtiff.so (found version "4.3.0")  \n'}
+[5.653403] (lslidar_driver) StdoutLine: {'line': b'-- Found Freetype: /usr/lib/x86_64-linux-gnu/libfreetype.so (found version "2.11.1") \n'}
+[5.656832] (lslidar_driver) StdoutLine: {'line': b'-- Found utf8cpp: /usr/include/utf8cpp  \n'}
+[5.705008] (-) TimerEvent: {}
+[5.724133] (lslidar_driver) StdoutLine: {'line': b"-- Checking for module 'libusb-1.0'\n"}
+[5.736129] (lslidar_driver) StdoutLine: {'line': b'--   Found libusb-1.0, version 1.0.25\n'}
+[5.771067] (lslidar_driver) StdoutLine: {'line': b'-- Found libusb: /usr/lib/x86_64-linux-gnu/libusb-1.0.so  \n'}
+[5.771686] (lslidar_driver) StdoutLine: {'line': b'-- Found OpenNI: /usr/lib/libOpenNI.so;libusb::libusb (found version "1.5.4.0") \n'}
+[5.771753] (lslidar_driver) StdoutLine: {'line': b'-- OpenNI found (version: 1.5.4.0, include: /usr/include/ni, lib: /usr/lib/libOpenNI.so;libusb::libusb)\n'}
+[5.805088] (-) TimerEvent: {}
+[5.824333] (lslidar_driver) StdoutLine: {'line': b'-- Found OpenNI2: /usr/lib/x86_64-linux-gnu/libOpenNI2.so;libusb::libusb (found version "2.2.0.33") \n'}
+[5.824422] (lslidar_driver) StdoutLine: {'line': b'-- OpenNI2 found (version: 2.2.0.33, include: /usr/include/openni2, lib: /usr/lib/x86_64-linux-gnu/libOpenNI2.so;libusb::libusb)\n'}
+[5.824542] (lslidar_driver) StderrLine: {'line': b'** WARNING ** io features related to pcap will be disabled\n'}
+[5.905167] (-) TimerEvent: {}
+[5.924240] (lslidar_driver) StdoutLine: {'line': b'-- Eigen found (include: /usr/include/eigen3, version: 3.4.0)\n'}
+[5.929297] (lslidar_driver) StdoutLine: {'line': b'-- OpenNI found (version: 1.5.4.0, include: /usr/include/ni, lib: /usr/lib/libOpenNI.so;libusb::libusb)\n'}
+[5.933447] (lslidar_driver) StdoutLine: {'line': b'-- OpenNI2 found (version: 2.2.0.33, include: /usr/include/openni2, lib: /usr/lib/x86_64-linux-gnu/libOpenNI2.so;libusb::libusb)\n'}
+[6.005234] (-) TimerEvent: {}
+[6.038815] (lslidar_driver) StdoutLine: {'line': b'-- Found Qhull version 8.0.2\n'}
+[6.105295] (-) TimerEvent: {}
+[6.131635] (lslidar_driver) StdoutLine: {'line': b'-- OpenNI found (version: 1.5.4.0, include: /usr/include/ni, lib: /usr/lib/libOpenNI.so;libusb::libusb)\n'}
+[6.205403] (-) TimerEvent: {}
+[6.222227] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_COMMON\n'}
+[6.222810] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_COMMON: /usr/lib/x86_64-linux-gnu/libpcl_common.so  \n'}
+[6.222928] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_KDTREE\n'}
+[6.223333] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_KDTREE: /usr/lib/x86_64-linux-gnu/libpcl_kdtree.so  \n'}
+[6.223435] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_OCTREE\n'}
+[6.223815] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_OCTREE: /usr/lib/x86_64-linux-gnu/libpcl_octree.so  \n'}
+[6.223909] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_SEARCH\n'}
+[6.224395] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_SEARCH: /usr/lib/x86_64-linux-gnu/libpcl_search.so  \n'}
+[6.224433] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_SAMPLE_CONSENSUS\n'}
+[6.224885] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_SAMPLE_CONSENSUS: /usr/lib/x86_64-linux-gnu/libpcl_sample_consensus.so  \n'}
+[6.224919] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_FILTERS\n'}
+[6.225351] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_FILTERS: /usr/lib/x86_64-linux-gnu/libpcl_filters.so  \n'}
+[6.225388] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_2D\n'}
+[6.225486] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_2D: /usr/include/pcl-1.12  \n'}
+[6.225601] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_GEOMETRY\n'}
+[6.225635] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_GEOMETRY: /usr/include/pcl-1.12  \n'}
+[6.225722] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_IO\n'}
+[6.226046] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_IO: /usr/lib/x86_64-linux-gnu/libpcl_io.so  \n'}
+[6.226149] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_FEATURES\n'}
+[6.226642] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_FEATURES: /usr/lib/x86_64-linux-gnu/libpcl_features.so  \n'}
+[6.226756] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_ML\n'}
+[6.227135] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_ML: /usr/lib/x86_64-linux-gnu/libpcl_ml.so  \n'}
+[6.227237] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_SEGMENTATION\n'}
+[6.227618] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_SEGMENTATION: /usr/lib/x86_64-linux-gnu/libpcl_segmentation.so  \n'}
+[6.227731] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_VISUALIZATION\n'}
+[6.228177] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_VISUALIZATION: /usr/lib/x86_64-linux-gnu/libpcl_visualization.so  \n'}
+[6.228332] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_SURFACE\n'}
+[6.228748] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_SURFACE: /usr/lib/x86_64-linux-gnu/libpcl_surface.so  \n'}
+[6.228838] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_REGISTRATION\n'}
+[6.229276] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_REGISTRATION: /usr/lib/x86_64-linux-gnu/libpcl_registration.so  \n'}
+[6.229376] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_KEYPOINTS\n'}
+[6.229808] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_KEYPOINTS: /usr/lib/x86_64-linux-gnu/libpcl_keypoints.so  \n'}
+[6.229897] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_TRACKING\n'}
+[6.230333] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_TRACKING: /usr/lib/x86_64-linux-gnu/libpcl_tracking.so  \n'}
+[6.230416] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_RECOGNITION\n'}
+[6.230826] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_RECOGNITION: /usr/lib/x86_64-linux-gnu/libpcl_recognition.so  \n'}
+[6.230956] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_STEREO\n'}
+[6.231406] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_STEREO: /usr/lib/x86_64-linux-gnu/libpcl_stereo.so  \n'}
+[6.231500] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_APPS\n'}
+[6.231879] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_APPS: /usr/lib/x86_64-linux-gnu/libpcl_apps.so  \n'}
+[6.232172] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_IN_HAND_SCANNER\n'}
+[6.232282] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_IN_HAND_SCANNER: /usr/include/pcl-1.12  \n'}
+[6.232380] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_MODELER\n'}
+[6.232469] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_MODELER: /usr/include/pcl-1.12  \n'}
+[6.232502] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_POINT_CLOUD_EDITOR\n'}
+[6.232647] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_POINT_CLOUD_EDITOR: /usr/include/pcl-1.12  \n'}
+[6.232744] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_OUTOFCORE\n'}
+[6.233126] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_OUTOFCORE: /usr/lib/x86_64-linux-gnu/libpcl_outofcore.so  \n'}
+[6.233211] (lslidar_driver) StdoutLine: {'line': b'-- looking for PCL_PEOPLE\n'}
+[6.233663] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL_PEOPLE: /usr/lib/x86_64-linux-gnu/libpcl_people.so  \n'}
+[6.234021] (lslidar_driver) StdoutLine: {'line': b'-- Found PCL: pcl_common;pcl_kdtree;pcl_octree;pcl_search;pcl_sample_consensus;pcl_filters;pcl_io;pcl_features;pcl_ml;pcl_segmentation;pcl_visualization;pcl_surface;pcl_registration;pcl_keypoints;pcl_tracking;pcl_recognition;pcl_stereo;pcl_apps;pcl_outofcore;pcl_people;Boost::system;Boost::filesystem;Boost::date_time;Boost::iostreams;Boost::serialization;/usr/lib/libOpenNI.so;libusb::libusb;/usr/lib/x86_64-linux-gnu/libOpenNI2.so;libusb::libusb;VTK::ChartsCore;VTK::CommonColor;VTK::CommonComputationalGeometry;VTK::CommonCore;VTK::CommonDataModel;VTK::CommonExecutionModel;VTK::CommonMath;VTK::CommonMisc;VTK::CommonTransforms;VTK::FiltersCore;VTK::FiltersExtraction;VTK::FiltersGeneral;VTK::FiltersGeometry;VTK::FiltersModeling;VTK::FiltersSources;VTK::ImagingCore;VTK::ImagingSources;VTK::InteractionImage;VTK::InteractionStyle;VTK::InteractionWidgets;VTK::IOCore;VTK::IOGeometry;VTK::IOImage;VTK::IOLegacy;VTK::IOPLY;VTK::RenderingAnnotation;VTK::RenderingCore;VTK::RenderingContext2D;VTK::RenderingLOD;VTK::RenderingFreeType;VTK::ViewsCore;VTK::ViewsContext2D;VTK::RenderingOpenGL2;VTK::GUISupportQt;FLANN::FLANN;QHULL::QHULL  \n'}
+[6.248075] (lslidar_driver) StdoutLine: {'line': b'-- Found diagnostic_updater: 4.0.6 (/opt/ros/humble/share/diagnostic_updater/cmake)\n'}
+[6.261096] (lslidar_driver) StdoutLine: {'line': b'-- Found lslidar_msgs: 1.2.0 (/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/cmake)\n'}
+[6.269727] (lslidar_driver) StdoutLine: {'line': b'-- Found pluginlib: 5.1.3 (/opt/ros/humble/share/pluginlib/cmake)\n'}
+[6.290667] (lslidar_driver) StdoutLine: {'line': b'-- Found pcl_conversions: 2.4.5 (/opt/ros/humble/share/pcl_conversions/cmake)\n'}
+[6.305487] (-) TimerEvent: {}
+[6.371849] (lslidar_driver) StdoutLine: {'line': b'-- Configuring done\n'}
+[6.405568] (-) TimerEvent: {}
+[6.444099] (lslidar_driver) StdoutLine: {'line': b'-- Generating done\n'}
+[6.452095] (lslidar_driver) StdoutLine: {'line': b'-- Build files have been written to: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver\n'}
+[6.464094] (lslidar_driver) CommandEnded: {'returncode': 0}
+[6.464646] (lslidar_driver) JobProgress: {'identifier': 'lslidar_driver', 'progress': 'build'}
+[6.465190] (lslidar_driver) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver', '--', '-j32', '-l32'], 'cwd': '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver', 'env': OrderedDict([('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('VSCODE_CWD', '/home/ubuntu22'), ('ANTHROPIC_MODEL', 'deepseek-v4-pro'), ('VSCODE_ESM_ENTRYPOINT', 'vs/workbench/api/node/extensionHostProcess'), ('AI_AGENT', 'claude-code_2-1-152_agent'), ('LANGUAGE', 'zh_CN:zh'), ('USER', 'ubuntu22'), ('CLAUDE_CODE_ENTRYPOINT', 'claude-vscode'), ('VSCODE_NLS_CONFIG', '{"userLocale":"zh-cn","osLocale":"zh-cn","resolvedLanguage":"zh-cn","defaultMessagesFile":"/usr/share/code/resources/app/out/nls.messages.json","languagePack":{"translationsConfigFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/tcf.json","messagesFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/560a9dba96f961efea7b1612916f89e5d5d4d679/nls.messages.json","corruptMarkerFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/corrupted.info"},"locale":"zh-cn","availableLanguages":{"*":"zh-cn"},"_languagePackId":"8a51db726da852292d1c80f7afa92629.zh-cn","_languagePackSupport":true,"_translationsConfigFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/tcf.json","_cacheRoot":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn","_resolvedLanguagePackCoreLocation":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/560a9dba96f961efea7b1612916f89e5d5d4d679","_corruptedFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/corrupted.info"}'), ('GIT_EDITOR', 'true'), ('VSCODE_HANDLES_UNCAUGHT_ERRORS', 'true'), ('XDG_SESSION_TYPE', 'x11'), ('CLAUDE_AGENT_SDK_VERSION', '0.3.152'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib:/home/ubuntu22/ws_ros2/install/px4_ros_com/lib:/home/ubuntu22/ws_ros2/install/px4_msgs/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda/lib64:/usr/local/cuda/lib64:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins'), ('CLAUDE_CODE_MAX_OUTPUT_TOKENS', '6000'), ('HOME', '/home/ubuntu22'), ('CHROME_DESKTOP', 'code.desktop'), ('DESKTOP_SESSION', 'ubuntu'), ('NVM_BIN', '/home/ubuntu22/.nvm/versions/node/v20.20.2/bin'), ('NVM_INC', '/home/ubuntu22/.nvm/versions/node/v20.20.2/include/node'), ('VSCODE_IPC_HOOK', '/run/user/1000/vscode-f1441c07-1.11-main.sock'), ('ANTHROPIC_DEFAULT_SONNET_MODEL', 'deepseek-v4-pro'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/code.desktop'), ('GAZEBO_MASTER_URI', 'http://localhost:11345'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('MANAGERPID', '2258'), ('SYSTEMD_EXEC_PID', '2680'), ('ANTHROPIC_SMALL_FAST_MODEL', 'deepseek-v4-flash'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '24317'), ('NVM_DIR', '/home/ubuntu22/.nvm'), ('VSCODE_CRASH_REPORTER_PROCESS_TYPE', 'extensionHost'), ('MANDATORY_PATH', '/usr/share/gconf/ubuntu.mandatory.path'), ('VSCODE_L10N_BUNDLE_LOCATION', 'file:///home/ubuntu22/.vscode/extensions/ms-ceintl.vscode-language-pack-zh-hans-1.121.2026052214/translations/extensions/vscode.markdown-language-features.i18n.json'), ('COLCON_PREFIX_PATH', '/home/ubuntu22/ws_ros2/install'), ('ROS_DISTRO', 'humble'), ('GTK_IM_MODULE', 'ibus'), ('LOGNAME', 'ubuntu22'), ('JOURNAL_STREAM', '8:15699'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('DEFAULTS_PATH', '/usr/share/gconf/ubuntu.default.path'), ('USERNAME', 'ubuntu22'), ('ANTHROPIC_BASE_URL', 'https://api.deepseek.com/anthropic'), ('GAZEBO_MODEL_PATH', '/usr/share/gazebo-11/models:/home/ubuntu22/.gazebo/models'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('FC_FONTATIONS', '1'), ('ROS_LOCALHOST_ONLY', '0'), ('WINDOWPATH', '2'), ('ANTHROPIC_DEFAULT_OPUS_MODEL', 'deepseek-v4-pro'), ('MCP_CONNECTION_NONBLOCKING', 'true'), ('OGRE_RESOURCE_PATH', '/usr/lib/x86_64-linux-gnu/OGRE-1.9.0'), ('PATH', '/opt/ros/humble/bin:/usr/bin:/opt/gcc-arm-none-eabi-9-2020-q2-update/bin:/home/ubuntu22/.local/bin:/home/ubuntu22/.npm-global/bin:/home/ubuntu22/.local/bin:/opt/gcc-arm-none-eabi-9-2020-q2-update/bin:/home/ubuntu22/.local/bin:/home/ubuntu22/.nvm/versions/node/v20.20.2/bin:/home/ubuntu22/.npm-global/bin:/home/ubuntu22/.local/bin:/opt/ros/humble/bin:/opt/gcc-arm-none-eabi-9-2020-q2-update/bin:/home/ubuntu22/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/usr/local/cuda/bin:/usr/local/cuda/bin:/home/ubuntu22/android-sdk/cmdline-tools/latest/bin:/home/ubuntu22/android-sdk/platform-tools:/home/ubuntu22/android-sdk/build-tools/34.0.0:/usr/local/cuda/bin:/usr/local/cuda/bin:/home/ubuntu22/android-sdk/cmdline-tools/latest/bin:/home/ubuntu22/android-sdk/platform-tools:/home/ubuntu22/android-sdk/build-tools/34.0.0:/home/ubuntu22/.fishros/bin/'), ('SESSION_MANAGER', 'local/ubuntu22:@/tmp/.ICE-unix/2651,unix/ubuntu22:/tmp/.ICE-unix/2651'), ('INVOCATION_ID', 'f59f9f4354fb416991c11cc49d07289f'), ('COREPACK_ENABLE_AUTO_PIN', '0'), ('XDG_MENU_PREFIX', 'gnome-'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GDK_BACKEND', 'x11'), ('CLAUDE_EFFORT', 'high'), ('DISPLAY', ':1'), ('NoDefaultCurrentDirectoryInExePath', '1'), ('LANG', 'zh_CN.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs:/home/ubuntu22/ws_ros2/install/px4_ros_com:/home/ubuntu22/ws_ros2/install/px4_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('ANTHROPIC_AUTH_TOKEN', 'sk-88114a3a3aed43db8df22fc6a0ce6136'), ('QT_ACCESSIBILITY', '1'), ('ELECTRON_RUN_AS_NODE', '1'), ('GDMSESSION', 'ubuntu'), ('CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING', 'true'), ('CLAUDE_CODE_SESSION_ID', '35a02ef1-f38c-443e-b930-b448a379d091'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('CLAUDECODE', '1'), ('GPG_AGENT_INFO', '/run/user/1000/gnupg/S.gpg-agent:0:1'), ('GAZEBO_RESOURCE_PATH', '/usr/share/gazebo/../../share/gazebo-11:'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('ANDROID_SDK_ROOT', '/home/ubuntu22/android-sdk'), ('GAZEBO_MODEL_DATABASE_URI', 'http://models.gazebosim.org'), ('VIRTUAL_ENV', '/usr'), ('QT_IM_MODULE', 'ibus'), ('JAVA_HOME', '/usr/lib/jvm/java-17-openjdk-amd64'), ('PWD', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver'), ('QT_QPA_PLATFORM', 'xcb'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('VSCODE_CODE_CACHE_PATH', '/home/ubuntu22/.config/Code/CachedData/560a9dba96f961efea7b1612916f89e5d5d4d679'), ('GAZEBO_PLUGIN_PATH', '/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins:'), ('ANDROID_HOME', '/home/ubuntu22/android-sdk'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('CLAUDE_CODE_EXECPATH', '/home/ubuntu22/.vscode/extensions/anthropic.claude-code-2.1.152-linux-x64/resources/native-binary/claude'), ('CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC', '1'), ('PYTHONPATH', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('CLAUDE_CODE_ENABLE_TASKS', '0'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs:/home/ubuntu22/ws_ros2/install/px4_ros_com:/home/ubuntu22/ws_ros2/install/px4_msgs:/opt/ros/humble'), ('VSCODE_PID', '24317')]), 'shell': False}
+[6.505674] (-) TimerEvent: {}
+[6.506607] (lslidar_driver) StdoutLine: {'line': b'[ 40%] Building CXX object CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o\n'}
+[6.506819] (lslidar_driver) StdoutLine: {'line': b'[ 40%] Building CXX object CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver_node.cc.o\n'}
+[6.506862] (lslidar_driver) StdoutLine: {'line': b'[ 80%] Building CXX object CMakeFiles/lslidar_driver_node.dir/src/input.cc.o\n'}
+[6.506895] (lslidar_driver) StdoutLine: {'line': b'[ 80%] Building CXX object CMakeFiles/lslidar_driver_node.dir/src/lsiosr.cpp.o\n'}
+[6.605789] (-) TimerEvent: {}
+[6.705956] (-) TimerEvent: {}
+[6.806146] (-) TimerEvent: {}
+[6.906374] (-) TimerEvent: {}
+[7.006627] (-) TimerEvent: {}
+[7.106831] (-) TimerEvent: {}
+[7.207016] (-) TimerEvent: {}
+[7.307195] (-) TimerEvent: {}
+[7.407413] (-) TimerEvent: {}
+[7.507613] (-) TimerEvent: {}
+[7.607844] (-) TimerEvent: {}
+[7.708117] (-) TimerEvent: {}
+[7.808368] (-) TimerEvent: {}
+[7.908620] (-) TimerEvent: {}
+[8.008856] (-) TimerEvent: {}
+[8.109072] (-) TimerEvent: {}
+[8.209241] (-) TimerEvent: {}
+[8.309364] (-) TimerEvent: {}
+[8.409482] (-) TimerEvent: {}
+[8.509665] (-) TimerEvent: {}
+[8.609926] (-) TimerEvent: {}
+[8.710124] (-) TimerEvent: {}
+[8.810315] (-) TimerEvent: {}
+[8.910530] (-) TimerEvent: {}
+[9.010774] (-) TimerEvent: {}
+[9.110993] (-) TimerEvent: {}
+[9.211187] (-) TimerEvent: {}
+[9.311361] (-) TimerEvent: {}
+[9.411487] (-) TimerEvent: {}
+[9.511601] (-) TimerEvent: {}
+[9.611731] (-) TimerEvent: {}
+[9.711857] (-) TimerEvent: {}
+[9.811961] (-) TimerEvent: {}
+[9.912067] (-) TimerEvent: {}
+[10.012171] (-) TimerEvent: {}
+[10.112263] (-) TimerEvent: {}
+[10.212364] (-) TimerEvent: {}
+[10.312475] (-) TimerEvent: {}
+[10.412611] (-) TimerEvent: {}
+[10.512781] (-) TimerEvent: {}
+[10.612914] (-) TimerEvent: {}
+[10.713028] (-) TimerEvent: {}
+[10.813125] (-) TimerEvent: {}
+[10.913306] (-) TimerEvent: {}
+[11.013514] (-) TimerEvent: {}
+[11.113691] (-) TimerEvent: {}
+[11.213815] (-) TimerEvent: {}
+[11.313983] (-) TimerEvent: {}
+[11.414151] (-) TimerEvent: {}
+[11.514294] (-) TimerEvent: {}
+[11.614371] (-) TimerEvent: {}
+[11.714467] (-) TimerEvent: {}
+[11.814545] (-) TimerEvent: {}
+[11.914633] (-) TimerEvent: {}
+[12.014749] (-) TimerEvent: {}
+[12.114836] (-) TimerEvent: {}
+[12.214942] (-) TimerEvent: {}
+[12.315062] (-) TimerEvent: {}
+[12.415175] (-) TimerEvent: {}
+[12.515289] (-) TimerEvent: {}
+[12.615469] (-) TimerEvent: {}
+[12.715703] (-) TimerEvent: {}
+[12.815898] (-) TimerEvent: {}
+[12.916044] (-) TimerEvent: {}
+[13.016162] (-) TimerEvent: {}
+[13.116277] (-) TimerEvent: {}
+[13.216369] (-) TimerEvent: {}
+[13.316489] (-) TimerEvent: {}
+[13.416594] (-) TimerEvent: {}
+[13.516708] (-) TimerEvent: {}
+[13.616777] (-) TimerEvent: {}
+[13.716875] (-) TimerEvent: {}
+[13.816966] (-) TimerEvent: {}
+[13.917068] (-) TimerEvent: {}
+[14.017194] (-) TimerEvent: {}
+[14.117297] (-) TimerEvent: {}
+[14.217380] (-) TimerEvent: {}
+[14.317446] (-) TimerEvent: {}
+[14.417562] (-) TimerEvent: {}
+[14.517656] (-) TimerEvent: {}
+[14.617763] (-) TimerEvent: {}
+[14.717887] (-) TimerEvent: {}
+[14.817966] (-) TimerEvent: {}
+[14.918086] (-) TimerEvent: {}
+[15.018213] (-) TimerEvent: {}
+[15.118316] (-) TimerEvent: {}
+[15.218406] (-) TimerEvent: {}
+[15.318527] (-) TimerEvent: {}
+[15.418621] (-) TimerEvent: {}
+[15.518745] (-) TimerEvent: {}
+[15.618848] (-) TimerEvent: {}
+[15.668499] (lslidar_driver) StdoutLine: {'line': b'[100%] Linking CXX executable lslidar_driver_node\n'}
+[15.718940] (-) TimerEvent: {}
+[15.819054] (-) TimerEvent: {}
+[15.919167] (-) TimerEvent: {}
+[16.019278] (-) TimerEvent: {}
+[16.119379] (-) TimerEvent: {}
+[16.219509] (-) TimerEvent: {}
+[16.319649] (-) TimerEvent: {}
+[16.419759] (-) TimerEvent: {}
+[16.508451] (lslidar_driver) StdoutLine: {'line': b'[100%] Built target lslidar_driver_node\n'}
+[16.519835] (-) TimerEvent: {}
+[16.522899] (lslidar_driver) CommandEnded: {'returncode': 0}
+[16.523408] (lslidar_driver) JobProgress: {'identifier': 'lslidar_driver', 'progress': 'install'}
+[16.523679] (lslidar_driver) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver'], 'cwd': '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver', 'env': OrderedDict([('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('VSCODE_CWD', '/home/ubuntu22'), ('ANTHROPIC_MODEL', 'deepseek-v4-pro'), ('VSCODE_ESM_ENTRYPOINT', 'vs/workbench/api/node/extensionHostProcess'), ('AI_AGENT', 'claude-code_2-1-152_agent'), ('LANGUAGE', 'zh_CN:zh'), ('USER', 'ubuntu22'), ('CLAUDE_CODE_ENTRYPOINT', 'claude-vscode'), ('VSCODE_NLS_CONFIG', '{"userLocale":"zh-cn","osLocale":"zh-cn","resolvedLanguage":"zh-cn","defaultMessagesFile":"/usr/share/code/resources/app/out/nls.messages.json","languagePack":{"translationsConfigFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/tcf.json","messagesFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/560a9dba96f961efea7b1612916f89e5d5d4d679/nls.messages.json","corruptMarkerFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/corrupted.info"},"locale":"zh-cn","availableLanguages":{"*":"zh-cn"},"_languagePackId":"8a51db726da852292d1c80f7afa92629.zh-cn","_languagePackSupport":true,"_translationsConfigFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/tcf.json","_cacheRoot":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn","_resolvedLanguagePackCoreLocation":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/560a9dba96f961efea7b1612916f89e5d5d4d679","_corruptedFile":"/home/ubuntu22/.config/Code/clp/8a51db726da852292d1c80f7afa92629.zh-cn/corrupted.info"}'), ('GIT_EDITOR', 'true'), ('VSCODE_HANDLES_UNCAUGHT_ERRORS', 'true'), ('XDG_SESSION_TYPE', 'x11'), ('CLAUDE_AGENT_SDK_VERSION', '0.3.152'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/lib:/home/ubuntu22/ws_ros2/install/px4_ros_com/lib:/home/ubuntu22/ws_ros2/install/px4_msgs/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda/lib64:/usr/local/cuda/lib64:/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins'), ('CLAUDE_CODE_MAX_OUTPUT_TOKENS', '6000'), ('HOME', '/home/ubuntu22'), ('CHROME_DESKTOP', 'code.desktop'), ('DESKTOP_SESSION', 'ubuntu'), ('NVM_BIN', '/home/ubuntu22/.nvm/versions/node/v20.20.2/bin'), ('NVM_INC', '/home/ubuntu22/.nvm/versions/node/v20.20.2/include/node'), ('VSCODE_IPC_HOOK', '/run/user/1000/vscode-f1441c07-1.11-main.sock'), ('ANTHROPIC_DEFAULT_SONNET_MODEL', 'deepseek-v4-pro'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/code.desktop'), ('GAZEBO_MASTER_URI', 'http://localhost:11345'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('MANAGERPID', '2258'), ('SYSTEMD_EXEC_PID', '2680'), ('ANTHROPIC_SMALL_FAST_MODEL', 'deepseek-v4-flash'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '24317'), ('NVM_DIR', '/home/ubuntu22/.nvm'), ('VSCODE_CRASH_REPORTER_PROCESS_TYPE', 'extensionHost'), ('MANDATORY_PATH', '/usr/share/gconf/ubuntu.mandatory.path'), ('VSCODE_L10N_BUNDLE_LOCATION', 'file:///home/ubuntu22/.vscode/extensions/ms-ceintl.vscode-language-pack-zh-hans-1.121.2026052214/translations/extensions/vscode.markdown-language-features.i18n.json'), ('COLCON_PREFIX_PATH', '/home/ubuntu22/ws_ros2/install'), ('ROS_DISTRO', 'humble'), ('GTK_IM_MODULE', 'ibus'), ('LOGNAME', 'ubuntu22'), ('JOURNAL_STREAM', '8:15699'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('DEFAULTS_PATH', '/usr/share/gconf/ubuntu.default.path'), ('USERNAME', 'ubuntu22'), ('ANTHROPIC_BASE_URL', 'https://api.deepseek.com/anthropic'), ('GAZEBO_MODEL_PATH', '/usr/share/gazebo-11/models:/home/ubuntu22/.gazebo/models'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('FC_FONTATIONS', '1'), ('ROS_LOCALHOST_ONLY', '0'), ('WINDOWPATH', '2'), ('ANTHROPIC_DEFAULT_OPUS_MODEL', 'deepseek-v4-pro'), ('MCP_CONNECTION_NONBLOCKING', 'true'), ('OGRE_RESOURCE_PATH', '/usr/lib/x86_64-linux-gnu/OGRE-1.9.0'), ('PATH', '/opt/ros/humble/bin:/usr/bin:/opt/gcc-arm-none-eabi-9-2020-q2-update/bin:/home/ubuntu22/.local/bin:/home/ubuntu22/.npm-global/bin:/home/ubuntu22/.local/bin:/opt/gcc-arm-none-eabi-9-2020-q2-update/bin:/home/ubuntu22/.local/bin:/home/ubuntu22/.nvm/versions/node/v20.20.2/bin:/home/ubuntu22/.npm-global/bin:/home/ubuntu22/.local/bin:/opt/ros/humble/bin:/opt/gcc-arm-none-eabi-9-2020-q2-update/bin:/home/ubuntu22/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/usr/local/cuda/bin:/usr/local/cuda/bin:/home/ubuntu22/android-sdk/cmdline-tools/latest/bin:/home/ubuntu22/android-sdk/platform-tools:/home/ubuntu22/android-sdk/build-tools/34.0.0:/usr/local/cuda/bin:/usr/local/cuda/bin:/home/ubuntu22/android-sdk/cmdline-tools/latest/bin:/home/ubuntu22/android-sdk/platform-tools:/home/ubuntu22/android-sdk/build-tools/34.0.0:/home/ubuntu22/.fishros/bin/'), ('SESSION_MANAGER', 'local/ubuntu22:@/tmp/.ICE-unix/2651,unix/ubuntu22:/tmp/.ICE-unix/2651'), ('INVOCATION_ID', 'f59f9f4354fb416991c11cc49d07289f'), ('COREPACK_ENABLE_AUTO_PIN', '0'), ('XDG_MENU_PREFIX', 'gnome-'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('GDK_BACKEND', 'x11'), ('CLAUDE_EFFORT', 'high'), ('DISPLAY', ':1'), ('NoDefaultCurrentDirectoryInExePath', '1'), ('LANG', 'zh_CN.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs:/home/ubuntu22/ws_ros2/install/px4_ros_com:/home/ubuntu22/ws_ros2/install/px4_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('ANTHROPIC_AUTH_TOKEN', 'sk-88114a3a3aed43db8df22fc6a0ce6136'), ('QT_ACCESSIBILITY', '1'), ('ELECTRON_RUN_AS_NODE', '1'), ('GDMSESSION', 'ubuntu'), ('CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING', 'true'), ('CLAUDE_CODE_SESSION_ID', '35a02ef1-f38c-443e-b930-b448a379d091'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('CLAUDECODE', '1'), ('GPG_AGENT_INFO', '/run/user/1000/gnupg/S.gpg-agent:0:1'), ('GAZEBO_RESOURCE_PATH', '/usr/share/gazebo/../../share/gazebo-11:'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('ANDROID_SDK_ROOT', '/home/ubuntu22/android-sdk'), ('GAZEBO_MODEL_DATABASE_URI', 'http://models.gazebosim.org'), ('VIRTUAL_ENV', '/usr'), ('QT_IM_MODULE', 'ibus'), ('JAVA_HOME', '/usr/lib/jvm/java-17-openjdk-amd64'), ('PWD', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver'), ('QT_QPA_PLATFORM', 'xcb'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('VSCODE_CODE_CACHE_PATH', '/home/ubuntu22/.config/Code/CachedData/560a9dba96f961efea7b1612916f89e5d5d4d679'), ('GAZEBO_PLUGIN_PATH', '/usr/share/gazebo/../../lib/x86_64-linux-gnu/gazebo-11/plugins:'), ('ANDROID_HOME', '/home/ubuntu22/android-sdk'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('CLAUDE_CODE_EXECPATH', '/home/ubuntu22/.vscode/extensions/anthropic.claude-code-2.1.152-linux-x64/resources/native-binary/claude'), ('CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC', '1'), ('PYTHONPATH', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('CLAUDE_CODE_ENABLE_TASKS', '0'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs:/home/ubuntu22/ws_ros2/install/px4_ros_com:/home/ubuntu22/ws_ros2/install/px4_msgs:/opt/ros/humble'), ('VSCODE_PID', '24317')]), 'shell': False}
+[16.529612] (lslidar_driver) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[16.529880] (lslidar_driver) StdoutLine: {'line': b'-- Execute custom install script\n'}
+[16.530150] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/launch/lslidar_double_launch.py\n'}
+[16.536763] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/launch/lslidar_launch.py\n'}
+[16.542762] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/params/lsx10.yaml\n'}
+[16.548527] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/params/lsx10_1.yaml\n'}
+[16.554275] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/params/lsx10_2.yaml\n'}
+[16.560160] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/rviz/lslidar.rviz\n'}
+[16.566061] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/lib/lslidar_driver/lslidar_driver_node\n'}
+[16.571887] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/ament_index/resource_index/package_run_dependencies/lslidar_driver\n'}
+[16.577863] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/ament_index/resource_index/parent_prefix_path/lslidar_driver\n'}
+[16.583874] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/environment/ament_prefix_path.sh\n'}
+[16.589584] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/environment/ament_prefix_path.dsv\n'}
+[16.595157] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/environment/path.sh\n'}
+[16.600746] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/environment/path.dsv\n'}
+[16.606472] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/local_setup.bash\n'}
+[16.612204] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/local_setup.sh\n'}
+[16.619017] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/local_setup.zsh\n'}
+[16.619912] (-) TimerEvent: {}
+[16.625463] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/local_setup.dsv\n'}
+[16.631416] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/package.dsv\n'}
+[16.637427] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/ament_index/resource_index/packages/lslidar_driver\n'}
+[16.643262] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/cmake/ament_cmake_export_dependencies-extras.cmake\n'}
+[16.648986] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/cmake/ament_cmake_export_include_directories-extras.cmake\n'}
+[16.655625] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/cmake/lslidar_driverConfig.cmake\n'}
+[16.661758] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/cmake/lslidar_driverConfig-version.cmake\n'}
+[16.667688] (lslidar_driver) StdoutLine: {'line': b'-- Symlinking: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/share/lslidar_driver/package.xml\n'}
+[16.675410] (lslidar_driver) CommandEnded: {'returncode': 0}
+[16.682079] (lslidar_driver) JobEnded: {'identifier': 'lslidar_driver', 'rc': 0}
+[16.682426] (-) EventReactorShutdown: {}

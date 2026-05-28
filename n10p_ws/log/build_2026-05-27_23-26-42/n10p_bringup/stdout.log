@@ -1,0 +1,28 @@
+running egg_info
+creating ../../build/n10p_bringup/n10p_bringup.egg-info
+writing ../../build/n10p_bringup/n10p_bringup.egg-info/PKG-INFO
+writing dependency_links to ../../build/n10p_bringup/n10p_bringup.egg-info/dependency_links.txt
+writing entry points to ../../build/n10p_bringup/n10p_bringup.egg-info/entry_points.txt
+writing requirements to ../../build/n10p_bringup/n10p_bringup.egg-info/requires.txt
+writing top-level names to ../../build/n10p_bringup/n10p_bringup.egg-info/top_level.txt
+writing manifest file '../../build/n10p_bringup/n10p_bringup.egg-info/SOURCES.txt'
+reading manifest file '../../build/n10p_bringup/n10p_bringup.egg-info/SOURCES.txt'
+writing manifest file '../../build/n10p_bringup/n10p_bringup.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/n10p_bringup/build/lib/n10p_bringup
+copying n10p_bringup/ano_bridge_node.py -> /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/n10p_bringup/build/lib/n10p_bringup
+copying n10p_bringup/__init__.py -> /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/n10p_bringup/build/lib/n10p_bringup
+running install
+running install_lib
+creating /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/lib/python3.10/site-packages/n10p_bringup
+copying /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/n10p_bringup/build/lib/n10p_bringup/ano_bridge_node.py -> /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/lib/python3.10/site-packages/n10p_bringup
+copying /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/n10p_bringup/build/lib/n10p_bringup/__init__.py -> /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/lib/python3.10/site-packages/n10p_bringup
+byte-compiling /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/lib/python3.10/site-packages/n10p_bringup/ano_bridge_node.py to ano_bridge_node.cpython-310.pyc
+byte-compiling /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/lib/python3.10/site-packages/n10p_bringup/__init__.py to __init__.cpython-310.pyc
+running install_data
+running install_egg_info
+Copying ../../build/n10p_bringup/n10p_bringup.egg-info to /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/lib/python3.10/site-packages/n10p_bringup-0.1.0-py3.10.egg-info
+running install_scripts
+Installing ano_bridge_node script to /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/lib/n10p_bringup
+writing list of installed files to '/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/n10p_bringup/install.log'

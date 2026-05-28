@@ -1,0 +1,13 @@
+/ano_bridge_node:
+  ros__parameters:
+    serial_port: /dev/serial/by-id/usb-ANO_TC_ANO_RadioLink-if00   # 匿名数传串口
+    baud_rate: 921600                   # 匿名数传波特率
+    frame_id: base_link                 # 无人机机体坐标系
+    odom_frame_id: odom                 # 里程计坐标系
+    publish_tf: true                    # 是否发布 odom → base_link TF
+    pub_rate: 20.0                      # 里程计发布频率 (Hz)
+    acc_scale: 0.004788                 # 加速度计 LSB → m/s² (±16g)
+    gyr_scale: 0.001065                 # 陀螺仪 LSB → rad/s (±2000dps)
+    gyr_offset_x: 0.0                   # 陀螺仪 X 轴零偏补偿
+    gyr_offset_y: 0.0
+    gyr_offset_z: 0.0
