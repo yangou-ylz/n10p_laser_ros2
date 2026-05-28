@@ -1,0 +1,136 @@
+<?xml version="1.0" ?>
+<robot name="n10p_drone" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 材质定义 -->
+  <!-- ══════════════════════════════════════════ -->
+  <material name="dark_grey">
+    <color rgba="0.3 0.3 0.3 1.0"/>
+  </material>
+  <material name="blue">
+    <color rgba="0.0 0.4 0.8 1.0"/>
+  </material>
+  <material name="red">
+    <color rgba="0.8 0.1 0.1 1.0"/>
+  </material>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 基础关节: base_footprint → base_link -->
+  <!-- ══════════════════════════════════════════ -->
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="base_footprint"/>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- base_link — 无人机主体 (圆柱体) -->
+  <!-- ══════════════════════════════════════════ -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0.05" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.15" length="0.1"/>
+      </geometry>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.05" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.15" length="0.1"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.0"/>
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0"
+               iyy="0.01" iyz="0.0"
+               izz="0.01"/>
+    </inertial>
+  </link>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- 激光雷达关节: base_link → laser_frame -->
+  <!-- ══════════════════════════════════════════ -->
+  <joint name="laser_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="laser_frame"/>
+    <origin xyz="0 0 0.1" rpy="0 0 0"/>
+  </joint>
+
+  <link name="laser_frame">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.03" length="0.02"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
+               iyy="0.0001" iyz="0.0"
+               izz="0.0001"/>
+    </inertial>
+  </link>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- Gazebo 插件 -->
+  <!-- ══════════════════════════════════════════ -->
+
+  <!-- 全向平面运动插件 (linear.x, linear.y, angular.z) -->
+  <gazebo>
+    <plugin name="planar_move" filename="libgazebo_ros_planar_move.so">
+      <ros>
+        <remapping>/cmd_vel:=/cmd_vel</remapping>
+        <remapping>/odom:=/odom</remapping>
+      </ros>
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+      <publish_odom_tf>true</publish_odom_tf>
+      <publish_odom>true</publish_odom>
+      <odometry_rate>20.0</odometry_rate>
+      <velocity_max>0.5</velocity_max>
+      <acceleration>1.0</acceleration>
+      <yaw_velocity_max>1.0</yaw_velocity_max>
+      <yaw_acceleration>2.0</yaw_acceleration>
+    </plugin>
+  </gazebo>
+
+  <!-- 2D LiDAR (N10P 仿真: 360°, 0.02-12m, 10Hz) -->
+  <gazebo reference="laser_frame">
+    <sensor name="n10p_lidar" type="ray">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>false</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>1058</samples>
+            <resolution>1</resolution>
+            <min_angle>-3.14159</min_angle>
+            <max_angle>3.14159</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.02</min>
+          <max>12.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="n10p_lidar_plugin" filename="libgazebo_ros_ray_sensor.so">
+        <output_type>sensor_msgs/LaserScan</output_type>
+        <frame_name>laser_frame</frame_name>
+        <topic_name>/scan</topic_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+</robot>

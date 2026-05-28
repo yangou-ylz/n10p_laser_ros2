@@ -1,0 +1,2 @@
+[console_scripts]
+scan_relay = n10p_gazebo.scan_relay:main

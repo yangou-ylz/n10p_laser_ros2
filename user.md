@@ -272,4 +272,79 @@ ros2 launch n10p_nav nav_launch.py map:=/home/ubuntu22/ROS2/n10p_leishen/maps/n1
 | `n10p_ws/src/n10p_slam/config/n10p_slam.rviz` | SLAM RViz2 配置 |
 | `n10p_ws/src/n10p_nav/config/nav2_params_n10p.yaml` | Nav2 导航参数 |
 | `n10p_ws/src/n10p_nav/config/n10p_nav.rviz` | Nav2 导航 RViz2 配置 |
+| `n10p_ws/src/n10p_gazebo/urdf/n10p_drone.urdf` | 仿真无人机 URDF 模型 |
+| `n10p_ws/src/n10p_gazebo/worlds/simple_obstacles.world` | 仿真世界 (4 个箱子) |
+| `n10p_ws/src/n10p_gazebo/config/n10p_sim_nav.yaml` | 仿真 Nav2 参数 |
+| `n10p_ws/src/n10p_gazebo/config/n10p_sim.rviz` | 仿真 RViz2 配置 |
 | `n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver/rviz/lslidar.rviz` | 仅雷达 RViz2 配置 |
+
+---
+
+## 10. Gazebo 仿真导航 (Phase 5)
+
+无硬件依赖，在虚拟环境中测试 Nav2 导航系统。
+
+### 10.1 编译
+
+```bash
+cd ~/ROS2/n10p_leishen/n10p_ws
+colcon build --packages-select n10p_gazebo
+
+# 手动修复 entry_points 安装路径 (已知问题)
+mkdir -p install/n10p_gazebo/lib/n10p_gazebo
+cp install/n10p_gazebo/bin/scan_relay install/n10p_gazebo/lib/n10p_gazebo/scan_relay
+
+source install/setup.bash
+```
+
+### 10.2 启动仿真
+
+```bash
+ros2 launch n10p_gazebo sim_launch.py
+```
+
+启动后依次出现：
+- Gazebo 窗口（3D 世界，圆柱体无人机 + 4 个棕色箱子）
+- RViz2 窗口（显示 RobotModel + LaserScan + Costmap + Path）
+
+等待约 18 秒所有 lifecycle 节点激活。
+
+### 10.3 测试导航
+
+```bash
+# 确认导航栈已激活
+ros2 lifecycle get /planner_server   # 应为 active [3]
+
+# 发布导航目标 (map 坐标系)
+ros2 topic pub /goal_pose geometry_msgs/msg/PoseStamped \
+  "{header: {frame_id: map}, pose: {position: {x: 2.0, y: 0.0}, orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}}}" -1
+
+# 验证路径规划
+ros2 topic echo /plan --once
+```
+
+### 10.4 仿真系统架构
+
+| 组件 | 节点名 | 功能 |
+|------|--------|------|
+| Gazebo | gzserver + gzclient | 3D 物理仿真 |
+| 运动插件 | planar_move | 全向运动, /cmd_vel→/odom, TF odom→base_footprint |
+| LiDAR 插件 | n10p_lidar_plugin | 360° 2D 激光, 0.02-12m, 10Hz, 1058 点 |
+| 话题转发 | scan_relay | /n10p_lidar_plugin/out → /scan (插件重映射不生效的 workaround) |
+| 机器人状态 | robot_state_publisher | 发布 URDF TF (base_footprint→base_link→laser_frame) |
+| 地图服务 | map_server | 空白静态地图 /map (10m×10m, 全空闲) |
+| TF 桥接 | static_tf_map_odom | map→odom identity (仿真中 odom=ground truth) |
+| 全局规划 | planner_server | NavfnPlanner, 全局 costmap (static_layer) |
+| 局部控制 | controller_server | RegulatedPurePursuit, 局部 costmap (obstacle_layer) |
+| 行为树 | bt_navigator | navigate_w_replanning_time.xml |
+| 生命周期管理 | lifecycle_manager | 自动激活所有 lifecycle 节点 |
+
+### 10.5 已知问题与 Workaround
+
+| 问题 | 解决方法 |
+|------|----------|
+| 每次编译后 scan_relay 找不到 | 手动 cp bin/scan_relay → lib/n10p_gazebo/ |
+| 首次启动 Gazebo 慢 | 模型数据库需下载，等 30-60s |
+| lifecycle_manager "Failed to change state for node: controller_server" | 增大 bond_timeout (>10s) |
+| RViz2 GLSL shader 警告 | 不影响功能，可忽略 |
+| 启动时 gzserver 偶尔 exit code 255 | 再运行一次即可（旧进程残留） |
