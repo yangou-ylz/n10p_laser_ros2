@@ -1,7 +1,7 @@
 {
     "version":            "1.1",
     "project_name":       "esp32_n10p_bridge",
-    "project_version":    "88d67bf-dirty",
+    "project_version":    "ddd9ed3-dirty",
     "project_path":       "/home/ubuntu22/ROS2/n10p_leishen/esp32_n10p_bridge",
     "idf_path":           "/home/ubuntu22/esp/esp-idf",
     "build_dir":          "/home/ubuntu22/ROS2/n10p_leishen/esp32_n10p_bridge/build",

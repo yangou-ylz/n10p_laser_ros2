@@ -1,0 +1,725 @@
+[0;32mI (123) esp_image: segment 1: paddr=0002b2f8 vaddr=3fc9abESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x15 (USB_UART_CHIP_RESET),boot:0x8 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40045107
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x1870
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xce8
+load:0x403cb700,len:0x2ed8
+entry 0x403c8918
+[0;32mI (26) boot: ESP-IDF v5.3.2 2nd stage bootloader[0m
+[0;32mI (27) boot: compile time May 31 2026 01:13:37[0m
+[0;32mI (27) boot: Multicore bootloader[0m
+[0;32mI (30) boot: chip revision: v0.2[0m
+[0;32mI (33) boot: efuse block revision: v1.3[0m
+[0;32mI (38) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (43) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (48) boot.esp32s3: SPI Flash Size : 2MB[0m
+[0;32mI (52) boot: Enabling RNG early entropy source...[0m
+[0;32mI (58) boot: Partition Table:[0m
+[0;32mI (61) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (69) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (76) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (83) boot:  2 factory          factory app      00 00 00010000 00100000[0m
+[0;32mI (91) boot: End of partition table[0m
+[0;32mI (95) esp_image: segment 0: paddr=00010020 vaddr=3c090020 size=1b2d0h (111312) map[0m
+[0;32mI (123) esp_image: segment 1: paddr=0002b2f8 vaddr=3fc9ab00 size=0497ch ( 18812) load[0m
+[0;32mI (127) esp_image: segment 2: paddr=0002fc7c vaddr=40374000 size=0039ch (   924) load[0m
+[0;32mI (129) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=86ef0h (552688) map[0m
+[0;32mI (235) esp_image: segment 4: paddr=000b6f18 vaddr=4037439c size=16680h ( 91776) load[0m
+[0;32mI (264) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (265) boot: Disabling RNG early entropy source...[0m
+[0;32mI (277) cpu_start: Multicore app[0m
+[0;32mI (286) cpu_start: Pro cpu start user code[0m
+[0;32mI (286) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (287) app_init: Application information:[0m
+[0;32mI (289) app_init: Project name:     esp32_n10p_bridge[0m
+[0;32mI (295) app_init: App version:      ddd9ed3-dirty[0m
+[0;32mI (301) app_init: Compile time:     May 31 2026 01:13:34[0m
+[0;32mI (307) app_init: ELF file SHA256:  e3866f4e2...[0m
+[0;32mI (312) app_init: ESP-IDF:          v5.3.2[0m
+[0;32mI (317) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (321) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (326) efuse_init: Chip rev:         v0.2[0m
+[0;32mI (331) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (338) heap_init: At 3FCA30D0 len 00046640 (281 KiB): RAM[0m
+[0;32mI (344) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (351) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (357) heap_init: At 600FE100 len 00001EE8 (7 KiB): RTCRAM[0m
+[0;32mI (364) spi_flash: detected chip: boya[0m
+[0;32mI (367) spi_flash: flash io: dio[0m
+[0;33mW (371) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.[0m
+[0;32mI (385) sleep: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (391) sleep: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (399) main_task: Started on CPU0[0m
+[0;32mI (409) main_task: Calling app_main()[0m
+[0;32mI (429) n10p_bridge: === N10P 雷达 WiFi 无线转发固件 v4 ===[0m
+[0;32mI (429) n10p_bridge: Phase 3: UART → WiFi TCP 原始帧转发 (无包装)[0m
+[0;32mI (429) n10p_bridge: 硬件: ESP32-S3 N16R8, UART1 RX=IO18, 460800-8N1[0m
+[0;32mI (439) n10p_bridge: UART1 init OK: 460800-8N1, RX=IO18 TX=IO17[0m
+[0;32mI (449) pp: pp rom version: e7ae62f[0m
+[0;32mI (449) net80211: net80211 rom version: e7ae62f[0m
+[0;32mI (469) wifi:wifi driver task: 3fcae29c, prio:23, stack:6656, core=0[0m
+[0;32mI (479) wifi:wifi firmware version: b0fd6006b[0m
+[0;32mI (479) wifi:wifi certification version: v7.0[0m
+[0;32mI (479) wifi:config NVS flash: enabled[0m
+[0;32mI (479) wifi:config nano formating: disabled[0m
+[0;32mI (479) wifi:Init data frame dynamic rx buffer num: 32[0m
+[0;32mI (489) wifi:Init static rx mgmt buffer num: 5[0m
+[0;32mI (489) wifi:Init management short buffer num: 32[0m
+[0;32mI (489) wifi:Init dynamic tx buffer num: 32[0m
+[0;32mI (499) wifi:Init static tx FG buffer num: 2[0m
+[0;32mI (499) wifi:Init static rx buffer size: 1600[0m
+[0;32mI (509) wifi:Init static rx buffer num: 10[0m
+[0;32mI (509) wifi:Init dynamic rx buffer num: 32[0m
+[0;32mI (509) wifi_init: rx ba win: 6[0m
+[0;32mI (519) wifi_init: accept mbox: 6[0m
+[0;32mI (519) wifi_init: tcpip mbox: 32[0m
+[0;32mI (529) wifi_init: udp mbox: 6[0m
+[0;32mI (529) wifi_init: tcp mbox: 6[0m
+[0;32mI (529) wifi_init: tcp tx win: 5760[0m
+[0;32mI (539) wifi_init: tcp rx win: 5760[0m
+[0;32mI (539) wifi_init: tcp mss: 1440[0m
+[0;32mI (539) wifi_init: WiFi IRAM OP enabled[0m
+[0;32mI (549) wifi_init: WiFi RX IRAM OP enabled[0m
+[0;32mI (559) phy_init: phy_version 680,a6008b2,Jun  4 2024,16:41:10[0m
+[0;32mI (599) wifi:mode : sta (c0:4e:30:07:e3:58)[0m
+[0;32mI (599) wifi:enable tsf[0m
+[0;32mI (599) n10p_bridge: WiFi Station 启动, 连接 SSID: YLZ[0m
+[0;32mI (609) wifi:new:<11,2>, old:<1,0>, ap:<255,255>, sta:<11,2>, prof:1, snd_ch_cfg:0x0[0m
+[0;32mI (609) wifi:state: init -> auth (0xb0)[0m
+[0;32mI (619) wifi:state: auth -> assoc (0x0)[0m
+[0;32mI (629) wifi:state: assoc -> run (0x10)[0m
+[0;32mI (639) wifi:connected with YLZ, aid = 1, channel 11, 40D, bssid = 5c:4d:bf:b5:67:3f[0m
+[0;32mI (639) wifi:security: WPA2-PSK, phy: bgn, rssi: -25[0m
+[0;32mI (649) wifi:pm start, type: 1[0m
+
+[0;32mI (649) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us[0m
+[0;32mI (659) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000[0m
+[0;32mI (719) wifi:AP's beacon interval = 102400 us, DTIM period = 1[0m
+[0;32mI (2669) esp_netif_handlers: sta ip: 192.168.0.184, mask: 255.255.255.0, gw: 192.168.0.1[0m
+[0;32mI (2669) n10p_bridge: WiFi 已连接! IP: 192.168.0.184[0m
+[0;32mI (2669) n10p_bridge: WiFi 连接成功![0m
+[0;32mI (2679) n10p_bridge: TCP Server 监听端口 8888, 等待客户端连接...[0m
+[0;32mI (2679) n10p_bridge: === 系统就绪 === 等待雷达数据和客户端连接...[0m
+[0;32mI (2679) n10p_bridge: UART: total=0 valid=0 (0fps) TCP发送=0 队列剩余=0[0m
+[0;32mI (2689) main_task: Returned from app_main()[0m
+[0;32mI (3689) n10p_bridge: UART: total=6 valid=0 (0fps) TCP发送=0 队列剩余=0[0m
+[0;32mI (4689) n10p_bridge: UART: total=1 valid=0 (0fps) TCP发送=0 队列剩余=0[0m
+[0;32mI (5709) n10p_bridge: UART: total=2 valid=0 (0fps) TCP发送=0 队列剩余=0[0m
+[0;32mI (6669) wifi:<ba-add>idx:0 (ifx:0, 5c:4d:bf:b5:67:3f), tid:0, ssn:6, winSize:64[0m
+[0;32mI (6709) n10p_bridge: UART: total=2 valid=0 (0fps) TCP发送=0 队列剩余=0[0m
+[0;32mI (7729) n10p_bridge: UART: total=2 valid=0 (0fps) TCP发送=0 队列剩余=0[0m
+[0;32mI (7909) n10p_bridge: 客户端已连接! 开始转发数据...[0m
+[0;32mI (8739) n10p_bridge: UART: total=26 valid=24 (24fps) TCP发送=24 队列剩余=0[0m
+[0;32mI (9749) n10p_bridge: UART: total=205 valid=197 (195fps) TCP发送=195 队列剩余=1[0m
+[0;32mI (10759) n10p_bridge: UART: total=235 valid=224 (222fps) TCP发送=224 队列剩余=0[0m
+[0;32mI (11759) n10p_bridge: UART: total=222 valid=216 (215fps) TCP发送=214 队列剩余=1[0m
+[0;32mI (12769) n10p_bridge: UART: total=300 valid=294 (291fps) TCP发送=164 队列剩余=32[0m
+[0;32mI (13779) n10p_bridge: UART: total=258 valid=249 (247fps) TCP发送=4 队列剩余=32[0m
+[0;32mI (14789) n10p_bridge: UART: total=253 valid=248 (246fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (15789) n10p_bridge: UART: total=333 valid=333 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (16789) n10p_bridge: UART: total=328 valid=327 (327fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (17789) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (18789) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (19799) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (20799) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (21799) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (22809) n10p_bridge: UART: total=333 valid=333 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (23809) n10p_bridge: UART: total=333 valid=333 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (24809) n10p_bridge: UART: total=331 valid=331 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (25809) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (26809) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (27819) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (28819) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (29819) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (30829) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (31829) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (32829) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (33799) wifi:<ba-add>idx:1 (ifx:0, 5c:4d:bf:b5:67:3f), tid:6, ssn:0, winSize:64[0m
+[0;32mI (33839) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (34839) n10p_bridge: UART: total=333 valid=333 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (35839) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (36839) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (37839) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (38849) n10p_bridge: UART: total=334 valid=334 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (39849) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (40859) n10p_bridge: UART: total=334 valid=334 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (41859) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (42859) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (43859) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (44869) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (45869) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (46869) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (47879) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (48879) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (49879) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (50889) n10p_bridge: UART: total=334 valid=334 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (51889) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (52889) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (53899) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (54899) n10p_bridge: UART: total=334 valid=334 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (55899) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (56909) n10p_bridge: UART: total=334 valid=334 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (57909) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (58909) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (59919) n10p_bridge: UART: total=334 valid=334 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (60919) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;33mW (61249) n10p_bridge: 客户端断开 (sent=-1 errno=104)[0m
+
+assert failed: tlsf_free tlsf.c:1201 (!block_is_free(block) && "block already marked as free")
+
+
+Backtrace: 0x40375c66:0x3fcb6500 0x4037d405:0x3fcb6520 0x403857fd:0x3fcb6540 0x403831e6:0x3fcb6660 0x4038306c:0x3fcb6680 0x40376582:0x3fcb66a0 0x4038582d:0x3fcb66c0 0x4200c484:0x3fcb66e0 0x4037dfcd:0x3fcb6740
+
+
+
+
+ELF file SHA256: e3866f4e2
+
+Rebooting...
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0xc (RTC_SW_CPU_RST),boot:0x8 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40375ba0
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x1870
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xce8
+load:0x403cb700,len:0x2ed8
+entry 0x403c8918
+[0;32mI (26) boot: ESP-IDF v5.3.2 2nd stage bootloader[0m
+[0;32mI (26) boot: compile time May 31 2026 01:13:37[0m
+[0;32mI (26) boot: Multicore bootloader[0m
+[0;32mI (29) boot: chip revision: v0.2[0m
+[0;32mI (33) boot: efuse block revision: v1.3[0m
+[0;32mI (38) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (42) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (47) boot.esp32s3: SPI Flash Size : 2MB[0m
+[0;32mI (52) boot: Enabling RNG early entropy source...[0m
+[0;32mI (57) boot: Partition Table:[0m
+[0;32mI (61) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (68) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (75) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (83) boot:  2 factory          factory app      00 00 00010000 00100000[0m
+[0;32mI (90) boot: End of partition table[0m
+[0;32mI (95) esp_image: segment 0: paddr=00010020 vaddr=3c090020 size=1b2d0h (111312) map[0m
+[0;32mI (123) esp_image: segment 1: paddr=0002b2f8 vaddr=3fc9ab00 size=0497ch ( 18812) load[0m
+[0;32mI (127) esp_image: segment 2: paddr=0002fc7c vaddr=40374000 size=0039ch (   924) load[0m
+[0;32mI (129) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=86ef0h (552688) map[0m
+[0;32mI (234) esp_image: segment 4: paddr=000b6f18 vaddr=4037439c size=16680h ( 91776) load[0m
+[0;32mI (264) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (264) boot: Disabling RNG early entropy source...[0m
+[0;32mI (276) cpu_start: Multicore app[0m
+[0;32mI (286) cpu_start: Pro cpu start user code[0m
+[0;32mI (286) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (286) app_init: Application information:[0m
+[0;32mI (289) app_init: Project name:     esp32_n10p_bridge[0m
+[0;32mI (295) app_init: App version:      ddd9ed3-dirty[0m
+[0;32mI (300) app_init: Compile time:     May 31 2026 01:13:34[0m
+[0;32mI (306) app_init: ELF file SHA256:  e3866f4e2...[0m
+[0;32mI (311) app_init: ESP-IDF:          v5.3.2[0m
+[0;32mI (316) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (321) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (326) efuse_init: Chip rev:         v0.2[0m
+[0;32mI (331) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (338) heap_init: At 3FCA30D0 len 00046640 (281 KiB): RAM[0m
+[0;32mI (344) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (350) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (356) heap_init: At 600FE100 len 00001EE8 (7 KiB): RTCRAM[0m
+[0;32mI (364) spi_flash: detected chip: boya[0m
+[0;32mI (367) spi_flash: flash io: dio[0m
+[0;33mW (371) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.[0m
+[0;32mI (384) sleep: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (391) sleep: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (398) main_task: Started on CPU0[0m
+[0;32mI (408) main_task: Calling app_main()[0m
+[0;32mI (428) n10p_bridge: === N10P 雷达 WiFi 无线转发固件 v4 ===[0m
+[0;32mI (428) n10p_bridge: Phase 3: UART → WiFi TCP 原始帧转发 (无包装)[0m
+[0;32mI (428) n10p_bridge: 硬件: ESP32-S3 N16R8, UART1 RX=IO18, 460800-8N1[0m
+[0;32mI (438) n10p_bridge: UART1 init OK: 460800-8N1, RX=IO18 TX=IO17[0m
+[0;32mI (448) pp: pp rom version: e7ae62f[0m
+[0;32mI (448) net80211: net80211 rom version: e7ae62f[0m
+[0;32mI (468) wifi:wifi driver task: 3fcae29c, prio:23, stack:6656, core=0[0m
+[0;32mI (478) wifi:wifi firmware version: b0fd6006b[0m
+[0;32mI (478) wifi:wifi certification version: v7.0[0m
+[0;32mI (478) wifi:config NVS flash: enabled[0m
+[0;32mI (478) wifi:config nano formating: disabled[0m
+[0;32mI (478) wifi:Init data frame dynamic rx buffer num: 32[0m
+[0;32mI (488) wifi:Init static rx mgmt buffer num: 5[0m
+[0;32mI (488) wifi:Init management short buffer num: 32[0m
+[0;32mI (488) wifi:Init dynamic tx buffer num: 32[0m
+[0;32mI (498) wifi:Init static tx FG buffer num: 2[0m
+[0;32mI (498) wifi:Init static rx buffer size: 1600[0m
+[0;32mI (508) wifi:Init static rx buffer num: 10[0m
+[0;32mI (508) wifi:Init dynamic rx buffer num: 32[0m
+[0;32mI (508) wifi_init: rx ba win: 6[0m
+[0;32mI (518) wifi_init: accept mbox: 6[0m
+[0;32mI (518) wifi_init: tcpip mbox: 32[0m
+[0;32mI (528) wifi_init: udp mbox: 6[0m
+[0;32mI (528) wifi_init: tcp mbox: 6[0m
+[0;32mI (528) wifi_init: tcp tx win: 5760[0m
+[0;32mI (538) wifi_init: tcp rx win: 5760[0m
+[0;32mI (538) wifi_init: tcp mss: 1440[0m
+[0;32mI (538) wifi_init: WiFi IRAM OP enabled[0m
+[0;32mI (548) wifi_init: WiFi RX IRAM OP enabled[0m
+[0;32mI (558) phy_init: phy_version 680,a6008b2,Jun  4 2024,16:41:10[0m
+[0;32mI (598) wifi:mode : sta (c0:4e:30:07:e3:58)[0m
+[0;32mI (598) wifi:enable tsf[0m
+[0;32mI (598) n10p_bridge: WiFi Station 启动, 连接 SSID: YLZ[0m
+[0;32mI (608) wifi:new:<11,2>, old:<1,0>, ap:<255,255>, sta:<11,2>, prof:1, snd_ch_cfg:0x0[0m
+[0;32mI (608) wifi:state: init -> auth (0xb0)[0m
+[0;32mI (618) wifi:state: auth -> assoc (0x0)[0m
+[0;32mI (628) wifi:state: assoc -> run (0x10)[0m
+[0;32mI (638) wifi:connected with YLZ, aid = 1, channel 11, 40D, bssid = 5c:4d:bf:b5:67:3f[0m
+[0;32mI (638) wifi:security: WPA2-PSK, phy: bgn, rssi: -25[0m
+[0;32mI (638) wifi:pm start, type: 1[0m
+
+[0;32mI (648) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us[0m
+[0;32mI (648) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000[0m
+[0;32mI (678) wifi:AP's beacon interval = 102400 us, DTIM period = 1[0m
+[0;32mI (2158) wifi:<ba-add>idx:0 (ifx:0, 5c:4d:bf:b5:67:3f), tid:0, ssn:6, winSize:64[0m
+[0;32mI (2658) esp_netif_handlers: sta ip: 192.168.0.184, mask: 255.255.255.0, gw: 192.168.0.1[0m
+[0;32mI (2658) n10p_bridge: WiFi 已连接! IP: 192.168.0.184[0m
+[0;32mI (2658) n10p_bridge: WiFi 连接成功![0m
+[0;32mI (2668) n10p_bridge: TCP Server 监听端口 8888, 等待客户端连接...[0m
+[0;32mI (2668) n10p_bridge: === 系统就绪 === 等待雷达数据和客户端连接...[0m
+[0;32mI (2668) n10p_bridge: UART: total=2 valid=2 (1fps) TCP发送=0 队列剩余=2[0m
+[0;32mI (2678) main_task: Returned from app_main()[0m
+[0;32mI (3678) n10p_bridge: UART: total=347 valid=347 (345fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (4678) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (5678) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (6688) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (7688) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (8698) n10p_bridge: UART: total=333 valid=333 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (9708) n10p_bridge: UART: total=335 valid=335 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (10708) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (11708) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (12718) n10p_bridge: UART: total=333 valid=333 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (13718) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (14718) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (15728) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (16728) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (17728) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (18738) n10p_bridge: UART: total=334 valid=334 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (19748) n10p_bridge: UART: total=334 valid=334 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (20758) n10p_bridge: UART: total=335 valid=335 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (21768) n10p_bridge: UART: total=334 valid=334 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (22768) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (23228) n10p_bridge: 客户端已连接! 开始转发数据...[0m
+[0;32mI (23778) n10p_bridge: UART: total=335 valid=335 (333fps) TCP发送=212 队列剩余=2[0m
+[0;33mW (24148) n10p_bridge: 客户端断开 (sent=-1 errno=104)[0m
+
+assert failed: tlsf_free tlsf.c:1201 (!block_is_free(block) && "block already marked as free")
+
+
+Backtrace: 0x40375c66:0x3fcb6500 0x4037d405:0x3fcb6520 0x403857fd:0x3fcb6540 0x403831e6:0x3fcb6660 0x4038306c:0x3fcb6680 0x40376582:0x3fcb66a0 0x4038582d:0x3fcb66c0 0x4200c484:0x3fcb66e0 0x4037dfcd:0x3fcb6740
+
+
+
+
+ELF file SHA256: e3866f4e2
+
+Rebooting...
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0xc (RTC_SW_CPU_RST),boot:0x8 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x4037acae
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x1870
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xce8
+load:0x403cb700,len:0x2ed8
+entry 0x403c8918
+[0;32mI (26) boot: ESP-IDF v5.3.2 2nd stage bootloader[0m
+[0;32mI (26) boot: compile time May 31 2026 01:13:37[0m
+[0;32mI (26) boot: Multicore bootloader[0m
+[0;32mI (29) boot: chip revision: v0.2[0m
+[0;32mI (33) boot: efuse block revision: v1.3[0m
+[0;32mI (38) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (42) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (47) boot.esp32s3: SPI Flash Size : 2MB[0m
+[0;32mI (52) boot: Enabling RNG early entropy source...[0m
+[0;32mI (57) boot: Partition Table:[0m
+[0;32mI (61) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (68) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (75) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (83) boot:  2 factory          factory app      00 00 00010000 00100000[0m
+[0;32mI (90) boot: End of partition table[0m
+[0;32mI (95) esp_image: segment 0: paddr=00010020 vaddr=3c090020 size=1b2d0h (111312) map[0m
+[0;32mI (123) esp_image: segment 1: paddr=0002b2f8 vaddr=3fc9ab00 size=0497ch ( 18812) load[0m
+[0;32mI (127) esp_image: segment 2: paddr=0002fc7c vaddr=40374000 size=0039ch (   924) load[0m
+[0;32mI (129) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=86ef0h (552688) map[0m
+[0;32mI (235) esp_image: segment 4: paddr=000b6f18 vaddr=4037439c size=16680h ( 91776) load[0m
+[0;32mI (265) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (265) boot: Disabling RNG early entropy source...[0m
+[0;32mI (277) cpu_start: Multicore app[0m
+[0;32mI (287) cpu_start: Pro cpu start user code[0m
+[0;32mI (287) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (287) app_init: Application information:[0m
+[0;32mI (290) app_init: Project name:     esp32_n10p_bridge[0m
+[0;32mI (295) app_init: App version:      ddd9ed3-dirty[0m
+[0;32mI (301) app_init: Compile time:     May 31 2026 01:13:34[0m
+[0;32mI (307) app_init: ELF file SHA256:  e3866f4e2...[0m
+[0;32mI (312) app_init: ESP-IDF:          v5.3.2[0m
+[0;32mI (317) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (322) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (326) efuse_init: Chip rev:         v0.2[0m
+[0;32mI (331) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (339) heap_init: At 3FCA30D0 len 00046640 (281 KiB): RAM[0m
+[0;32mI (345) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (351) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (357) heap_init: At 600FE100 len 00001EE8 (7 KiB): RTCRAM[0m
+[0;32mI (364) spi_flash: detected chip: boya[0m
+[0;32mI (368) spi_flash: flash io: dio[0m
+[0;33mW (371) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.[0m
+[0;32mI (385) sleep: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (392) sleep: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (399) main_task: Started on CPU0[0m
+[0;32mI (409) main_task: Calling app_main()[0m
+[0;32mI (429) n10p_bridge: === N10P 雷达 WiFi 无线转发固件 v4 ===[0m
+[0;32mI (429) n10p_bridge: Phase 3: UART → WiFi TCP 原始帧转发 (无包装)[0m
+[0;32mI (429) n10p_bridge: 硬件: ESP32-S3 N16R8, UART1 RX=IO18, 460800-8N1[0m
+[0;32mI (439) n10p_bridge: UART1 init OK: 460800-8N1, RX=IO18 TX=IO17[0m
+[0;32mI (449) pp: pp rom version: e7ae62f[0m
+[0;32mI (449) net80211: net80211 rom version: e7ae62f[0m
+[0;32mI (469) wifi:wifi driver task: 3fcae29c, prio:23, stack:6656, core=0[0m
+[0;32mI (479) wifi:wifi firmware version: b0fd6006b[0m
+[0;32mI (479) wifi:wifi certification version: v7.0[0m
+[0;32mI (479) wifi:config NVS flash: enabled[0m
+[0;32mI (479) wifi:config nano formating: disabled[0m
+[0;32mI (479) wifi:Init data frame dynamic rx buffer num: 32[0m
+[0;32mI (489) wifi:Init static rx mgmt buffer num: 5[0m
+[0;32mI (489) wifi:Init management short buffer num: 32[0m
+[0;32mI (489) wifi:Init dynamic tx buffer num: 32[0m
+[0;32mI (499) wifi:Init static tx FG buffer num: 2[0m
+[0;32mI (499) wifi:Init static rx buffer size: 1600[0m
+[0;32mI (509) wifi:Init static rx buffer num: 10[0m
+[0;32mI (509) wifi:Init dynamic rx buffer num: 32[0m
+[0;32mI (509) wifi_init: rx ba win: 6[0m
+[0;32mI (519) wifi_init: accept mbox: 6[0m
+[0;32mI (519) wifi_init: tcpip mbox: 32[0m
+[0;32mI (529) wifi_init: udp mbox: 6[0m
+[0;32mI (529) wifi_init: tcp mbox: 6[0m
+[0;32mI (529) wifi_init: tcp tx win: 5760[0m
+[0;32mI (539) wifi_init: tcp rx win: 5760[0m
+[0;32mI (539) wifi_init: tcp mss: 1440[0m
+[0;32mI (539) wifi_init: WiFi IRAM OP enabled[0m
+[0;32mI (549) wifi_init: WiFi RX IRAM OP enabled[0m
+[0;32mI (559) phy_init: phy_version 680,a6008b2,Jun  4 2024,16:41:10[0m
+[0;33mW (599) phy_init: saving new calibration data because of checksum failure, mode(0)[0m
+[0;32mI (619) wifi:mode : sta (c0:4e:30:07:e3:58)[0m
+[0;32mI (619) wifi:enable tsf[0m
+[0;32mI (619) n10p_bridge: WiFi Station 启动, 连接 SSID: YLZ[0m
+[0;32mI (629) wifi:new:<11,2>, old:<1,0>, ap:<255,255>, sta:<11,2>, prof:1, snd_ch_cfg:0x0[0m
+[0;32mI (629) wifi:state: init -> auth (0xb0)[0m
+[0;32mI (639) wifi:state: auth -> assoc (0x0)[0m
+[0;32mI (639) wifi:state: assoc -> run (0x10)[0m
+[0;32mI (659) wifi:connected with YLZ, aid = 1, channel 11, 40D, bssid = 5c:4d:bf:b5:67:3f[0m
+[0;32mI (659) wifi:security: WPA2-PSK, phy: bgn, rssi: -24[0m
+[0;32mI (659) wifi:pm start, type: 1[0m
+
+[0;32mI (669) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us[0m
+[0;32mI (669) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000[0m
+[0;32mI (759) wifi:AP's beacon interval = 102400 us, DTIM period = 1[0m
+[0;32mI (2679) esp_netif_handlers: sta ip: 192.168.0.184, mask: 255.255.255.0, gw: 192.168.0.1[0m
+[0;32mI (2679) n10p_bridge: WiFi 已连接! IP: 192.168.0.184[0m
+[0;32mI (2679) n10p_bridge: WiFi 连接成功![0m
+[0;32mI (2689) n10p_bridge: TCP Server 监听端口 8888, 等待客户端连接...[0m
+[0;32mI (2689) n10p_bridge: === 系统就绪 === 等待雷达数据和客户端连接...[0m
+[0;32mI (2689) n10p_bridge: UART: total=1 valid=1 (0fps) TCP发送=0 队列剩余=1[0m
+[0;32mI (2699) main_task: Returned from app_main()[0m
+[0;32mI (3699) n10p_bridge: UART: total=348 valid=348 (346fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (4699) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (5679) wifi:<ba-add>idx:0 (ifx:0, 5c:4d:bf:b5:67:3f), tid:0, ssn:6, winSize:64[0m
+[0;32mI (5699) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (6699) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (7699) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (8709) n10p_bridge: UART: total=333 valid=333 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (9709) n10p_bridge: UART: total=333 valid=333 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (10719) n10p_bridge: UART: total=334 valid=334 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (11719) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (12729) n10p_bridge: UART: total=334 valid=334 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (13729) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (14729) n10p_bridge: UART: total=333 valid=333 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (15739) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (16739) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (17739) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (18749) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (19749) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (20749) n10p_bridge: UART: total=334 valid=334 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (21759) n10p_bridge: UART: total=333 valid=333 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (22759) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (23759) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (24769) n10p_bridge: UART: total=333 valid=333 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (25059) n10p_bridge: 客户端已连接! 开始转发数据...[0m
+[0;32mI (25779) n10p_bridge: UART: total=335 valid=335 (332fps) TCP发送=267 队列剩余=2[0m
+[0;33mW (25949) n10p_bridge: 客户端断开 (sent=-1 errno=104)[0m
+[0;32mI (25949) n10p_bridge: 等待新客户端连接...[0m
+[0;32mI (25949) n10p_bridge: TCP Server 监听端口 8888, 等待客户端连接...[0m
+[0;32mI (26789) n10p_bridge: UART: total=335 valid=335 (332fps) TCP发送=41 队列剩余=32[0m
+[0;32mI (27789) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (28799) n10p_bridge: UART: total=333 valid=333 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (29809) n10p_bridge: UART: total=335 valid=335 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (30819) n10p_bridge: UART: total=334 valid=334 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (31819) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (32819) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (33829) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (34829) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (35829) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (36839) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (37849) n10p_bridge: UART: total=335 valid=335 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (38849) n10p_bridge: UART: total=333 valid=333 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (39849) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (40849) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (41859) n10p_bridge: UART: total=334 valid=334 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (42869) n10p_bridge: UART: total=333 valid=333 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (43869) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (44869) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (45879) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (46879) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (47879) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (48889) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (49889) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (50889) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (51899) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (52909) n10p_bridge: UART: total=335 valid=335 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (53909) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (54909) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (55919) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (56919) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (57919) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (58929) n10p_bridge: UART: total=333 valid=333 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (59929) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (60069) n10p_bridge: 客户端已连接! 开始转发数据...[0m
+
+assert failed: tlsf_free tlsf.c:1201 (!block_is_free(block) && "block already marked as free")
+
+
+Backtrace: 0x40375c66:0x3fcb6500 0x4037d405:0x3fcb6520 0x403857fd:0x3fcb6540 0x403831e6:0x3fcb6660 0x4038306c:0x3fcb6680 0x40376582:0x3fcb66a0 0x4038582d:0x3fcb66c0 0x4200c454:0x3fcb66e0 0x4037dfcd:0x3fcb6740
+
+
+
+
+ELF file SHA256: e3866f4e2
+
+Rebooting...
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0xc (RTC_SW_CPU_RST),boot:0x8 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x42036f08
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x1870
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xce8
+load:0x403cb700,len:0x2ed8
+entry 0x403c8918
+[0;32mI (26) boot: ESP-IDF v5.3.2 2nd stage bootloader[0m
+[0;32mI (26) boot: compile time May 31 2026 01:13:37[0m
+[0;32mI (26) boot: Multicore bootloader[0m
+[0;32mI (29) boot: chip revision: v0.2[0m
+[0;32mI (33) boot: efuse block revision: v1.3[0m
+[0;32mI (38) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (42) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (47) boot.esp32s3: SPI Flash Size : 2MB[0m
+[0;32mI (52) boot: Enabling RNG early entropy source...[0m
+[0;32mI (57) boot: Partition Table:[0m
+[0;32mI (61) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (68) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (75) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (83) boot:  2 factory          factory app      00 00 00010000 00100000[0m
+[0;32mI (90) boot: End of partition table[0m
+[0;32mI (95) esp_image: segment 0: paddr=00010020 vaddr=3c090020 size=1b2d0h (111312) map[0m
+[0;32mI (123) esp_image: segment 1: paddr=0002b2f8 vaddr=3fc9ab00 size=0497ch ( 18812) load[0m
+[0;32mI (127) esp_image: segment 2: paddr=0002fc7c vaddr=40374000 size=0039ch (   924) load[0m
+[0;32mI (129) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=86ef0h (552688) map[0m
+[0;32mI (235) esp_image: segment 4: paddr=000b6f18 vaddr=4037439c size=16680h ( 91776) load[0m
+[0;32mI (265) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (265) boot: Disabling RNG early entropy source...[0m
+[0;32mI (277) cpu_start: Multicore app[0m
+[0;32mI (287) cpu_start: Pro cpu start user code[0m
+[0;32mI (287) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (287) app_init: Application information:[0m
+[0;32mI (290) app_init: Project name:     esp32_n10p_bridge[0m
+[0;32mI (295) app_init: App version:      ddd9ed3-dirty[0m
+[0;32mI (301) app_init: Compile time:     May 31 2026 01:13:34[0m
+[0;32mI (307) app_init: ELF file SHA256:  e3866f4e2...[0m
+[0;32mI (312) app_init: ESP-IDF:          v5.3.2[0m
+[0;32mI (317) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (322) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (326) efuse_init: Chip rev:         v0.2[0m
+[0;32mI (331) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (339) heap_init: At 3FCA30D0 len 00046640 (281 KiB): RAM[0m
+[0;32mI (345) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (351) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (357) heap_init: At 600FE100 len 00001EE8 (7 KiB): RTCRAM[0m
+[0;32mI (364) spi_flash: detected chip: boya[0m
+[0;32mI (368) spi_flash: flash io: dio[0m
+[0;33mW (371) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.[0m
+[0;32mI (385) sleep: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (392) sleep: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (399) main_task: Started on CPU0[0m
+[0;32mI (409) main_task: Calling app_main()[0m
+[0;32mI (429) n10p_bridge: === N10P 雷达 WiFi 无线转发固件 v4 ===[0m
+[0;32mI (429) n10p_bridge: Phase 3: UART → WiFi TCP 原始帧转发 (无包装)[0m
+[0;32mI (429) n10p_bridge: 硬件: ESP32-S3 N16R8, UART1 RX=IO18, 460800-8N1[0m
+[0;32mI (439) n10p_bridge: UART1 init OK: 460800-8N1, RX=IO18 TX=IO17[0m
+[0;32mI (449) pp: pp rom version: e7ae62f[0m
+[0;32mI (449) net80211: net80211 rom version: e7ae62f[0m
+[0;32mI (469) wifi:wifi driver task: 3fcae29c, prio:23, stack:6656, core=0[0m
+[0;32mI (479) wifi:wifi firmware version: b0fd6006b[0m
+[0;32mI (479) wifi:wifi certification version: v7.0[0m
+[0;32mI (479) wifi:config NVS flash: enabled[0m
+[0;32mI (479) wifi:config nano formating: disabled[0m
+[0;32mI (479) wifi:Init data frame dynamic rx buffer num: 32[0m
+[0;32mI (489) wifi:Init static rx mgmt buffer num: 5[0m
+[0;32mI (489) wifi:Init management short buffer num: 32[0m
+[0;32mI (489) wifi:Init dynamic tx buffer num: 32[0m
+[0;32mI (499) wifi:Init static tx FG buffer num: 2[0m
+[0;32mI (499) wifi:Init static rx buffer size: 1600[0m
+[0;32mI (509) wifi:Init static rx buffer num: 10[0m
+[0;32mI (509) wifi:Init dynamic rx buffer num: 32[0m
+[0;32mI (509) wifi_init: rx ba win: 6[0m
+[0;32mI (519) wifi_init: accept mbox: 6[0m
+[0;32mI (519) wifi_init: tcpip mbox: 32[0m
+[0;32mI (529) wifi_init: udp mbox: 6[0m
+[0;32mI (529) wifi_init: tcp mbox: 6[0m
+[0;32mI (529) wifi_init: tcp tx win: 5760[0m
+[0;32mI (539) wifi_init: tcp rx win: 5760[0m
+[0;32mI (539) wifi_init: tcp mss: 1440[0m
+[0;32mI (539) wifi_init: WiFi IRAM OP enabled[0m
+[0;32mI (549) wifi_init: WiFi RX IRAM OP enabled[0m
+[0;32mI (559) phy_init: phy_version 680,a6008b2,Jun  4 2024,16:41:10[0m
+[0;32mI (599) wifi:mode : sta (c0:4e:30:07:e3:58)[0m
+[0;32mI (599) wifi:enable tsf[0m
+[0;32mI (599) n10p_bridge: WiFi Station 启动, 连接 SSID: YLZ[0m
+[0;32mI (609) wifi:new:<11,2>, old:<1,0>, ap:<255,255>, sta:<11,2>, prof:1, snd_ch_cfg:0x0[0m
+[0;32mI (609) wifi:state: init -> auth (0xb0)[0m
+[0;32mI (619) wifi:state: auth -> assoc (0x0)[0m
+[0;32mI (629) wifi:state: assoc -> run (0x10)[0m
+[0;32mI (889) wifi:connected with YLZ, aid = 1, channel 11, 40D, bssid = 5c:4d:bf:b5:67:3f[0m
+[0;32mI (889) wifi:security: WPA2-PSK, phy: bgn, rssi: -28[0m
+[0;32mI (899) wifi:pm start, type: 1[0m
+
+[0;32mI (899) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us[0m
+[0;32mI (909) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000[0m
+[0;32mI (969) wifi:AP's beacon interval = 102400 us, DTIM period = 1[0m
+[0;32mI (2199) wifi:<ba-add>idx:0 (ifx:0, 5c:4d:bf:b5:67:3f), tid:0, ssn:6, winSize:64[0m
+[0;32mI (2919) esp_netif_handlers: sta ip: 192.168.0.184, mask: 255.255.255.0, gw: 192.168.0.1[0m
+[0;32mI (2919) n10p_bridge: WiFi 已连接! IP: 192.168.0.184[0m
+[0;32mI (2919) n10p_bridge: WiFi 连接成功![0m
+[0;32mI (2929) n10p_bridge: TCP Server 监听端口 8888, 等待客户端连接...[0m
+[0;32mI (2929) n10p_bridge: === 系统就绪 === 等待雷达数据和客户端连接...[0m
+[0;32mI (2929) n10p_bridge: UART: total=2 valid=2 (1fps) TCP发送=0 队列剩余=2[0m
+[0;32mI (2939) main_task: Returned from app_main()[0m
+[0;32mI (3939) n10p_bridge: UART: total=347 valid=347 (345fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (4939) n10p_bridge: UART: total=332 valid=332 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (5939) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (6949) n10p_bridge: UART: total=333 valid=333 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (7949) n10p_bridge: UART: total=333 valid=333 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (8959) n10p_bridge: UART: total=334 valid=334 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (9959) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (10969) n10p_bridge: UART: total=334 valid=334 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (11969) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (12969) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (13669) wifi:<ba-add>idx:1 (ifx:0, 5c:4d:bf:b5:67:3f), tid:6, ssn:0, winSize:64[0m
+[0;32mI (13979) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (14979) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (15989) n10p_bridge: UART: total=334 valid=334 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (16989) n10p_bridge: UART: total=333 valid=333 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (17999) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (18999) n10p_bridge: UART: total=333 valid=333 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (20009) n10p_bridge: UART: total=334 valid=334 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (21009) n10p_bridge: UART: total=334 valid=334 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (22019) n10p_bridge: UART: total=334 valid=334 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (23019) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (24019) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (25029) n10p_bridge: UART: total=334 valid=334 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (26039) n10p_bridge: UART: total=333 valid=333 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (27039) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (28049) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (29049) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (30049) n10p_bridge: UART: total=333 valid=333 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (31059) n10p_bridge: UART: total=333 valid=333 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (32059) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (33059) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (34059) n10p_bridge: 客户端已连接! 开始转发数据...[0m
+[0;32mI (34069) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=31 队列剩余=3[0m
+[0;32mI (35079) n10p_bridge: UART: total=336 valid=336 (333fps) TCP发送=332 队列剩余=5[0m
+[0;32mI (36089) n10p_bridge: UART: total=335 valid=335 (332fps) TCP发送=338 队列剩余=2[0m
+[0;32mI (37099) n10p_bridge: UART: total=334 valid=334 (331fps) TCP发送=331 队列剩余=2[0m
+[0;32mI (38099) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=15 队列剩余=32[0m
+[0;32mI (39109) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (40109) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (41109) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (42119) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (43119) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (44119) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (45129) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (46129) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (47129) n10p_bridge: UART: total=333 valid=333 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (48129) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (49139) n10p_bridge: UART: total=334 valid=334 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (50139) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (51149) n10p_bridge: UART: total=333 valid=333 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (52149) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (53149) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (54159) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (55159) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (56159) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (57169) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (58169) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (59169) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (60179) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (61189) n10p_bridge: UART: total=335 valid=335 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (62199) n10p_bridge: UART: total=335 valid=335 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (63199) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (64199) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (65209) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (66209) n10p_bridge: UART: total=333 valid=333 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (67209) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (68219) n10p_bridge: UART: total=334 valid=334 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (69229) n10p_bridge: UART: total=334 valid=334 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (70229) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (71229) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (72239) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (73239) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (74239) n10p_bridge: UART: total=334 valid=334 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (75249) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (76249) n10p_bridge: UART: total=333 valid=333 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (77249) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (78259) n10p_bridge: UART: total=334 valid=334 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (79269) n10p_bridge: UART: total=334 valid=334 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (80269) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (81279) n10p_bridge: UART: total=334 valid=334 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (82289) n10p_bridge: UART: total=333 valid=333 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (83289) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (84289) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (85299) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (86309) n10p_bridge: UART: total=335 valid=335 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (87309) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (88309) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (89319) n10p_bridge: UART: total=333 valid=333 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (90329) n10p_bridge: UART: total=334 valid=334 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (91329) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (92329) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (93339) n10p_bridge: UART: total=332 valid=332 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (94339) n10p_bridge: UART: total=332 valid=332 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (95339) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (96349) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (97349) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (98349) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (99359) n10p_bridge: UART: total=334 valid=334 (331fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (100359) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (101359) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (102369) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (103369) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (104369) n10p_bridge: UART: total=334 valid=334 (332fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (105379) n10p_bridge: UART: total=332 valid=332 (330fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (106379) n10p_bridge: UART: total=334 valid=334 (333fps) TCP发送=0 队列剩余=32[0m
+[0;32mI (107379) n10p_bridge: UART: total=332 valid=332 (332fps) TCP发送=0 队列剩余=32[0m
