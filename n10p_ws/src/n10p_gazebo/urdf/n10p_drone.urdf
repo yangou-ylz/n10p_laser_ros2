@@ -126,9 +126,11 @@
         </noise>
       </ray>
       <plugin name="n10p_lidar_plugin" filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <remapping>/out:=/scan</remapping>
+        </ros>
         <output_type>sensor_msgs/LaserScan</output_type>
         <frame_name>laser_frame</frame_name>
-        <topic_name>/scan</topic_name>
       </plugin>
     </sensor>
   </gazebo>

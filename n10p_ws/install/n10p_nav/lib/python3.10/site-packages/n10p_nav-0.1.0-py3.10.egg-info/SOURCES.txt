@@ -8,6 +8,7 @@ setup.py
 ../../build/n10p_nav/n10p_nav.egg-info/zip-safe
 config/n10p_nav.rviz
 config/nav2_params_n10p.yaml
+launch/desktop_test_launch.py
 launch/nav_launch.py
 n10p_nav/__init__.py
 resource/n10p_nav

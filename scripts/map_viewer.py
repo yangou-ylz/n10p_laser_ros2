@@ -38,8 +38,8 @@ def load_map(yaml_path):
     unknown = ~occupied & ~free
 
     result = np.zeros_like(data)
-    result[free] = 0      # 自由 → 白色
-    result[occupied] = 100 # 占用 → 黑色
+    result[free] = 100     # 自由 → 白色(与 RViz2 一致)
+    result[occupied] = 0   # 占用 → 黑色
     result[unknown] = 50   # 未知 → 灰色
 
     return meta, result

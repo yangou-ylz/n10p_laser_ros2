@@ -2,6 +2,7 @@
 /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_nav/lib/python3.10/site-packages/n10p_nav/__pycache__/__init__.cpython-310.pyc
 /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_nav/share/ament_index/resource_index/packages/n10p_nav
 /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_nav/share/n10p_nav/package.xml
+/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_nav/share/n10p_nav/launch/desktop_test_launch.py
 /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_nav/share/n10p_nav/launch/nav_launch.py
 /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_nav/share/n10p_nav/config/nav2_params_n10p.yaml
 /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_nav/share/n10p_nav/config/n10p_nav.rviz

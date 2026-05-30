@@ -97,17 +97,7 @@ def generate_launch_description():
     )
 
     # ══════════════════════════════════════════════════
-    # 5.5. Scan 话题转发 (n10p_lidar_plugin/out → /scan)
-    # ══════════════════════════════════════════════════
-    scan_relay = Node(
-        package='n10p_gazebo',
-        executable='scan_relay',
-        name='scan_relay',
-        output='screen',
-    )
-
-    # ══════════════════════════════════════════════════
-    # 6. Nav2 导航栈
+    # 5. Nav2 导航栈
     # ══════════════════════════════════════════════════
     planner_node = Node(
         package='nav2_planner',
@@ -142,7 +132,8 @@ def generate_launch_description():
             'use_sim_time': use_sim_time,
             'autostart': True,
             'node_names': ['map_server', 'planner_server', 'controller_server', 'bt_navigator'],
-            'bond_timeout': 10.0,
+            'bond_timeout': 15.0,
+            'service_timeout': 15.0,
         }],
     )
 
@@ -170,18 +161,17 @@ def generate_launch_description():
         # 等 Gazebo 就绪后生成模型
         TimerAction(period=3.0, actions=[spawn_robot]),
 
-        # robot_state_publisher + map_server + TF + scan relay
+        # robot_state_publisher + map_server + TF + scan relay (提前启动，留足初始化时间)
         TimerAction(period=5.0, actions=[robot_state_pub]),
-        TimerAction(period=5.0, actions=[map_server]),
+        TimerAction(period=3.0, actions=[map_server]),
         TimerAction(period=5.5, actions=[static_tf_map_odom]),
-        TimerAction(period=6.0, actions=[scan_relay]),
 
         # Nav2 导航栈 (等 TF 树就绪)
         TimerAction(period=8.0, actions=[planner_node]),
         TimerAction(period=8.0, actions=[controller_node]),
         TimerAction(period=8.0, actions=[bt_navigator_node]),
-        TimerAction(period=15.0, actions=[lifecycle_nav]),
+        TimerAction(period=18.0, actions=[lifecycle_nav]),
 
         # RViz2 最后启动
-        TimerAction(period=16.0, actions=[rviz_node]),
+        TimerAction(period=19.0, actions=[rviz_node]),
     ])

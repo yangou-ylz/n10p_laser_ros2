@@ -10,4 +10,5 @@ setup.py
 config/mapper_params_online_async.yaml
 config/n10p_slam.rviz
 launch/slam_launch.py
+launch/slam_only_launch.py
 resource/n10p_slam
