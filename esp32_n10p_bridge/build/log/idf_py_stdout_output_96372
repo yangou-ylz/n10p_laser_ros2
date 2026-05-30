@@ -1,0 +1,12 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x15 (USB_UART_CHIP_RESET),boot:0x0 (DOWNLOAD(USB/UART0))
+Saved PC:0x40041a76
+waiting for download
+[0;32mI (1019) n10p_uart: !!! 首次收到数据: len=256 首字节=0xFF '?'[0m
+[0;32mI (1019) n10p_uart:   前8字节: FF EF D9 FF EF ED B7 FF[0m
+[0;32mI (5429) n10p_uart: 统计(5s): 字节=400 (79B/s) 帧: total=0 valid=0 lost=0 fps=0.0[0m
+[0;33mW (10529) n10p_uart: !!! 心跳: 已等待 10s, UART 收到 0 字节 !!![0m
+[0;33mW (10529) n10p_uart:   检查: N10P是否上电/电机是否转/TX→IO18/GND连通[0m
+[0;33mW (15629) n10p_uart: !!! 心跳: 已等待 15s, UART 收到 0 字节 !!![0m
+[0;33mW (15629) n10p_uart:   检查: N10P是否上电/电机是否转/TX→IO18/GND连通[0m

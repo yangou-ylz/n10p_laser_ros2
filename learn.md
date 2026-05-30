@@ -1487,3 +1487,1603 @@ flowchart LR
 ```
 
 ---
+
+# 阶段一补充：TF 坐标变换实战详解
+
+> 用一次完整的无人机飞行流程，讲清楚 map、odom、base_link 到底是怎么协同工作的。
+
+---
+
+## 1.B.1 首先回答你的两个问题
+
+### 问题 1：地图的原点在哪里？
+
+**地图原点 = 你启动 SLAM 建图那一瞬间，机器人所在的位置。**
+
+SLAM 配置文件 `mapper_params_online_async.yaml:19` 明确写了：
+
+```yaml
+map_start_pose: [0.0, 0.0, 0.0]   # 地图原点
+```
+
+当你第一次启动 SLAM（`slam_launch.py`），slam-toolbox 创建一个空的"世界"，把机器人的当前位置标记为 `(0, 0, 0)`。之后slam-toolbox 通过激光扫描匹配，推算出机器人相对于这个原点走了多远，同时在地图上画出障碍物。
+
+打个比方：你搬进一个空房间，在门口放了一枚硬币标记为"原点"。然后你闭着眼睛（只用里程计）走一圈，每次睁眼看一眼前方（激光扫描），把看到的墙壁位置记录下来。最终你得到一张以"门口的硬币"为原点的地图。
+
+**地图原点没有物理意义**——它不是房间的某个固定角落，也不是 GPS 坐标。它纯粹是"开始建图时机器人恰好在哪里"。
+
+### 问题 2：odom 怎么知道离世界坐标系的相对位移？
+
+**odom 不知道。odom 从零开始自己算，是 SLAM/AMCL 后来告诉它"你偏了，需要修正"。**
+
+这是最关键的理解。下面用完整流程讲清楚。
+
+---
+
+## 1.B.2 一个完整的无人机工作流程
+
+**场景设定**：一个 10m × 10m 的仓库，里面有货架。我们有一架搭载 N10P 雷达和飞控的无人机。
+
+```
+        y=10
+         ┌──────────────────────────┐
+         │                          │
+         │    货架A      货架B       │
+         │                          │
+         │                          │
+         │    货架C      货架D       │
+         │                          │
+         │               无人机起飞点│
+         └──────────────────────────┘
+      (0,0)                      x=10
+```
+
+---
+
+### 第一阶段：建图（某一天）
+
+**步骤 1：放置无人机，开机**
+
+操作：把无人机放在仓库门口附近（不是任何特殊位置），上电。
+
+飞控启动后，**在飞控自己的世界里**，它认为当前位置是 `(0, 0, 0)`，朝向 0°。飞控创建一个叫 `odom` 的坐标系，机器人此时在 odom 坐标系的原点。
+
+```
+飞控内心世界：
+    odom 坐标系
+       │
+       └── base_link 在 (0, 0, 0)，朝向 0°
+```
+
+**步骤 2：启动 SLAM 手持建图**
+
+执行：`ros2 launch n10p_slam slam_launch.py`
+
+slam-toolbox 启动时，创建了一个叫 `map` 的坐标系。**此时机器人在 map 坐标系的原点**。
+
+```
+slam-toolbox 的内心世界：
+    map 坐标系
+       │
+       └── 机器人在 (0, 0, 0)，朝向 0°（因为刚启动，map 和 odom 重合）
+```
+
+**关键**：此时 `map` 和 `odom` 重合，都是 `(0, 0, 0)`。因为机器人还没动，谁也不知道"真实世界"在哪。`map→odom` 的 TF = 零（无修正）。
+
+**步骤 3：拿着无人机在仓库里走一圈**
+
+你拿起无人机，先在 X 方向走了 5 米，绕过一个货架，又走了回来。
+
+此时发生了两件事：
+
+**① 飞控（odom）在持续更新：**
+
+飞控的 IMU + 速度积分告诉你：
+```
+t=0s:   我在 odom 原点 (0, 0, 0)，朝 X 方向
+t=10s:  我在 odom 的 (2.0, 0.02, 0)  ← 朝 X 走了约 2m
+t=20s:  我在 odom 的 (4.0, 0.05, 0)  ← 又走了 2m
+t=30s:  我在 odom 的 (5.0, 0.10, 0)  ← 到了货架附近
+t=40s:  我在 odom 的 (2.0, 0.10, 0)  ← 往回走了
+t=50s:  我在 odom 的 (0.5, 0.15, 0)  ← 快回到原点了
+```
+
+注意 Y 坐标从 0 慢慢漂到了 0.15——这是里程计的**累积漂移**，飞控自己察觉不到。
+
+飞控一直在发布 `odom→base_link` 的 TF：每 20ms 一次，告诉下游"我相对于 odom 原点走了多少"。
+
+**② SLAM 在做扫描匹配（scan matching）：**
+
+SLAM 每收到一帧激光扫描，就跟上一帧对比：
+```
+第 1 帧扫描：看到前方 1.8m 有堵墙（仓库墙壁）
+第 2 帧扫描：同一堵墙现在在 1.2m 处 → 我朝墙走了 0.6m
+第 3 帧扫描：墙在 0.6m 处 → 又走了 0.6m
+...
+```
+
+SLAM 还能检测**回环**（loop closure）——当你走回之前来过的地方时：
+```
+第 50 帧扫描：这个 L 形角落的图案... 我见过！这是第 1 帧看到的那个角落！
+             但 odom 说我现在在 (0.5, 0.15)，而实际我应该在 (0, 0) 附近
+             → odom 漂了 0.15m！需要修正！
+```
+
+SLAM 修正的方式：发布一个新的 `map→odom` TF。本来是零 TF（因为最开始重合），现在变成 `(0, -0.15, 0)`，意思是"要得到正确的 map 坐标，把 odom 的 Y 坐标减去 0.15"。
+
+```
+修正前：
+  odom 说 base_link 在 (0.5, 0.15)
+  map→odom TF = (0, 0, 0)  ← 零修正
+  → map 中 base_link 在 (0.5, 0.15) ← 错了！应该是 (0.5, 0)
+
+修正后：
+  odom 说 base_link 在 (0.5, 0.15)
+  map→odom TF = (0, -0.15, 0) ← SLAM 发布的新修正
+  → map 中 base_link 在 (0.5, 0.15) + (0, -0.15, 0) = (0.5, 0) ← 对了！
+```
+
+**步骤 4：保存地图**
+
+SLAM 完成后，调用 SaveMap 服务。slam-toolbox 把当前的栅格地图保存为 `n10p_map.pgm` + `n10p_map.yaml`。
+
+这张地图的原点是 `(0, 0, 0)`——也就是你**启动 SLAM 时机器人站的位置**。
+
+---
+
+### 第二阶段：使用地图导航（另一天）
+
+**步骤 1：把无人机重新放到仓库里**
+
+**重点**：这次你放的位置可能跟上次建图时不一样——比如往右偏了 1 米。但没关系！
+
+上电后，飞控跟上次一样，从零开始：
+```
+飞控内心世界：
+    odom 坐标系
+       │
+       └── base_link 在 (0, 0, 0)  ← 又是零！
+```
+
+odom 坐标系**总是从零开始**。它不知道上次建图的事，不知道地图原点在哪，不知道自己在仓库什么位置。它只会说："从我开机以来，我走了多远"。
+
+**步骤 2：启动导航**
+
+执行：`ros2 launch n10p_nav nav_launch.py`
+
+这次启动了 map_server，把之前保存的地图加载进来，发布到 `/map` 话题。同时启动了 AMCL（定位模块）。
+
+**启动瞬间**：AMCL 不知道机器人在哪。它在地图上**随机撒了 2000 个粒子**——每个粒子代表"机器人可能在这个位置"。
+
+```
+AMCL 初始状态：
+    地图上散布着 2000 个红色粒子
+    每个粒子 (x, y, θ) 都是随机猜测
+    AMCL 还没有发布 map→odom TF
+```
+
+**步骤 3：给 AMCL 一个初始位姿**
+
+在 RViz2 里用"2D Pose Estimate"工具，在地图上点一下无人机的大概位置 + 朝向。
+
+这一步之后：AMCL 把所有粒子集中到你点的位置附近，不再随机散布。
+
+**步骤 4：AMCL 自动收敛到精确位置**
+
+激光雷达一直在发 `/scan`。AMCL 对每个粒子问："如果机器人真的在这里，它看到的激光扫描应该长什么样？"然后跟真实的 `/scan` 对比。
+
+```
+粒子 A(位置正确): 预期扫描 ≈ 实际扫描 → 得分高 ✓ 保留！
+粒子 B(偏了 30cm): 预期扫描 ≠ 实际扫描 → 得分低 ✗ 淘汰！
+粒子 C(方向错了): 预期扫描 ≠ 实际扫描 → 得分低 ✗ 淘汰！
+```
+
+经过几轮淘汰和重采样后，2000 个粒子密集聚集在真实位置附近。AMCL 取这些粒子的加权平均 = **机器人在 map 中的精确位姿**。
+
+现在 AMCL 知道了：**机器人实际上在 map 的 (3.5, 2.1)，朝向 45°**。
+
+但 odom 还在说"我在 (0, 0)，朝向 0°"！这就出现了矛盾：
+- odom 说 base_link 在 odom 的 (0, 0, 0)
+- AMCL 说 base_link 应该在 map 的 (3.5, 2.1, 45°)
+
+**AMCL 解决这个矛盾的方式：发布 `map→odom` TF！**
+
+```
+AMCL 发布的 map→odom TF：
+  平移 = (3.5, 2.1, 0)
+  旋转 = 45°
+
+TF 系统自动计算：
+  map 中的 base_link = map→odom × odom→base_link
+                     = (3.5, 2.1, 45°) × (0, 0, 0)
+                     = (3.5, 2.1, 45°)  ← 正确！
+```
+
+**步骤 5：给出导航目标**
+
+现在 TF 链完整了——AMCL 知道机器人在 map 的哪里，持续发布 `map→odom` TF。一切就绪。
+
+你在 RViz2 中点击"2D Goal Pose"，在 map 坐标中指定目标 `(8.0, 4.0)`。
+
+planner_server 收到请求：从 map 的 `(3.5, 2.1)` 规划一条路径到 `(8.0, 4.0)`。路径 `/plan` 上的所有点都在 map 坐标系中。
+
+controller_server 把路径上的点转换到 base_link 坐标系中，算出 `/cmd_vel`。
+
+无人机开始移动：
+```
+t=0s:    odom→base_link = (0, 0, 0)           map→odom = (3.5, 2.1, 45°)
+t=5s:    odom→base_link = (0.5, 0.01, 0)      AMCL 重新计算 map→odom
+t=10s:   odom→base_link = (1.0, 0.02, 0)      AMCL 重新计算 map→odom
+t=20s:   odom→base_link = (2.0, 0.01, 0)      AMCL 重新计算 map→odom
+...
+         → map 中 base_link = 始终是激光匹配出的真实位置
+```
+
+**AMCL 持续在后台修正** `map→odom` TF：每收到一帧 `/scan`，就跟地图比对一次，更新粒子权重。如果 odom 漂了，`map→odom` 会相应调整，保证 `map 中的 base_link` 始终正确。
+
+---
+
+## 1.B.3 用"GPS 类比"一言以蔽之
+
+| | GPS 系统 | ROS2 TF 系统 |
+|---|---------|------------|
+| 世界固定坐标系 | 地球经纬度 | `map` 坐标系 |
+| 本机推算 | 手机 GPS 芯片的航迹推算 | 飞控里程计 → `odom` |
+| 纠偏方式 | 接收卫星信号校准 | 激光扫描匹配地图 → AMCL 修正 |
+| 纠偏输出 | 手机上显示"你在地球上的位置" | `map→odom` TF |
+
+- GPS 不需要你"站在固定位置开机"——卫星告诉你绝对位置
+- 里程计不需要你"站在地图原点开机"——AMCL 用激光扫描告诉你绝对位置
+
+**AMCL = 室内版 GPS**。GPS 用卫星信号定位，AMCL 用激光扫描匹配地图定位。
+
+---
+
+## 1.B.4 一张图讲清全过程
+
+```
+时间线：建图（Day 1）→ 导航（Day 2）
+```
+
+```
+Day 1: 建图
+══════════════════════════════════════════════════════════════
+
+[启动 SLAM]                     [建图完成]
+     │                               │
+     ▼                               ▼
+ map 原点诞生                   map 被保存
+ 在机器人脚下                   原点 = 曾经的脚下
+ (0, 0, 0)
+     │                               │
+     └──── 机器人移动, SLAM追踪 ──────┘
+
+
+Day 2: 导航 (机器人在不同位置重新开机)
+══════════════════════════════════════════════════════════════
+
+上电         启动 AMCL       给初始位姿        AMCL 收敛          开始导航
+ │               │               │                │                  │
+ ▼               ▼               ▼                ▼                  ▼
+odom 从        2000 粒子      粒子聚焦到      粒子收敛到         map→odom TF
+(0,0,0)       随机散布       用户指定位姿     精确位置           持续更新
+开始          在地图上        附近             map→odom TF       /cmd_vel 发出
+                                               被设定
+                                               (3.5, 2.1, 45°)
+
+飞控一直说:       AMCL不知道         有了近似位姿        激光匹配          地图中定位
+"我在(0,0)"       自己在哪里         开始激光匹配        确认精确位姿        持续稳定
+```
+
+---
+
+## 1.B.5 总结：TF 三段式的本质
+
+```
+map → odom → base_link → laser_frame
+ ↑       ↑        ↑            ↑
+ │       │        │            └── 雷达装在哪 (固定偏移, 永远不会变)
+ │       │        └── 飞控说"我走了多远" (一直在变, 高频, 但会漂移)
+ │       └── SLAM/AMCL 的"纠偏量" (间断修正, 低频, 但精确)
+ └── 世界的原点 (建图时确定, 永远不变)
+```
+
+**odom 不需要"知道"世界坐标系**。它只管自己的事。
+- odom: "从我开机以来，我往前走了 3.5 米"
+- AMCL: "但你现在实际在地图的 (3.5, 2.1)，你往右多漂了 2.1 米"
+- AMCL 发布 map→odom: 平移 (3.5, 2.1) — 翻译了 odom 的话
+- TF 系统自动算: 实际位置 = 3.5 - 3.5 = 0? 不对...
+  
+  实际算法: map 中 base_link 坐标 = map→odom 变换 × odom→base_link 变换
+  = (3.5, 2.1, 45°) 变换 × (3.5, 0, 0) 变换
+  ≠ 简单加减，是完整的 2D 刚体变换
+
+最终：**不管无人机在哪开机，AMCL 都能通过激光匹配地图把它定位到 map 坐标系的正确位置，然后发布 map→odom TF 来"对齐"两个坐标系。**
+
+---
+
+
+# 阶段二：硬件驱动层 — N10P 雷达驱动详解
+
+> 目标：理解 N10P 驱动从串口字节到 /scan 话题的每一步发生了什么。
+> 本阶段深入 C++ 源码，但只关注关键逻辑，不逐行解释。
+
+---
+
+## 2.1 驱动包总览
+
+`lslidar_driver` 是一个 C++ ROS2 包，是整个项目中最底层的模块。它位于：
+
+```
+n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver/
+```
+
+### 2.1.1 文件地图
+
+```
+lslidar_driver/
+├── CMakeLists.txt              ← 编译规则：编译 lslidar_driver_node 可执行文件
+├── package.xml                 ← 包元信息：依赖 rclcpp, lslidar_msgs, PCL, pcap 等
+│
+├── include/lslidar_driver/     ← 头文件
+│   ├── lslidar_driver.h        ←   核心类 LslidarDriver 声明（继承自 rclcpp::Node）
+│   ├── input.h                 ←   UDP/PCAP 网络输入类
+│   └── lsiosr.h                ←   串口 I/O 抽象类（LSIOSR 单例）
+│
+├── src/                        ← 源码
+│   ├── lslidar_driver_node.cc  ←   入口 main()：创建节点 → 轮询循环
+│   ├── lslidar_driver.cc       ←   核心驱动逻辑（~1384 行，整个项目的核心）
+│   ├── input.cc                ←   网络输入实现（UDP socket / PCAP 文件回放）
+│   └── lsiosr.cpp              ←   串口实现（termios 配置, 460800bps, 8N1）
+│
+├── params/
+│   └── lsx10.yaml              ←   N10P 出厂配置
+│
+├── launch/
+│   ├── lslidar_launch.py       ←   单雷达启动
+│   └── lslidar_double_launch.py←   双雷达启动
+│
+└── rviz/
+    └── lslidar.rviz            ←   预配置的 RViz2 显示文件
+```
+
+### 2.1.2 驱动支持的所有雷达型号
+
+从 `lslidar_driver.cc:140-226` 的参数选择逻辑可以看到，一个驱动支持 8 种镭神雷达：
+
+| 型号 | 每帧字节 | 每帧点数 | 波特率 | 总点数 | 本项目使用 |
+|------|---------|---------|--------|--------|-----------|
+| M10 | 92 | 42 | 460800 | 1008 | |
+| M10_P | 160 | 70 | 500000 | 2000 | |
+| M10_PLUS | 104 | 41 | 921600 | 5000 | |
+| M10_GPS | 102 | 42 | 460800 | 1008 | |
+| N10 | 58 | 16 | 230400 | 2000 | |
+| **N10_P** | **108** | **16** | **460800** | **2000** | ✅ |
+| M10_DOUBLE | 300 | 70 | 921600 | 3000 | |
+| L10 | 58 | 16 | 230400 | 2000 | |
+
+**关键认知**：N10_P 的 `points_size_ = 2000` 是前/后半圈各 1000 点。文件顶部 `scan_points_.resize(6000)` 预分配了 6000 个元素的数组（3000×2=6000，留有余量）。
+
+---
+
+## 2.2 N10P 的帧格式（字节级）
+
+### 2.2.1 完整帧结构
+
+N10_P 每帧 **108 字节**，结构如下：
+
+```
+偏移  字节数  内容               解析方式
+────  ──────  ────────────────  ────────────────────────────
+0     2       帧头               固定值 0xA5 0x5A
+2     2       转速参数            rpm = 2,500,000 / value
+4     1       (未使用/保留)       —
+5     2       起始角度            大端序 uint16, 单位 0.01°
+7     n×2     距离数据区起点      每个点 2 字节, 小端序 uint16, 单位 mm
+              共 16 个点          值 0xFFFF = 无效点
+              (16×2 = 32 字节从偏移7开始)
+               57-104: 其他数据       —
+105   2       结束角度            大端序 uint16, 单位 0.01°
+107   1       CRC8 校验           所有前 107 字节的累加和 & 0xFF
+```
+
+### 2.2.2 N10P 的特殊之处
+
+跟其他型号不同，N10_P 的帧包含 **结束角度字段**（偏移 105-106）。
+
+这意味着驱动不是靠假设"每帧 15°"，而是用 `(end_angle - start_angle) / 15` 来**精确计算**本帧内的角度步长。如果电机转速不稳导致帧长变化，这个机制能自适应。
+
+代码证据（`lslidar_driver.cc:666-678`）：
+
+```cpp
+if (lidar_name == "N10" || lidar_name == "L10") {
+    // 读取结束角度
+    end_degree = (s_e * 256 + z_e) / 100.f;
+    // 计算本帧的精确角度步长
+    if (degree > end_degree)
+        degree_interval = end_degree + 360 - degree;
+    else
+        degree_interval = end_degree - degree;
+}
+```
+
+> 注意：代码中条件判断用的是 `N10` 和 `L10`，但实际上 N10_P 也进入这个分支（因为 `end_degree_bits_start = 105` 在 N10_P 配置中也被设置了）。
+
+### 2.2.3 CRC8 校验
+
+N10_P 使用简单的 **累加和校验**（`lslidar_driver.cc:625-636`）：
+
+```cpp
+uint8_t LslidarDriver::N10_CalCRC8(unsigned char *p, int len) {
+    uint8_t crc = 0;
+    int sum = 0;
+    for (int i = 0; i < len; i++) {
+        sum += uint8_t(p[i]);
+    }
+    crc = sum & 0xff;  // 取低 8 位
+    return crc;
+}
+```
+
+把前 107 个字节全部加起来，取低 8 位，跟第 108 字节对比。如果不一致 → 帧损坏 → 丢弃。
+
+---
+
+## 2.3 驱动数据流 — 函数调用链
+
+从 `main()` 到 `/scan` 发布，经过以下调用链：
+
+```
+main()                                    [lslidar_driver_node.cc:24]
+ │
+ └─→ node = new LslidarDriver()          构造函数:
+     │                                      - 声明参数 (declare_parameter)
+     │                                      - 读取参数 (get_parameter)
+     │                                      - 根据 lidar_name 选择型号参数
+     │                                      - 创建发布者: /scan + /lslidar_point_cloud
+     │                                      - 创建订阅者: /lslidar_order
+     │                                      - 初始化串口 (LSIOSR::init)
+     │                                      - 启动发布线程 (pubScanThread)
+     │
+     └─→ while(polling())                 [lslidar_driver.cc:1266]
+          │
+          ├─→ interface == "serial" 时:
+          │   接收一个完整帧
+          │   receive_data(packet_bytes)   [lslidar_driver.cc:554]
+          │     ├─ 读第 1 字节 → 检查 0xA5
+          │     ├─ 读第 2 字节 → 检查 0x5A
+          │     ├─ N10_P: len = 108
+          │     ├─ 读剩余 106 字节
+          │     ├─ CRC8 校验
+          │     └─ return 108 (帧长度)
+          │
+          ├─→ N10_P 走双回波处理:
+          │   data_processing_2(packet_bytes, len)
+          │     ├─ 解析起始角度 + 结束角度 → 算角度步长
+          │     ├─ 循环 16 个点:
+          │     │   读取 2 字节距离值 (小端序)
+          │     │   转换: dist = (s*256+z) / 1000.0 (mm→m)
+          │     │   检查 0xFFFF → 无效标记
+          │     │   角度裁剪 (angle_disable_min/max)
+          │     │   存储: scan_points_[i] = 前半圈点
+          │     │          scan_points_[i+3000] = 后半圈点
+          │     └─ 圈检测: 角度回绕 → 通知发布线程
+          │
+          └─→ interface == "net" 时:
+              类似，但走 UDP socket 而非串口
+
+rclcpp::spin_some(node)                  处理 ROS2 回调
+  └─ /lslidar_order 订阅回调
+
+[独立线程]
+
+pubScanThread()                           [lslidar_driver.cc:955]
+ │  阻塞等待 pubscan_cond_ 条件变量
+ │  被唤醒后:
+ ├─→ 分配 LaserScan 消息
+ ├─→ 设置 header.frame_id = "laser_frame"
+ ├─→ 设置 angle_min=0, angle_max=2π, angle_increment=2π/scan_num
+ ├─→ 设置 range_min=0.02, range_max=12.0
+ ├─→ 遍历 scan_points_:
+ │     前半圈: ranges[idx] = points[i].range
+ │     后半圈: ranges[idx+count_num] = points[i+3000].range
+ │     无效点: ranges[idx] = inf
+ └─→ scan_pub->publish(scan)  ← 发布到 /scan 话题
+```
+
+---
+
+## 2.4 关键参数文件 lsx10.yaml
+
+```yaml
+/lslidar_driver_node:           # 节点名，参数挂在这个命名空间下
+  ros__parameters:
+    frame_id: laser_frame       # 雷达坐标系名
+    lidar_name: N10_P           # 型号：触发 N10_P 专用参数(108字节/帧)
+    angle_disable_min: 0.0      # 角度过滤起点 (0=不过滤)
+    angle_disable_max: 0.0      # 角度过滤终点 (0=不过滤)
+    min_range: 0.02             # 最小有效距离(m)
+    max_range: 12.0             # 最大有效距离(m)
+    use_gps_ts: false           # 不用 GPS 时间戳
+    interface_selection: serial # 串口模式
+    serial_port_: /dev/serial/by-id/usb-1a86_USB_Single_Serial_58EB011256-if00
+                                # CH9102 USB 串口的唯一路径
+    compensation: false         # 角度补偿 (N10P 不需要)
+    pubScan: true               # 发布 /scan 话题
+    pubPointCloud2: false       # 不发布点云 (省带宽)
+    pointcloud_topic: /lslidar_point_cloud
+```
+
+**每个参数的含义**：
+
+| 参数 | 如果改了会怎样 |
+|------|--------------|
+| `lidar_name` | 改成 M10 → 驱动按 92 字节/帧解析 → 全乱套 |
+| `serial_port_` | 改成错误的设备 → 串口打不开 → 驱动报错退出 |
+| `min_range / max_range` | 只影响 LaserScan 的过滤，不影响原始解析。改大了可能把有效近处障碍物滤掉 |
+| `angle_disable_min/max` | 屏蔽某个角度范围，比如雷达后方被机身挡住可以设为 150°~210° |
+| `pubScan: false` | 不发布 /scan → 下游 SLAM 无数据 → 什么都做不了 |
+| `pubPointCloud2: true` | 额外发布点云 → 多耗 CPU，一般不需要 |
+
+---
+
+## 2.5 驱动验证方法
+
+### 2.5.1 确认驱动正常运行
+
+```bash
+# 激活环境
+ros2env
+source n10p_ws/install/setup.bash
+
+# 启动驱动
+ros2 launch lslidar_driver lslidar_launch.py
+```
+
+### 2.5.2 三步验证法
+
+| 步骤 | 命令 | 预期结果 | 如果不正常 |
+|------|------|---------|-----------|
+| ① 话题存在 | `ros2 topic list \| grep scan` | 能看到 `/scan` | 驱动没启动或 crash |
+| ② 数据有内容 | `ros2 topic echo /scan --once` | `ranges` 数组有值（不全为 inf） | 雷达没转/遮挡/串口错 |
+| ③ 频率正确 | `ros2 topic hz /scan` | 平均 ~10Hz | 串口丢数/CPU 太慢 |
+
+### 2.5.3 常见故障排查
+
+```
+ros2 topic list | grep scan  →  无输出
+    ↓ 原因
+    驱动 crash (double free 退出)
+    → 查 dmesg | tail, 看是否有 segfault
+    → 或者检查串口是否被占用 (lsof /dev/ttyACM0)
+
+ros2 topic echo /scan --once  →  ranges 全是 inf
+    ↓ 原因
+    雷达转了吗？(听声音/看指示灯)
+    串口路径对吗？(ls -la /dev/serial/by-id/)
+    波特率对吗？(N10P 是 460800)
+
+ros2 topic hz /scan  →  3Hz 而非 10Hz
+    ↓ 原因
+    CPU 被挤占 (top 看 driver 的 CPU 占用)
+    或者串口速率不对
+```
+
+---
+
+## 2.6 驱动已知坑点与修复
+
+### KI-005: Double Free 崩溃 ★★★
+
+**现象**：驱动启动后立刻退出，错误码 -6 (`double free or corruption`)。
+
+**根因**（`lslidar_driver.cc:1271 + data_processing/data_processing_2`）：
+```cpp
+// polling() 中分配内存:
+unsigned char *packet_bytes = new unsigned char[500];
+
+// data_processing/data_processing_2 中:
+delete packet_bytes;  // ❌ BUG 1: 应该用 delete[] (数组)
+// 返回 polling() 后:
+delete packet_bytes;  // ❌ BUG 2: 指针被释两次 (double free)
+```
+
+**修复**：
+1. 删除 `data_processing()` 和 `data_processing_2()` 内部的 `delete` 语句（内存所有权归 `polling()`）
+2. 把 `polling()` 中的 `delete` 改为 `delete[]`
+
+### KI-002: angle_increment 错误 ★★★
+
+**现象**：slam-toolbox 报 "1058 range readings, expected 529"，所有扫描被丢弃。
+
+**根因**（`lslidar_driver.cc:990`）：
+```cpp
+// 错误版本:
+scan->angle_increment = 2 * M_PI / count_num;  // count_num=529
+// → angle_increment = 360/529 ≈ 0.68°
+
+// 但 ranges[] 数组有 scan_num = 2*count_num = 1058 个元素
+// → 角度增量算大了 2 倍
+// → ranges[528] 应该是 180°, 但增量说 ranges[528] 是 360°
+// → slam-toolbox 检测到矛盾 → 丢弃整帧
+```
+
+**修复**：
+```cpp
+scan->angle_increment = 2 * M_PI / scan_num;  // scan_num = 1058
+// → angle_increment = 360/1058 ≈ 0.34°  ✓
+```
+
+### KI-006: Linux 设备路径不稳定
+
+**现象**：昨天 `ros2 launch` 还能用，今天插上雷达找不到设备。
+
+**根因**：Linux 分配 `/dev/ttyACM0`、`/dev/ttyACM1` 是按插入顺序的。先插飞控 → 飞控占 ACM0 → 雷达变 ACM1。
+
+**修复**：用 `/dev/serial/by-id/` 路径，因为 `by-id` 包含 USB 芯片的唯一序列号，不受插入顺序影响。
+
+```bash
+# 不稳定:
+serial_port_: /dev/ttyACM0
+
+# 稳定:
+serial_port_: /dev/serial/by-id/usb-1a86_USB_Single_Serial_58EB011256-if00
+```
+
+---
+
+## 2.7 串口 I/O 层：LSIOSR
+
+`lsiosr.cpp` 是一个约 400 行的串口抽象层（单例模式），封装了 POSIX termios：
+
+```
+LSIOSR::instance()
+  ├── init(port, baud)       → open() + tcgetattr + 配置 8N1 + tcsetattr
+  ├── read(buf, len)         → select() 超时等待 + read()
+  ├── write(buf, len)        → write()
+  └── close()                → close(fd)
+```
+
+配置的串口参数：
+- 8 个数据位、无校验、1 个停止位（8N1）
+- 支持波特率：230400, 460800, 500000, 921600
+- 读取超时：使用 `select()` 非阻塞等待
+
+---
+
+
+## 阶段二 知识图谱
+
+### 2.A.1 驱动函数调用链
+
+```mermaid
+flowchart TB
+    MAIN["main()<br/>lslidar_driver_node.cc"]
+    CONSTRUCTOR["LslidarDriver 构造函数<br/>lslidar_driver.cc"]
+    POLLING["polling()<br/>主轮询循环"]
+    RECEIVE["receive_data()<br/>串口接收帧"]
+    DP1["data_processing()<br/>单回波解析"]
+    DP2["data_processing_2()<br/>N10_P 双回波解析"]
+    PUB_THREAD["pubScanThread()<br/>发布线程 (独立Boost线程)"]
+    PUBLISH["scan_pub->publish()<br/>发布到 /scan 话题"]
+
+    MAIN -->|"new LslidarDriver()"| CONSTRUCTOR
+    CONSTRUCTOR -->|"加载参数 → 选型号 → 开串口 → 启动发布线程"| POLLING
+    MAIN -->|"while循环"| POLLING
+    POLLING -->|"interface==serial"| RECEIVE
+    RECEIVE -->|"读108字节 + CRC8校验"| DP2
+    DP2 -->|"16点→scan_points_[]<br/>圈检测→通知条件变量"| PUB_THREAD
+    PUB_THREAD -->|"阻塞等待→醒来→组装LaserScan"| PUBLISH
+
+    style MAIN fill:#4a9eff,color:#fff
+    style CONSTRUCTOR fill:#ff9f43,color:#fff
+    style POLLING fill:#10ac84,color:#fff
+    style RECEIVE fill:#10ac84,color:#fff
+    style DP2 fill:#a29bfe,color:#fff
+    style PUB_THREAD fill:#ee5a24,color:#fff
+    style PUBLISH fill:#576574,color:#fff
+```
+
+### 2.A.2 帧解析流程图（N10_P）
+
+```mermaid
+flowchart LR
+    BYTES["串口字节流<br/>460800bps"]
+    SYNC["帧同步<br/>找 A5 5A"]
+    READ["读108字节<br/>完成一帧"]
+    CRC["CRC8校验<br/>累加和&0xFF"]
+    PASS{"通过?"}
+    DISCARD["丢弃帧"]
+    START_ANGLE["读取起始角度<br/>字节5-6, 大端序<br/>÷100 = 度数"]
+    END_ANGLE["读取结束角度<br/>字节105-106, 大端序"]
+    ANGLE_STEP["计算角度步长<br/>(end-start)/15"]
+    POINTS["循环16个点<br/>每个点读2字节距离<br/>小端序, mm→m÷1000"]
+    CHECK["检查0xFFFF<br/>无效标记"]
+    STORE["存入scan_points_[]<br/>前半圈: [i]<br/>后半圈: [i+3000]"]
+    DETECT{"圈检测<br/>角度回绕?"}
+    WAKE["唤醒发布线程<br/>pubscan_cond_.notify()"]
+
+    BYTES --> SYNC --> READ --> CRC --> PASS
+    PASS -->|"失败"| DISCARD
+    PASS -->|"通过"| START_ANGLE --> END_ANGLE --> ANGLE_STEP --> POINTS --> CHECK --> STORE --> DETECT
+    DETECT -->|"否,继续收"| BYTES
+    DETECT -->|"是,一圈完整"| WAKE
+
+    style PASS fill:#ff9f43,color:#fff
+    style DETECT fill:#ff9f43,color:#fff
+    style DISCARD fill:#ee5a24,color:#fff
+    style WAKE fill:#10ac84,color:#fff
+```
+
+### 2.A.3 双回波(N10_P)数据存储模型
+
+```mermaid
+flowchart TB
+    subgraph FRAMES["连续帧"]
+        F1["帧1: 角度0°~6° (16点)"]
+        F2["帧2: 角度6°~12° (16点)"]
+        F3["帧N: 角度354°~360° (16点)"]
+    end
+
+    subgraph BUFFER["scan_points_[] 缓冲区"]
+        P1["[0..999] 前半圈<br/>每个角度一个点"]
+        P2["[3000..3999] 后半圈<br/>同角度, 可能不同距离"]
+    end
+
+    subgraph LASER["LaserScan 输出"]
+        R1["ranges[0]: 前半圈0°的距离"]
+        R2["ranges[529]: 后半圈0°的距离"]
+        R3["ranges[1]: 前半圈0.34°的距离"]
+        R4["ranges[530]: 后半圈0.34°的距离"]
+    end
+
+    F1 -->|"写入"| P1
+    F1 -->|"写入"| P2
+    F2 -->|"继续写入"| P1
+    F3 -->|"最后一帧"| P1
+    P1 -->|"拼合"| R1
+    P1 -->|"拼合"| R3
+    P2 -->|"拼合"| R2
+    P2 -->|"拼合"| R4
+
+    style P1 fill:#4a9eff,color:#fff
+    style P2 fill:#ff9f43,color:#fff
+```
+
+---
+
+
+# 阶段三：飞控桥接层 — 里程计与姿态
+
+> 目标：理解飞控数据怎么变成 /odom 和 /imu，以及"里程计"到底是什么。
+> 本阶段深入 [ano_bridge_node.py](n10p_ws/src/n10p_bringup/n10p_bringup/ano_bridge_node.py)（404 行），完整解析匿名协议 V7。
+
+---
+
+## 3.1 什么是"匿名凌霄飞控"
+
+飞控（Flight Controller）= 无人机的大脑。它是一个独立的单片机（STM32），负责：
+
+- 读取 IMU 传感器（加速度计 + 陀螺仪 + 磁力计）
+- 通过融合算法（如卡尔曼滤波）算出飞行姿态（四元数/欧拉角）
+- 估算飞行速度和位置（通过积分 IMU 数据）
+- 接收遥控器指令、控制电机转速
+
+飞控通过**串口数传**跟机载计算机（本项目目前是开发机，最终是树莓派）通信，协议叫"匿名协议 V7"。
+
+```
+无人机硬件栈:
+┌─────────────────────────────────┐
+│  机载计算机 (树莓派/开发机)       │ ← 跑 ROS2, SLAM, Nav2
+│  USB 口 ← 插数传接收器           │
+└──────────┬──────────────────────┘
+           │ 串口 921600bps
+           │ 匿名协议 V7 帧
+┌──────────┴──────────────────────┐
+│  匿名凌霄飞控 (STM32)            │ ← 跑姿态解算, 电机控制
+│  - IMU (加速度计+陀螺仪+磁力计)   │
+│  - 气压计 (高度)                 │
+│  - GPS (可选)                    │
+└─────────────────────────────────┘
+```
+
+---
+
+## 3.2 匿名协议 V7 详解
+
+### 3.2.1 帧格式
+
+```
+┌──────┬──────┬──────┬──────┬──────────┬──────┬──────┐
+│ HEAD │ ADDR │  ID  │ LEN  │  DATA    │  SC  │  AC  │
+│ 1B   │ 1B   │ 1B   │ 1B   │   n B    │ 1B   │ 1B   │
+└──────┴──────┴──────┴──────┴──────────┴──────┴──────┘
+ 0xAA   0xFF   帧ID  数据长   实际数据   累加和  累积和
+```
+
+| 字段 | 字节 | 含义 |
+|------|------|------|
+| `HEAD` | 1 | 帧头，固定 `0xAA` |
+| `ADDR` | 1 | 目标地址。`0xFF` = 广播, `0xAF` = 主机 |
+| `ID` | 1 | 帧类型 ID，决定 DATA 区如何解析 |
+| `LEN` | 1 | DATA 区的字节数 |
+| `DATA` | n | 实际数据，n = LEN |
+| `SC` | 1 | 累加和校验：`sum(HEAD..DATA_end) & 0xFF` |
+| `AC` | 1 | 累积和校验：`cumulative_sum(各步SC) & 0xFF` |
+
+### 3.2.2 双重校验和（SC + AC）
+
+这是匿名协议的核心特点——用两步累积校验保证可靠性。
+
+```
+假设帧数据序列: [AA, FF, 04, 09, v0, v1, v2, v3, sta, ...]
+
+SC 计算 (累加和):
+  SC₁ = (AA)                      & 0xFF
+  SC₂ = (AA + FF)                 & 0xFF
+  SC₃ = (AA + FF + 04)            & 0xFF
+  ...
+  SC_final = (all bytes sum)      & 0xFF  → 这就是 SC
+
+AC 计算 (SC 值的累积和):
+  AC₁ = SC₁                        & 0xFF
+  AC₂ = (AC₁ + SC₂)               & 0xFF
+  AC₃ = (AC₂ + SC₃)               & 0xFF
+  ...
+  AC_final                         & 0xFF  → 这就是 AC
+```
+
+如果传输中一个比特翻转了，SC 可能碰巧蒙混过关，但 AC 几乎不可能同时蒙混。双重校验大大提高了误码检测率。
+
+代码实现（`ano_bridge_node.py:167-175`）：
+```python
+def verify_checksum(self, frame):
+    sc = 0
+    ac = 0
+    data_end = 4 + frame[3]  # HEAD 到 DATA 结束
+    for i in range(data_end):
+        sc = (sc + frame[i]) & 0xFF
+        ac = (ac + sc) & 0xFF
+    return sc == frame[-2] and ac == frame[-1]
+```
+
+### 3.2.3 本项目解析的 8 种帧 ID
+
+| ID | 名称 | DATA 字段 | 长度 | 发布到什么 |
+|----|------|----------|------|-----------|
+| `0x01` | IMU_RAW | ACC_X/Y/Z (int16×3) + GYR_X/Y/Z (int16×3) | 13B | `/imu` (角速度+加速度) |
+| `0x02` | MAG_BARO | MAG_X/Y/Z (int16×3) + ALT_BAR (int32 cm) | 14B | 缓存 (高度) |
+| `0x03` | EULER | ROL/PIT/YAW ×100 (int16×3) | 7B | 缓存 (欧拉角, 备用) |
+| `0x04` | QUAT | V0/V1/V2/V3 ×10000 (int16×4) | 9B | `/odom` + `/imu` (姿态四元数) |
+| `0x05` | ALTITUDE | ALT_FU (int32 cm) + ALT_ADD (int32 cm) | 9B | `/odom` (Z 位置) |
+| `0x07` | SPEED | SPEED_X/Y/Z (int16×3 cm/s) | 6B | `/odom` (线速度) |
+| `0x08` | POSITION | POS_X/Y (int32×2 cm) | 8B | `/odom` (X,Y 位置) |
+| `0x0E` | MODULE_STA | 4 个 uint8 状态字节 | 4B | 缓存 (模块状态) |
+
+**注意**：飞控**不会**同时发送所有 8 种帧。它按固定顺序循环发送（如 0x01 → 0x04 → 0x07 → 0x08 → 0x01 → ...），每帧间隔约几毫秒。ano_bridge_node 的 1kHz 串口轮询足以捕获所有帧。
+
+---
+
+## 3.3 ano_bridge_node 架构
+
+### 3.3.1 两大工作流程
+
+```
+流程 A: 串口读取 (1kHz)                    流程 B: 定时发布 (20Hz)
+─────────────────────                      ─────────────────────
+
+read_serial() [每 1ms]                    publish_odometry() [每 50ms]
+    │                                         │
+    ├→ ser.read() 读串口缓冲区                  ├→ 组装 Odometry 消息
+    │                                         │   ├─ header.frame_id = "odom"
+    ├→ 追加到 self.buf                         │   ├─ child_frame_id = "base_link"
+    │                                         │   ├─ pose.position = (pos_x,pos_y,pos_z)
+    ├→ parse_buffer()                          │   ├─ pose.orientation = (q0,q1,q2,q3)
+    │   ├─ 找帧头 0xAA                         │   ├─ twist.linear = (vel_x,vel_y,vel_z)
+    │   ├─ 读 LEN → 完整帧                     │   └─ twist.angular = (gyr_x,gyr_y,gyr_z)
+    │   ├─ verify_checksum() → 校验            │
+    │   └─ dispatch_frame() → 分发解析          ├→ odom_pub.publish(msg)
+    │       ├─ ID=0x01 → parse_imu_raw()       │
+    │       │   更新 self.acc, self.gyr        ├→ 如果 publish_tf:
+    │       │   调用 publish_imu()              │   发布 TransformStamped
+    │       ├─ ID=0x04 → parse_quat()           │   (odom → base_link)
+    │       │   更新 self.q0~q3                 │
+    │       ├─ ID=0x05 → parse_altitude()       └→ 完成
+    │       │   更新 self.pos_z
+    │       ├─ ID=0x07 → parse_speed()
+    │       │   更新 self.vel_x,vel_y,vel_z
+    │       └─ ID=0x08 → parse_position()
+    │           更新 self.pos_x,pos_y
+    └→ 完成
+```
+
+**关键设计**：串口读取（1kHz）和消息发布（20Hz）是两个独立的流程。飞控数据随时来，解析后更新缓存变量（`self.pos_x`, `self.vel_x`, `self.q0~q3` 等）。发布流程每 50ms 从缓存变量中读最新值，组装成 Odometry 消息发出去。
+
+### 3.3.2 数据换算说明
+
+飞控发来的都是**整数**，需要乘以 scale 因子换算成标准单位。
+
+| 数据 | 飞控原始值 | 换算 | 最终值 | 说明 |
+|------|----------|------|--------|------|
+| 姿态四元数 | int16 ×10000 | ÷10000 | float (w,x,y,z) | 飞控融合后的姿态 |
+| 位置 X/Y | int32 cm | ×0.01 | float m | 飞控积分的位置 |
+| 高度 | int32 cm | ×0.01 | float m | 气压计/超声波 |
+| 速度 X/Y/Z | int16 cm/s | ×0.01 | float m/s | 飞控估计的速度 |
+| 角速度 | int16 LSB | ×0.001065 | float rad/s | ±2000dps 陀螺仪 |
+| 加速度 | int16 LSB | ×0.004788 | float m/s² | ±16g 加速度计 |
+
+---
+
+## 3.4 /odom 消息的每一行怎么来的
+
+以 `publish_odometry()` 函数（`ano_bridge_node.py:282-332`）为例：
+
+```python
+msg = Odometry()
+msg.header.frame_id = "odom"         # 父坐标系 = 里程计
+msg.child_frame_id = "base_link"      # 子坐标系 = 机器人本体
+
+# 位置 — 来自飞控 ID 0x08 帧 (POSITION), cm→m
+msg.pose.pose.position.x = self.pos_x   # 飞控累积的 X 位置
+msg.pose.pose.position.y = self.pos_y   # 飞控累积的 Y 位置
+msg.pose.pose.position.z = self.pos_z   # 来自 ID 0x05 (ALTITUDE)
+
+# 姿态四元数 — 来自飞控 ID 0x04 帧 (QUAT), ×10000→归一化
+msg.pose.pose.orientation.w = self.q0
+msg.pose.pose.orientation.x = self.q1
+msg.pose.pose.orientation.y = self.q2
+msg.pose.pose.orientation.z = self.q3
+
+# 线速度 — 来自飞控 ID 0x07 帧 (SPEED), cm/s→m/s
+msg.twist.twist.linear.x = self.vel_x
+msg.twist.twist.linear.y = self.vel_y
+msg.twist.twist.linear.z = self.vel_z
+
+# 角速度 — 来自飞控 ID 0x01 帧 (IMU) 的陀螺仪数据
+msg.twist.twist.angular.x = self.gyr[0]
+msg.twist.twist.angular.y = self.gyr[1]
+msg.twist.twist.angular.z = self.gyr[2]
+
+# 协方差 — 硬编码的合理默认值（非实时估算）
+msg.pose.covariance = [0.01, ...]    # 位置: 0.01m², 姿态: 0.001rad²
+msg.twist.covariance = [0.01, ...]   # 速度: 0.01 (m/s)²
+```
+
+**为什么协方差是硬编码的？**
+飞控不输出协方差矩阵（这需要卡尔曼滤波器额外输出）。所以节点用了合理的经验值：认为位置精度约 10cm，姿态精度约 3°，速度精度约 10cm/s。这些值足够 SLAM/AMCL 使用了——因为 AMCL 主要信任激光匹配，不依赖里程计的协方差。
+
+---
+
+## 3.5 /imu 消息的每一行怎么来的
+
+`publish_imu()` 函数（`ano_bridge_node.py:349-387`）：
+
+```python
+msg = Imu()
+msg.header.frame_id = "base_link"   # IMU 装在机身上
+
+# 姿态 — 跟 /odom 同一个来源 (飞控融合四元数)
+msg.orientation = (q0, q1, q2, q3)
+
+# 角速度 — 来自飞控陀螺仪原始数据 (ID 0x01)
+msg.angular_velocity.x = gyr_x      # 绕 X 轴旋转速度 (rad/s)
+msg.angular_velocity.y = gyr_y      # 绕 Y 轴
+msg.angular_velocity.z = gyr_z      # 绕 Z 轴 (偏航)
+
+# 线加速度 — 来自飞控加速度计原始数据 (ID 0x01)
+msg.linear_acceleration.x = acc_x   # X 方向加速度 (m/s²)
+msg.linear_acceleration.y = acc_y   # Y 方向
+msg.linear_acceleration.z = acc_z   # Z 方向 (重力方向)
+```
+
+**IMU 和 Odometry 中姿态的区别**：
+- `/imu` 发布的是**原始传感器数据**（角速度 + 加速度）加上融合后的姿态
+- `/odom` 发布的是**里程计推断**（位置 + 速度 + 姿态）
+- 两者姿态来源相同（飞控四元数），但 IMU 额外包含原始陀螺仪和加速度计读数
+
+**关于 ACC scale 的已知问题**：飞控静止时，Z 轴加速度应该约 9.8 m/s²（重力），但实测约 6.4。说明 `acc_scale = 0.004788` 这个值需要校准。不过目前不影响使用——SLAM 不需要加速度数据，只用四元数姿态。
+
+---
+
+## 3.6 三个里程计节点对比
+
+n10p_bringup 包含 3 种里程计节点，适用于不同场景：
+
+| | ano_bridge_node | dummy_odom_node | keyboard_odom_node |
+|---|----------------|-----------------|-------------------|
+| **位置来源** | 飞控积分 (ID 0x08) | 全零 (0,0,0) | 键盘积分 (20Hz) |
+| **姿态来源** | 飞控融合四元数 (ID 0x04) | 飞控四元数 (仅 ID 0x04) | 偏航角积分 (无 roll/pitch) |
+| **速度来源** | 飞控估计 (ID 0x07) | 无 (零) | 键盘设置值 |
+| **角速度来源** | 飞控陀螺仪 (ID 0x01) | 无 | 键盘设置值 |
+| **需要飞控** | 是 | 可选 (有则用姿态) | 否 |
+| **使用场景** | 真实飞行 / 完整测试 | 手持 SLAM 建图 | 桌面测试 Nav2 |
+| **代码行数** | 404 | 156 | 175 |
+
+### 3.6.1 dummy_odom_node — 为什么位置全零但 SLAM 能用？
+
+这是项目中最精妙的设计决策之一。回顾手持 SLAM 场景：
+
+- 你拿着雷达在室内走，**没有飞控提供位置**
+- dummy_odom 把位置固定为 (0,0,0)，只从飞控取四元数姿态
+- slam-toolbox 配置了 `minimum_travel_distance: 0.0`（不依赖里程计触发）
+- SLAM 的扫描匹配（scan matching）自己算出了机器人的真实位移
+- SLAM 发布 `map→odom` TF 来修正里程计的"零位移"偏差
+- 最终 `/map` 仍然正确生成
+
+**dummy_odom 唯一必须提供的是姿态**（四元数），因为如果姿态全是零（意味着雷达水平朝前），而你拿着雷达倾斜了 30°，那激光平面就歪了，SLAM 扫描匹配会崩溃。
+
+### 3.6.2 keyboard_odom_node — 纯键盘模拟全向运动
+
+这个节点**不读飞控**，不需要任何串口。用 Python stdlib 的 `termios + tty + select` 实现非阻塞键盘读取。
+
+运动模型（全向）体现在 `update_odom()` 函数（`keyboard_odom_node.py:128-130`）：
+
+```python
+# 体坐标系速度 → 世界坐标系积分（全向模型）
+self.x += (self.vx * cos(self.yaw) - self.vy * sin(self.yaw)) * dt
+self.y += (self.vx * sin(self.yaw) + self.vy * cos(self.yaw)) * dt
+self.yaw += self.vth * dt
+```
+
+这个公式允许机器人朝任意方向平移（不受偏航角约束），你按 A 键就是纯左移（不改变朝向），按 D 就是纯右移。
+
+---
+
+## 3.7 TF 坐标树 — 谁发布哪一段
+
+```
+map            ← 世界固定原点 (建图时确定)
+ │              发布者: slam-toolbox (建图) 或 AMCL (导航)
+ │              频率: 按需 (回环检测/粒子更新后)
+ │
+odom           ← 里程计累积原点 (每次开机从零开始)
+ │              发布者: ano_bridge_node / dummy_odom / keyboard_odom
+ │              频率: 20Hz (定时发布)
+ │              内容: odom → base_link 的平移 + 旋转
+ │
+base_link      ← 机器人本体中心
+ │              发布时间: 不直接发布 (它是 odom 的子帧)
+ │
+laser_frame    ← 雷达安装位置
+                发布者: static_transform_publisher
+                频率: 静态 (启动时一次)
+                内容: base_link → laser_frame 的固定偏移 (0, 0, -0.1)
+```
+
+**为什么真机和仿真 TF 方向相反？**
+
+| | 真机 | 仿真 |
+|---|------|------|
+| `base_link → laser_frame` 平移 | `(0, 0, -0.1)` | `(0, 0, 0.1)` |
+| 原因 | 雷达吊在无人机**下方** 10cm | URDF 中雷达在机身**上方** 10cm |
+
+这不是 bug。仿真中雷达装在顶部是为了方便（不用考虑起落架遮挡），真机中雷达吊在底部是实际安装位置。只要 TF 发布正确，SLAM 不在乎雷达实际装在哪。
+
+---
+
+
+## 阶段三 知识图谱
+
+### 3.A.1 飞控数据流全景
+
+```mermaid
+flowchart TB
+    subgraph HW["🛩️ 匿名凌霄飞控"]
+        IMU_HW["IMU 传感器<br/>加速度计+陀螺仪"]
+        BARO["气压计"]
+        MAG["磁力计"]
+        FUSION["姿态融合算法<br/>(卡尔曼滤波)"]
+    end
+
+    subgraph SERIAL["📡 串口数传 921600bps"]
+        FRAMES["匿名协议 V7 帧<br/>0xAA + ID + DATA + SC + AC"]
+    end
+
+    subgraph BRIDGE["ano_bridge_node (Python)"]
+        READ["read_serial()<br/>1kHz 轮询"]
+        PARSE["parse_buffer()<br/>帧同步+校验"]
+        DISPATCH["dispatch_frame()<br/>按ID分发"]
+        CACHE["数据缓存<br/>pos_x/y/z, vel_x/y/z<br/>q0~q3, gyr[], acc[]"]
+        PUB_ODOM["publish_odometry()<br/>20Hz 定时器"]
+        PUB_IMU["publish_imu()<br/>IMU帧到达时"]
+        TF["TransformBroadcaster<br/>odom→base_link TF"]
+    end
+
+    subgraph TOPICS["📨 ROS2 话题"]
+        ODOM_TOPIC["/odom<br/>Odometry, 20Hz"]
+        IMU_TOPIC["/imu<br/>Imu, 按需"]
+        TF_TOPIC["/tf<br/>TFMessage, 20Hz"]
+    end
+
+    IMU_HW --> FUSION
+    BARO --> FUSION
+    MAG --> FUSION
+    FUSION --> FRAMES
+    FRAMES --> READ --> PARSE --> DISPATCH
+    DISPATCH -->|"ID 0x01"| CACHE
+    DISPATCH -->|"ID 0x04"| CACHE
+    DISPATCH -->|"ID 0x05"| CACHE
+    DISPATCH -->|"ID 0x07"| CACHE
+    DISPATCH -->|"ID 0x08"| CACHE
+    CACHE --> PUB_ODOM --> ODOM_TOPIC
+    CACHE --> PUB_IMU --> IMU_TOPIC
+    CACHE --> TF --> TF_TOPIC
+
+    style FUSION fill:#ff9f43,color:#fff
+    style CACHE fill:#4a9eff,color:#fff
+    style ODOM_TOPIC fill:#10ac84,color:#fff
+    style IMU_TOPIC fill:#10ac84,color:#fff
+```
+
+### 3.A.2 三种里程计节点对比
+
+```mermaid
+flowchart LR
+    subgraph ANO["ano_bridge_node<br/>(完整飞控数据)"]
+        A1["位置: 飞控积分<br/>姿态: 飞控四元数<br/>速度: 飞控估计<br/>用途: 真实飞行/完整测试"]
+    end
+
+    subgraph DUMMY["dummy_odom_node<br/>(仅姿态)"]
+        A2["位置: 全零<br/>姿态: 飞控四元数<br/>速度: 无<br/>用途: 手持SLAM建图"]
+    end
+
+    subgraph KEY["keyboard_odom_node<br/>(纯键盘)"]
+        A3["位置: 键盘积分<br/>姿态: 偏航角积分<br/>速度: 键盘设置<br/>用途: 桌面测试Nav2"]
+    end
+
+    FC["飞控串口<br/>921600bps"] -->|"读全部8种帧"| ANO
+    FC -->|"仅读 0x04 四元数"| DUMMY
+    KEYBOARD["键盘输入<br/>WASD/QE"] --> KEY
+
+    ANO -->|"/odom + /imu + TF"| ROS2["ROS2 网络"]
+    DUMMY -->|"/odom + TF"| ROS2
+    KEY -->|"/odom + TF"| ROS2
+
+    style ANO fill:#4a9eff,color:#fff
+    style DUMMY fill:#ff9f43,color:#fff
+    style KEY fill:#10ac84,color:#fff
+```
+
+### 3.A.3 匿名协议帧格式
+
+```mermaid
+flowchart LR
+    subgraph FRAME["一个完整帧"]
+        H["HEAD<br/>0xAA<br/>1B"]
+        A["ADDR<br/>0xFF<br/>1B"]
+        I["ID<br/>0x01~0x0E<br/>1B"]
+        L["LEN<br/>n<br/>1B"]
+        D["DATA<br/>实际数据<br/>n B"]
+        S["SC<br/>累加和<br/>1B"]
+        AC["AC<br/>累积和<br/>1B"]
+    end
+
+    H --> A --> I --> L --> D --> S --> AC
+
+    subgraph VERIFY["双重校验"]
+        SC_CALC["SC = sum(HEAD..DATA) & 0xFF"]
+        AC_CALC["AC = cumulative_sum(SC_steps) & 0xFF"]
+    end
+
+    D --> SC_CALC --> S
+    SC_CALC --> AC_CALC --> AC
+
+    style H fill:#ee5a24,color:#fff
+    style I fill:#ff9f43,color:#fff
+    style D fill:#4a9eff,color:#fff
+    style S fill:#10ac84,color:#fff
+    style AC fill:#10ac84,color:#fff
+```
+
+---
+
+
+# 阶段四：SLAM 建图 — 怎么把激光扫描变成地图
+
+> 目标：理解 slam-toolbox 如何把 /scan + /odom 变成 /map，以及地图如何保存给导航使用。
+> 本阶段深入 [mapper_params_online_async.yaml](n10p_ws/src/n10p_slam/config/mapper_params_online_async.yaml) 的每个参数含义。
+
+---
+
+## 4.1 SLAM 基本概念
+
+### 4.1.1 问题定义
+
+SLAM = **S**imultaneous **L**ocalization **A**nd **M**apping（同时定位与建图）
+
+机器人被放在一个未知环境中，手里只有激光雷达和里程计。它要同时回答两个问题：
+
+1. **定位（Localization）**：我在哪？
+2. **建图（Mapping）**：周围环境长什么样？
+
+这两个问题是**互相依赖**的——要知道环境长什么样，首先需要知道自己在哪；要知道自己在哪，又需要知道环境长什么样。这是一个"鸡生蛋蛋生鸡"的问题，SLAM 的核心就是同时求解这两个东西。
+
+### 4.1.2 输入输出
+
+```
+输入:                           输出:
+─────                           ─────
+
+/scan (LaserScan, 10Hz)  ──┐
+                            ├──→  slam-toolbox  ──→  /map (OccupancyGrid, 栅格地图)
+TF(odom→base_link)  ───────┘                         TF(map→odom, 修正里程计漂移)
+```
+
+### 4.1.3 核心思想：扫描匹配（Scan Matching）
+
+SLAM 的核心操作叫"扫描匹配"：把当前收到的激光扫描跟之前累积的地图对齐。
+
+```
+第 1 帧扫描: ████░░░░░░░░░░  ← 前方 4m 有墙
+
+第 2 帧扫描: ██░░░░░░░░░░░░  ← 墙在 2m 处了！说明我朝墙走了 2m
+             墙更近了
+
+第 3 帧扫描: ░░████░░░░░░░░  ← 墙在左边了！说明我转弯了
+             墙在左边
+```
+
+每次收到新的扫描，SLAM 都会问："如果把这帧扫描放在地图的哪个位置，它跟已有地图的匹配度最高？"找到最优位置后，就把机器人的位姿更新到那里，然后把新扫描数据融入地图。
+
+### 4.1.4 回环检测（Loop Closure）
+
+当你走了一圈回到起点时，里程计说你在 (100, 5)，但激光扫描看到的环境跟你起始位置看到的一样。SLAM 识别出这是一个"回环"——"我来过这里！"，然后自动修正累积的漂移。
+
+```
+回环前:                           回环后:
+  实际路径: ┌──────┐               实际路径: ┌──────┐
+            │      │                         │      │
+            └──────┘                         └──────┘
+  里程计说: ┌──────┐╱╲  漂了           地图修正后: 完美闭合
+```
+
+---
+
+## 4.2 slam-toolbox 简介
+
+### 4.2.1 为什么选 slam-toolbox（ADR-001）
+
+| 候选 | 优 | 劣 | 结论 |
+|------|----|-----|------|
+| **slam-toolbox** | 已安装在 ros-humble 中，社区活跃，支持异步建图+离线优化 | 参数较多需要调 | ✅ 选用 |
+| Hector SLAM | 不需要里程计 | 建图质量一般，对雷达精度要求高 | 备选 |
+| Cartographer | Google 出品，精度最高 | 计算量大，树莓派跑不动 | 放弃 |
+| Gmapping | ROS1 经典 | ROS2 版本成熟度一般 | 放弃 |
+
+### 4.2.2 Online Async 模式
+
+slam-toolbox 有几种工作模式。我们用的是 **online async（在线异步）**：
+
+- **online**：实时接收 /scan，边跑边建图
+- **async**：建图优化在后台异步进行，不阻塞新数据的接收。这样即使某一次优化花的时间长了，也不会丢扫描数据。
+
+---
+
+## 4.3 本项目 SLAM 配置逐参数详解
+
+配置文件：`n10p_slam/config/mapper_params_online_async.yaml`（56 行）
+
+### 4.3.1 模式与坐标系
+
+```yaml
+mode: mapping                # 建图模式。导航时改用 localization
+map_frame: map              # 地图坐标系名
+odom_frame: odom            # 里程计坐标系名
+base_frame: base_link       # 机器人本体坐标系名
+scan_topic: /scan           # 订阅哪个话题的激光数据
+```
+
+**mapping vs localization 模式**：
+- `mapping`：同时建图+定位。地图在持续更新，用于首次探索环境
+- `localization`：只用已有地图定位，不修改地图。用于导航时的精确定位
+
+### 4.3.2 地图参数
+
+```yaml
+map_resolution: 0.05        # 每格 5cm × 5cm
+map_start_pose: [0.0, 0.0, 0.0]  # 地图原点 = 机器人初始位置
+map_update_interval: 3.0    # 每 3 秒更新一次地图发布
+max_laser_range: 12.0       # 最远用多远的激光数据（匹配 N10P 量程）
+minimum_laser_range: 0.02   # 最近用多近的激光数据
+```
+
+| 参数 | 如果改大了 | 如果改小了 |
+|------|-----------|-----------|
+| `map_resolution` | 地图粗糙，内存小，树莓派友好 | 地图精细，内存大，计算慢 |
+| `map_update_interval` | 地图更新慢，省 CPU | 更新快，CPU 开销大 |
+| `max_laser_range` | 远距离噪声被纳入地图 | 远距离障碍物看不到 |
+
+### 4.3.3 扫描匹配参数
+
+```yaml
+minimum_travel_distance: 0.0    # 平移多少米才处理新扫描 (0=每帧都处理)
+minimum_travel_heading: 0.0     # 旋转多少弧度才处理新扫描 (0=不依赖里程计)
+```
+
+**这两个参数是本项目的关键设置。** 标准配置是 `minimum_travel_distance: 0.5`（移动半米才处理一次），但我们设为 0，因为：
+
+- 手持建图时用的 `dummy_odom` 位置始终是零，如果设 0.5m，SLAM 会认为"机器人从未移动过"→ 永远不会处理新扫描 → 永远不建图
+- 设 0 意味着每一帧 /scan 都处理，完全依赖 scan matching 来推断运动
+
+### 4.3.4 回环检测参数
+
+```yaml
+do_loop_closing: true                   # 启用回环检测
+loop_search_maximum_distance: 5.0       # 在当前位置 5m 范围内搜索回环候选
+loop_match_min_chain_size: 10           # 至少 10 帧连续匹配才认定回环
+loop_match_min_response_coarse: 0.35    # 粗匹配得分阈值
+loop_match_min_response_fine: 0.45      # 精细匹配得分阈值
+```
+
+回环检测的工作方式：
+1. 每收到一帧扫描，在当前位姿 5m 范围内搜索"历史上有没有类似的扫描"
+2. 如果找到相似的 → 做精细匹配 → 得分 > 0.45 → 确认回环
+3. 回环确认后，位姿图优化器修正整条轨迹
+
+### 4.3.5 求解器参数
+
+```yaml
+solver_plugin: solver_plugins::CeresSolver      # 用 Google Ceres 做非线性优化
+ceres_linear_solver: SPARSE_NORMAL_CHOLESKY      # 稀疏矩阵求解器
+ceres_preconditioner: SCHUR_JACOBI               # SCHUR 预处理器（加速收敛）
+ceres_trust_strategy: LEVENBERG_MARQUARDT        # LM 信赖域策略
+ceres_num_threads: 4                             # 4 线程并行
+```
+
+这些是 Ceres Solver 的底层配置，一般不需要改。唯一可能需要调整的是 `ceres_num_threads`——树莓派 4B 只有 4 核，建议降为 2。
+
+### 4.3.6 地图保存
+
+```yaml
+map_file_name: /home/ubuntu22/ROS2/n10p_leishen/maps/n10p_map
+map_save_mode: 0    # 0=完整保存, 1=仅保存变更
+```
+
+保存地图的方式：在终端中调用 slam-toolbox 的 SaveMap 服务。
+
+---
+
+## 4.4 两种启动模式
+
+### 4.4.1 模式 A：手持建图（slam_launch.py）
+
+```
+ros2 launch n10p_slam slam_launch.py
+```
+
+启动的节点：
+```
+dummy_odom_node        ← 占位里程计 (位置全零 + 飞控姿态)
+lslidar_driver_node    ← N10P 雷达驱动 (自带驱动!)
+static_tf_laser        ← 静态 TF
+slam_toolbox           ← SLAM 建图 (3秒延迟)
+rviz2                  ← 可视化 (6秒延迟)
+```
+
+**适用场景**：第一次建图，没有已有地图，不需要飞控。**自给自足，一个 launch 搞定一切。**
+
+**不能跟 bringup_launch.py 同时跑**：两个 launch 都启动了雷达驱动 → 两个进程抢同一个串口 → 驱动崩溃。
+
+### 4.4.2 模式 B：配合飞控建图（slam_only_launch.py）
+
+```
+终端1: ros2 launch n10p_bringup n10p_bringup_launch.py   ← 传感器
+终端2: ros2 launch n10p_slam slam_only_launch.py          ← 仅 SLAM
+```
+
+启动的节点（仅 slam_only_launch.py）：
+```
+slam_toolbox           ← SLAM 建图 (1秒延迟)
+rviz2                  ← 可视化 (4秒延迟)
+```
+
+**适用场景**：飞控在线，想用真实里程计（而非 dummy_odom）做 SLAM。
+
+**对比 slam_launch.py**：
+- 不启动驱动（假设 bringup 已启动）
+- 不启动 dummy_odom（用 bringup 中的 ano_bridge_node）
+- 延迟更短（1 秒 vs 3 秒），因为无需等驱动初始化
+
+---
+
+## 4.5 从建图到导航 — 地图如何交接
+
+SLAM 建完图后，地图文件被保存。导航时，map_server 加载地图。
+
+### 4.5.1 保存地图
+
+```bash
+# 终端执行，调用 slam-toolbox 的 SaveMap 服务
+ros2 service call /slam_toolbox/save_map slam_toolbox/srv/SaveMap
+```
+
+或者用 ROS2 命令行：
+```bash
+ros2 run nav2_map_server map_saver_cli -f ~/ROS2/n10p_leishen/maps/n10p_map
+```
+
+### 4.5.2 地图文件的含义
+
+保存后会得到两个文件：
+
+**n10p_map.yaml**（元数据）：
+```yaml
+image: n10p_map.pgm        # 对应的图像文件
+mode: trinary              # 三值: -1未知, 0空闲, 100占用
+resolution: 0.05           # 每个像素 = 5cm
+origin: [-5.59, -7.76, 0]  # 地图左下角像素在 map 坐标系的位置
+occupied_thresh: 0.65      # 像素值 >0.65 → 视为占用
+free_thresh: 0.25          # 像素值 <0.25 → 视为空闲
+```
+
+**n10p_map.pgm**（图像）：
+一个灰度图像，每个像素代表 5cm×5cm 的格子。白色=空闲，黑色=占用，灰色=未知。
+
+### 4.5.3 导航时加载地图
+
+`nav_launch.py` 中的 map_server 节点加载这个 yaml 文件：
+
+```python
+map_server_node = Node(
+    package='nav2_map_server',
+    executable='map_server',
+    parameters=[params_file, {'yaml_filename': map_yaml}],
+)
+```
+
+map_server 加载后发布 `/map` 话题（跟 SLAM 的 /map 是同一种消息类型），AMCL 订阅这个地图做定位。
+
+**关键**：导航时 map_server 发布的是**静态地图**（从文件读取，不再更新），而 SLAM 发布的是**动态地图**（持续更新）。导航不需要更新地图——导航是"用已知地图找路"。
+
+---
+
+## 4.6 SLAM 验证方法
+
+### 4.6.1 确认 SLAM 正常工作
+
+| 步骤 | 命令 | 预期 |
+|------|------|------|
+| ① 话题存在 | `ros2 topic list \| grep map` | `/map` 存在 |
+| ② 地图有内容 | `ros2 topic echo /map --once` | `data[]` 不全为 -1 |
+| ③ TF 完整 | `ros2 run tf2_tools view_frames` | 能看到 map→odom→base_link 的完整树 |
+
+### 4.6.2 判断建图质量
+
+| 现象 | 原因 | 对策 |
+|------|------|------|
+| 地图模糊、重影 | 里程计漂移太大 | 走慢一点，多走回环 |
+| 地图不闭合 | 回环检测未触发 | 增加回环候选距离，或减少阈值 |
+| 地图上出现"自己的轮廓" | 手持时身体遮挡雷达后方 | 把雷达举高，或屏蔽后方角度 |
+| 地图大面积空白 | 扫描被丢弃 | 检查 TF 链是否完整，QoS 是否匹配 |
+
+### 4.6.3 查看保存的地图
+
+```bash
+# 用项目自带的查看工具
+python3 scripts/map_viewer.py maps/n10p_map.yaml
+```
+
+---
+
+
+## 阶段四 知识图谱
+
+### 4.A.1 SLAM 工作流程全景
+
+```mermaid
+flowchart TB
+    subgraph INPUT["📥 输入"]
+        SCAN["/scan<br/>LaserScan, 10Hz<br/>1058 点/圈"]
+        ODOM_TF["odom→base_link TF<br/>20Hz<br/>飞控里程计"]
+    end
+
+    subgraph SLAM_CORE["🧠 slam-toolbox Online Async"]
+        MATCHER["扫描匹配<br/>Correlation Scan Matcher"]
+        POSE_GRAPH["位姿图<br/>节点=机器人历史位姿<br/>边=扫描匹配约束"]
+        LOOP["回环检测<br/>搜索 5m 范围内的<br/>历史相似扫描"]
+        OPTIM["位姿图优化<br/>CeresSolver<br/>LM 信赖域, 4线程"]
+        MAP_BUILDER["地图构建<br/>分辨率 0.05m<br/>每3秒更新一次"]
+    end
+
+    subgraph OUTPUT["📤 输出"]
+        MAP_TOPIC["/map<br/>OccupancyGrid<br/>每3秒更新"]
+        MAP_ODOM_TF["map→odom TF<br/>修正里程计漂移"]
+    end
+
+    SCAN --> MATCHER
+    ODOM_TF --> MATCHER
+    MATCHER --> POSE_GRAPH
+    POSE_GRAPH --> LOOP
+    LOOP -->|"发现回环"| OPTIM
+    OPTIM -->|"修正轨迹"| POSE_GRAPH
+    POSE_GRAPH --> MAP_BUILDER
+    MAP_BUILDER --> MAP_TOPIC
+    POSE_GRAPH --> MAP_ODOM_TF
+
+    style MATCHER fill:#4a9eff,color:#fff
+    style LOOP fill:#ff9f43,color:#fff
+    style OPTIM fill:#ee5a24,color:#fff
+    style MAP_TOPIC fill:#10ac84,color:#fff
+```
+
+### 4.A.2 扫描匹配原理示意
+
+```mermaid
+flowchart LR
+    subgraph STEP1["步骤1: 收到新扫描"]
+        S1["当前时刻的 /scan<br/>ranges = [1.2, 1.5, inf, 2.3, ...]"]
+    end
+
+    subgraph STEP2["步骤2: 候选位姿"]
+        S2["从里程计推测的位姿:<br/>(x=2.0, y=0.05, θ=3°)<br/>尝试周围多个候选:<br/>(2.0±0.1, 0.05±0.1, 3°±2°)"]
+    end
+
+    subgraph STEP3["步骤3: 打分"]
+        S3["对每个候选位姿:<br/>把 scan 投影到已有地图上<br/>计算匹配得分"]
+    end
+
+    subgraph STEP4["步骤4: 选最优"]
+        S4["得分最高的候选<br/>→ 机器人的真实位姿<br/>→ 更新 map→odom TF"]
+    end
+
+    S1 --> S2 --> S3 --> S4
+
+    style S1 fill:#dfe6e9,color:#2d3436
+    style S2 fill:#4a9eff,color:#fff
+    style S3 fill:#ff9f43,color:#fff
+    style S4 fill:#10ac84,color:#fff
+```
+
+### 4.A.3 建图到导航的地图交接
+
+```mermaid
+flowchart LR
+    subgraph PHASE1["Phase 1: 建图 (slam_toolbox)"]
+        SLAM_IN["/scan + odom TF"] --> SLAM_PROC["slam-toolbox<br/>mode: mapping"] --> SLAM_OUT["/map (动态更新)<br/>map→odom TF"]
+    end
+
+    subgraph PHASE2["Phase 2: 保存"]
+        SAVE["SaveMap 服务调用"] --> FILE["n10p_map.pgm<br/>n10p_map.yaml"]
+    end
+
+    subgraph PHASE3["Phase 3: 导航 (map_server + AMCL)"]
+        LOAD["map_server<br/>加载 .pgm+.yaml"] --> STATIC_MAP["/map (静态, 不变)"]
+        STATIC_MAP --> AMCL["AMCL 定位<br/>激光匹配静态地图"]
+    end
+
+    SLAM_OUT --> SAVE
+    FILE --> LOAD
+
+    style SAVE fill:#ff9f43,color:#fff
+    style FILE fill:#ee5a24,color:#fff
+    style AMCL fill:#a29bfe,color:#fff
+```
+
+### 4.A.4 两种 SLAM 启动模式对比
+
+```mermaid
+flowchart TB
+    subgraph MODE_A["模式 A: 手持建图 (slam_launch.py)"]
+        A_DUMMY["dummy_odom_node<br/>位置=全零, 姿态=飞控"]
+        A_DRIVER["lslidar_driver_node<br/>发布 /scan"]
+        A_TF["static TF<br/>base_link→laser_frame"]
+        A_SLAM["slam_toolbox<br/>3秒后启动"]
+        A_RVIZ["rviz2<br/>6秒后启动"]
+    end
+
+    subgraph MODE_B["模式 B: 配合飞控 (slam_only_launch.py)"]
+        B_BRINGUP["终端1: bringup_launch.py<br/>ano_bridge + driver + TF"]
+        B_SLAM["slam_toolbox<br/>1秒后启动"]
+        B_RVIZ["rviz2<br/>4秒后启动"]
+    end
+
+    MODE_A -.->|"⚠️ 不能同时运行<br/>(串口冲突)"| MODE_B
+
+    style A_DRIVER fill:#4a9eff,color:#fff
+    style A_SLAM fill:#ff9f43,color:#fff
+    style B_BRINGUP fill:#10ac84,color:#fff
+    style B_SLAM fill:#ff9f43,color:#fff
+```
+
+---
+
