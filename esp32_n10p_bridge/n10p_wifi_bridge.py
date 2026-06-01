@@ -29,7 +29,7 @@ DATA_START       = 7                # 数据从字节7开始
 DEGREE_START     = 5                # 起始角度在字节5-6 (uint16 BE, 0.01°)
 DEGREE_END       = 105              # 结束角度在字节105-106
 POINT_LEN        = 6                # 每个点6字节
-MAX_POINTS       = 6000             # scan_points 数组大小
+MAX_POINTS       = 4000             # scan_points 数组大小 (必须等于 scan_num=2*count_num)
 
 # ======== 默认参数 ========
 DEFAULT_HOST     = "192.168.0.184"

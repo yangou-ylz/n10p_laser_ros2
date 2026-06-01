@@ -292,3 +292,83 @@ ros2 topic echo /scan --once --field ranges | head -5  # 预期: 有效距离值
 - 发布频率: 10Hz (0.1s 定时器)
 - scan_num: 4000 (2×count_num, 每度约 11 个点)
 - 帧解析: 6 字节/点 (dist+conf+reserved), CRC8 累加和
+
+---
+
+## 整合总结：ESP32 WiFi 方案接入现有 N10P ROS2 项目
+
+### 你需要关注的文件
+
+| 文件 | 角色 |
+|------|------|
+| `main/main.c` | ESP32 固件。烧录一次，上电自动运行。不可动除非改硬件引脚 |
+| `n10p_wifi_bridge.py` | **你唯一的整合入口。** 独立 Python 节点，产生与 lslidar_driver 完全相同的 `/scan` |
+| `user.md` | 使用教程，接线+烧录+运行+排错 |
+
+以下文件是开发过程产物，**整合时不需要**：
+- sdkconfig, CMakeLists.txt（编译一次就不用了）
+- tcp2pty.py（Phase 3 尝试的失败方案）
+- SETUP.md（环境搭建，已装好就不用看了）
+
+### 现有 ROS2 项目怎么接入
+
+你现有的 ROS2 项目数据流是：
+
+```
+N10P串口 → lslidar_driver → /scan → SLAM/Nav2/RViz2
+```
+
+加入 ESP32 无线方案后，多了一条路径：
+
+```
+N10P串口 → ESP32 (WiFi TCP) → n10p_wifi_bridge.py → /scan → SLAM/Nav2/RViz2
+```
+
+**两条路径输出完全相同的 `/scan`（LaserScan, laser_frame, 10Hz, 4000点/圈）**，
+下游 SLAM/Nav2/RViz2 不需要任何改动。
+
+### 切换方式
+
+```bash
+# 有线模式（原方案）
+ros2 launch lslidar_driver lslidar_launch.py
+
+# 无线模式（新增）
+python3 esp32_n10p_bridge/n10p_wifi_bridge.py
+```
+
+只需二选一启动，不可同时运行。其他 launch 文件（SLAM、Nav2）都不受影响。
+
+### 如果你想整合到 launch 文件里
+
+在现有 launch 文件中加一个条件分支即可：
+
+```python
+# 在 launch 文件中
+use_wireless = LaunchConfiguration('use_wireless', default='false')
+
+# 无线模式
+wireless_node = Node(
+    package='n10p_bringup',
+    executable='n10p_wifi_bridge.py',  # 需加到 setup.py
+    condition=IfCondition(use_wireless),
+)
+```
+
+或者更简单：保持 `n10p_wifi_bridge.py` 独立运行，不在 launch 中管理。SLAM/Nav2 的 launch 不需要感知 `/scan` 来源于有线还是无线。
+
+### 关键参数（可能需要调）
+
+| 参数 | 位置 | 默认值 | 何时改 |
+|------|------|--------|--------|
+| ESP32 IP | n10p_wifi_bridge.py `--host` | 192.168.0.184 | 换路由器或 DHCP 变了 |
+| WiFi SSID/密码 | main/main.c `WIFI_SSID`/`WIFI_PASS` | YLZ / yy060315 | 换 WiFi 环境时重新编译固件 |
+| TCP 端口 | main/main.c + n10p_wifi_bridge.py | 8888 | 一般不需要改 |
+| IO 引脚 | main/main.c `UART_RX_PIN` | 18 | 只有改硬件接线时改 |
+
+### 性能红线
+
+- ESP32 固件 776KB (1MB 分区, 23% 余量)
+- CPU: Core0 (WiFi+TCP) + Core1 (UART接收) 均远未满载
+- 无线延时比有线多 2-5ms (WiFi 局域网), 不影响 SLAM
+- 当前扫频 332fps / 10Hz 发布, 完全满足原有线方案的节奏

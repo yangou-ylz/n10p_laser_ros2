@@ -13,5 +13,6 @@ n10p_bringup/__init__.py
 n10p_bringup/ano_bridge_node.py
 n10p_bringup/dummy_odom_node.py
 n10p_bringup/keyboard_odom_node.py
+n10p_bringup/n10p_wifi_bridge.py
 params/ano_bridge.yaml
 resource/n10p_bringup

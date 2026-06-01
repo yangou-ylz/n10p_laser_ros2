@@ -18,7 +18,13 @@ ID_QUAT = 0x04  # 四元数 V0 V1 V2 V3 ×10000 (int16×4)
 
 
 class DummyOdomNode(Node):
-    """位置用零里程计 + 飞控四元数姿态"""
+    """
+    混合里程计节点
+    - 位置: 全零 (0,0,0)。SLAM 的 scan matching 自己估算真实位移
+    - 姿态: 从飞控串口读四元数帧 (ID 0x04)。保证激光平面不倾斜
+    - TF:  发布 odom → base_link (位置全零 + 飞控姿态)
+    适用场景: 手持建图，飞控不在线或不想用飞控位置
+    """
 
     def __init__(self):
         super().__init__('dummy_odom_node')
@@ -114,13 +120,21 @@ class DummyOdomNode(Node):
     # ── 发布 ────────────────────────────────────────────
 
     def publish(self):
+        """
+        发布 /odom 消息 + odom → base_link TF (20Hz)
+        位置始终为 (0,0,0) — 这是故意设计的。
+        SLAM 的 scan matching 会自己算出机器人的真实位移，
+        然后通过 map→odom TF 来纠正这里的"零位移"。
+        最终地图仍然是正确的。
+        """
         now = self.get_clock().now()
 
         odom = Odometry()
         odom.header.stamp = now.to_msg()
-        odom.header.frame_id = self.odom_frame_id
-        odom.child_frame_id = self.frame_id
+        odom.header.frame_id = self.odom_frame_id      # 父坐标系 = "odom"
+        odom.child_frame_id = self.frame_id              # 子坐标系 = "base_link"
         # 位置保持 (0,0,0) — scan matching 自己算
+        # 这是整个 dummy_odom 的核心设计: 不给位置, 让 SLAM 来找
         odom.pose.pose.orientation.w = self.q0
         odom.pose.pose.orientation.x = self.q1
         odom.pose.pose.orientation.y = self.q2

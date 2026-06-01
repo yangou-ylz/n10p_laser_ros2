@@ -8,7 +8,8 @@
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, TimerAction
-from launch.substitutions import LaunchConfiguration
+from launch.conditions import IfCondition, UnlessCondition
+from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
 import os
 
@@ -19,13 +20,17 @@ def generate_launch_description():
     driver_dir = get_package_share_directory('lslidar_driver')
 
     # ── 参数 ──────────────────────────────────────────
+    scan_source = LaunchConfiguration('scan_source', default='wired')
+    is_wireless = PythonExpression(["'", scan_source, "' == 'wireless'"])
+
     map_yaml = LaunchConfiguration('map', default=os.path.join(
         nav_dir, '..', '..', '..', '..', '..', 'maps', 'n10p_map.yaml'))
     params_file = os.path.join(nav_dir, 'config', 'nav2_params_n10p.yaml')
     rviz_config = os.path.join(nav_dir, 'config', 'n10p_nav.rviz')
 
     # ══════════════════════════════════════════════════
-    # 1. 真实 N10P 激光雷达驱动
+    # 1. N10P 激光雷达 (有线/无线可选)
+    #    ⚠️  必须先在另一终端启动 keyboard_odom_node, 否则 odom TF 不存在
     # ══════════════════════════════════════════════════
     driver_node = Node(
         package='lslidar_driver',
@@ -33,6 +38,24 @@ def generate_launch_description():
         name='lslidar_driver_node',
         output='screen',
         parameters=[os.path.join(driver_dir, 'params', 'lsx10.yaml')],
+        condition=UnlessCondition(is_wireless),
+    )
+
+    wifi_bridge_node = Node(
+        package='n10p_bringup',
+        executable='n10p_wifi_bridge_node',
+        name='n10p_wifi_bridge_node',
+        output='screen',
+        parameters=[{'host': '192.168.0.184', 'port': 8888}],
+        condition=IfCondition(is_wireless),
+    )
+
+    # 静态 TF: map → odom (bootstrap: AMCL 未初始化前让 map 帧存在, RViz 才能显示地图)
+    static_tf_map_odom = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='static_tf_map_odom',
+        arguments=['0', '0', '0', '0', '0', '0', 'map', 'odom'],
     )
 
     # 静态 TF: base_link → laser_frame
@@ -128,9 +151,13 @@ def generate_launch_description():
 
     return LaunchDescription([
         DeclareLaunchArgument('map', default_value=map_yaml, description='地图 yaml 路径'),
+        DeclareLaunchArgument('scan_source', default_value='wired',
+                              description='雷达数据源: wired (有线) | wireless (ESP32 WiFi)'),
 
         # 传感器立即启动
         driver_node,
+        wifi_bridge_node,
+        static_tf_map_odom,
         static_tf_node,
 
         # 定位: 地图 → AMCL → 生命周期

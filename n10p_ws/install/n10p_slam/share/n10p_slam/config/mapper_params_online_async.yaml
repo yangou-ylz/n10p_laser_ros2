@@ -27,8 +27,8 @@ slam_toolbox:
     scan_buffer_size: 10                       # 扫描缓冲区大小
     scan_buffer_max_scan_time: 10.0            # 缓冲区最大扫描时间 (s)
     link_match_min_response_fine: 0.1
-    link_scan_maximum_distance: 1.5
-    loop_search_maximum_distance: 5.0
+    link_scan_maximum_distance: 3.0            # 增大帧间匹配距离 (原1.5→3.0, 手持可快步走)
+    loop_search_maximum_distance: 8.0          # 增大回环搜索距离 (原5.0→8.0)
     do_loop_closing: true                      # 启用回环检测
     loop_match_min_chain_size: 10
     loop_match_max_variance_coarse: 3.0
@@ -36,7 +36,9 @@ slam_toolbox:
     loop_match_min_response_fine: 0.45
 
     # ── 相关性扫描匹配器 ────────────────────────
-    correlation_search_space_dimension: 0.5
+    # dimension: 搜索窗口大小 (米+弧度)。手持无飞控里程计→需要大窗口
+    # 0.5 = ±28°旋转搜索 → 手持旋转建图不够 → 增大到1.5 = ±86°
+    correlation_search_space_dimension: 1.5
     correlation_search_space_resolution: 0.01
     correlation_search_space_smear_deviation: 0.1
 

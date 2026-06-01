@@ -13,17 +13,19 @@
   AC  = cumulative_sum(SC_during_sum) & 0xFF
 """
 
-import struct
+import struct       # 解析二进制帧（将 bytes 解包为 int16/int32 等）
 import time
 
-import rclpy
-from rclpy.node import Node
+import rclpy              # ROS2 Python 客户端库
+from rclpy.node import Node  # 所有 ROS2 Python 节点的基类
+# QoS（服务质量）相关的枚举类型
 from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy, HistoryPolicy
-from nav_msgs.msg import Odometry
-from sensor_msgs.msg import Imu
+from nav_msgs.msg import Odometry              # 里程计消息（/odom 的类型）
+from sensor_msgs.msg import Imu                # IMU 消息（/imu 的类型）
+# 坐标变换和几何消息
 from geometry_msgs.msg import TransformStamped, Quaternion, Vector3, Twist, TwistWithCovariance, PoseWithCovariance, Pose, Point
-from tf2_ros import TransformBroadcaster
-import serial
+from tf2_ros import TransformBroadcaster       # 动态 TF 广播器（发布 odom→base_link 变换）
+import serial           # pyserial：Python 串口通信库
 
 
 # ── 协议常量 ──────────────────────────────────────────────
@@ -74,19 +76,27 @@ class AnoBridgeNode(Node):
             self.get_parameter('gyr_offset_z').value,
         ]
 
-        # ── QoS ───────────────────────────────────────
+        # ── QoS（服务质量）配置 ──────────────────────────
+        # 为什么 Best Effort？里程计数据每秒 20 帧，丢一帧马上有新的。
+        # 如果用 Reliable（保证送达），下游处理慢 → 队列堆积 → 延迟越来越大。
+        # Best Effort 保证下游拿到的永远是最新的数据。
         sensor_qos = QoSProfile(
-            reliability=ReliabilityPolicy.BEST_EFFORT,
-            durability=DurabilityPolicy.VOLATILE,
-            history=HistoryPolicy.KEEP_LAST,
-            depth=10,
+            reliability=ReliabilityPolicy.BEST_EFFORT,  # 尽力而为，丢了不重传
+            durability=DurabilityPolicy.VOLATILE,        # 不持久化，新订阅者收不到旧数据
+            history=HistoryPolicy.KEEP_LAST,             # 只保留最近的 N 条消息
+            depth=10,                                    # N=10，队列最多缓存 10 条
         )
 
-        # ── 发布者 ────────────────────────────────────
+        # ── 发布者（Publisher）─ 向外发布话题 ──────────
+        # /odom 话题：发布机器人的里程计（位置+速度+姿态），20Hz
+        # Odometry = nav_msgs.msg.Odometry，是 ROS2 标准消息类型
         self.odom_pub = self.create_publisher(Odometry, '/odom', sensor_qos)
+        # /imu 话题：发布 IMU 数据（加速度+角速度+姿态），有 IMU 数据时即发
         self.imu_pub = self.create_publisher(Imu, '/imu', sensor_qos)
 
-        # ── TF 广播 ───────────────────────────────────
+        # ── TF 广播器 ─ 动态发布 odom → base_link 的坐标变换 ──
+        # 这是 TF 树中关键的一段：里程计坐标系 → 机器人本体坐标系
+        # 机器人一直在移动，所以这段变换是动态的（20Hz 更新）
         self.tf_broadcaster = TransformBroadcaster(self)
 
         # ── 数据缓存 ──────────────────────────────────
@@ -111,12 +121,15 @@ class AnoBridgeNode(Node):
 
         self.buf = bytearray()
 
-        # ── 定时器：定期发布里程计 ──────────────────────
-        pub_period = 1.0 / self.get_parameter('pub_rate').value
+        # ── 定时器：定期发布里程计（pub_rate = 20Hz） ──
+        # 不是每收到一帧飞控数据就发一次 /odom，而是固定 20Hz 发布
+        # 这样下游 SLAM/AMCL 收到的里程计频率稳定、可预测
+        pub_period = 1.0 / self.get_parameter('pub_rate').value  # 1/20 = 0.05 秒
         self.timer = self.create_timer(pub_period, self.publish_odometry)
 
-        # ── 串口读取定时器 ─────────────────────────────
-        self.read_timer = self.create_timer(0.001, self.read_serial)  # 1kHz poll
+        # ── 串口读取定时器：以 1kHz 频率轮询串口 ──────────
+        # 飞控以 921600bps 高速发送数据，必须高频轮询才能及时收全
+        self.read_timer = self.create_timer(0.001, self.read_serial)  # 每 1ms 检查一次串口缓冲区
 
         self.get_logger().info('匿名凌霄飞控桥接节点已启动')
 

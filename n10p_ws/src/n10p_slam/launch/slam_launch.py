@@ -1,16 +1,25 @@
 #!/usr/bin/python3
 """N10P SLAM 建图启动文件 — 手持建图模式（不需要飞控）
 启动: 占位里程计 + N10P 雷达 + slam-toolbox + RViz2
+
+参数:
+  scan_source:=wired    有线模式 (默认, lslidar_driver)
+  scan_source:=wireless 无线模式 (ESP32 WiFi → n10p_wifi_bridge_node)
 """
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import TimerAction
+from launch.actions import DeclareLaunchArgument, TimerAction
+from launch.conditions import IfCondition, UnlessCondition
+from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
 import os
 
 
 def generate_launch_description():
+
+    scan_source = LaunchConfiguration('scan_source', default='wired')
+    is_wireless = PythonExpression(["'", scan_source, "' == 'wireless'"])
 
     # ── 1. 占位里程计 (飞控不在线时提供 odom → base_link TF) ──
     dummy_odom_node = Node(
@@ -20,7 +29,7 @@ def generate_launch_description():
         output='screen',
     )
 
-    # ── 2. N10P 激光雷达驱动 ──────────────────────────
+    # ── 2. N10P 激光雷达 (有线/无线可选) ─────────────
     driver_params = os.path.join(
         get_package_share_directory('lslidar_driver'),
         'params', 'lsx10.yaml')
@@ -31,6 +40,16 @@ def generate_launch_description():
         name='lslidar_driver_node',
         output='screen',
         parameters=[driver_params],
+        condition=UnlessCondition(is_wireless),
+    )
+
+    wifi_bridge_node = Node(
+        package='n10p_bringup',
+        executable='n10p_wifi_bridge_node',
+        name='n10p_wifi_bridge_node',
+        output='screen',
+        parameters=[{'host': '192.168.0.184', 'port': 8888}],
+        condition=IfCondition(is_wireless),
     )
 
     # ── 3. 静态 TF: base_link → laser_frame ──────────
@@ -67,8 +86,11 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        DeclareLaunchArgument('scan_source', default_value='wired',
+                              description='雷达数据源: wired (有线) | wireless (ESP32 WiFi)'),
         dummy_odom_node,
         driver_node,
+        wifi_bridge_node,
         static_tf_node,
         TimerAction(period=3.0, actions=[slam_node]),
         TimerAction(period=6.0, actions=[rviz_node]),

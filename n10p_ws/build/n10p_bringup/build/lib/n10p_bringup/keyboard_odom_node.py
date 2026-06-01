@@ -124,7 +124,12 @@ class KeyboardOdomNode(Node):
     def update_odom(self):
         dt = 0.05
 
-        # 体坐标系速度 → 世界坐标系积分
+        # ── 全向运动模型：体坐标系速度 → 世界坐标系积分 ──
+        # 这是全向(omnidirectional)机器人的运动学公式。
+        # 差分驱动(differential drive)机器人只能前进+转向,
+        # 但全向机器人可以朝任意方向平移(无人机就是全向的)。
+        # vx = 前行速度, vy = 侧移速度, vth = 转向速度
+        # 公式将"以机器人为参考的速度"转换为"以世界为参考的位移":
         self.x += (self.vx * cos(self.yaw) - self.vy * sin(self.yaw)) * dt
         self.y += (self.vx * sin(self.yaw) + self.vy * cos(self.yaw)) * dt
         self.yaw += self.vth * dt

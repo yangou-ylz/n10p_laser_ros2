@@ -2,10 +2,12 @@
 /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/lib/python3.10/site-packages/n10p_bringup/ano_bridge_node.py
 /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/lib/python3.10/site-packages/n10p_bringup/__init__.py
 /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/lib/python3.10/site-packages/n10p_bringup/keyboard_odom_node.py
+/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/lib/python3.10/site-packages/n10p_bringup/n10p_wifi_bridge.py
 /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/lib/python3.10/site-packages/n10p_bringup/__pycache__/dummy_odom_node.cpython-310.pyc
 /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/lib/python3.10/site-packages/n10p_bringup/__pycache__/ano_bridge_node.cpython-310.pyc
 /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/lib/python3.10/site-packages/n10p_bringup/__pycache__/__init__.cpython-310.pyc
 /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/lib/python3.10/site-packages/n10p_bringup/__pycache__/keyboard_odom_node.cpython-310.pyc
+/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/lib/python3.10/site-packages/n10p_bringup/__pycache__/n10p_wifi_bridge.cpython-310.pyc
 /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/share/ament_index/resource_index/packages/n10p_bringup
 /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/share/n10p_bringup/package.xml
 /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/share/n10p_bringup/launch/n10p_bringup_launch.py
@@ -20,3 +22,4 @@
 /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/lib/n10p_bringup/ano_bridge_node
 /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/lib/n10p_bringup/dummy_odom_node
 /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/lib/n10p_bringup/keyboard_odom_node
+/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/n10p_bringup/lib/n10p_bringup/n10p_wifi_bridge_node

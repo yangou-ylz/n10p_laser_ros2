@@ -1,6 +1,6 @@
 # N10P ROS2 SLAM 项目 — 使用教程
 
-> 版本: v2.0 | 更新: 2026-05-28
+> 版本: v2.1 | 更新: 2026-05-31
 >
 > 保姆级教程，每一步直接复制命令运行即可。
 > **有新节点/新包时，实时更新此文件。**
@@ -21,7 +21,7 @@
 - [9. Nav2 导航（真实雷达）](#9-nav2-导航真实雷达)
 - [10. Gazebo 仿真导航（无硬件）](#10-gazebo-仿真导航无硬件)
 - [11. 桌面测试模式（真实N10P + 键盘导航）](#11-桌面测试模式真实n10p--键盘导航)
-- [常见问题](#常见问题)
+- [12. ESP32 WiFi 无线雷达 — 整合经验](#12-esp32-wifi-无线雷达--整合经验总结)
 - [配置文件速查](#配置文件速查)
 
 ---
@@ -32,8 +32,9 @@
 |------|----------------|--------|------|
 | N10P 激光雷达 | `usb-1a86_USB_Single_Serial_58EB011256-if00` | 460800 | CH9102 芯片 |
 | 匿名数传（凌霄飞控） | `usb-ANO_TC_ANO_RadioLink-if00` | 921600 | ANO RadioLink |
+| ESP32-S3 WiFi 桥接 | 192.168.0.184:8888 (TCP) | — | N10P 接 ESP32 IO18(RX)，无线收发 |
 
-> 两个设备**同时**插入时，by-id 路径固定不变，与插入顺序无关。
+> 两个 USB 设备**同时**插入时，by-id 路径固定不变，与插入顺序无关。
 
 插入后确认识别：
 
@@ -42,6 +43,8 @@ ls /dev/serial/by-id/
 ```
 
 应看到两个蓝绿色的软链接。
+
+> ESP32 上电自动连 WiFi 并启动 TCP Server，电脑连同一 WiFi 即可无线接收雷达数据。
 
 ---
 
@@ -84,11 +87,28 @@ source install/setup.bash
 
 ## 3. 仅运行激光雷达（查看点云）
 
+> 每次新开终端先激活环境：`ros2env && source ~/ROS2/n10p_leishen/n10p_ws/install/setup.bash`
+
+### 有线模式（USB 数据线直连）
+
 启动驱动 + RViz2：
 
 ```bash
 ros2 launch lslidar_driver lslidar_launch.py
 ```
+
+### 无线模式（ESP32 WiFi）
+
+ESP32 上电连接 N10P，电脑连同一 WiFi，启动桥接节点即可收到 `/scan`：
+
+```bash
+ros2 run n10p_bringup n10p_wifi_bridge_node
+# 或指定 ESP32 IP
+ros2 run n10p_bringup n10p_wifi_bridge_node --ros-args -p host:=192.168.0.184
+```
+
+> ESP32 上电自动连接 WiFi 并启动 TCP Server (默认 192.168.0.184:8888)。
+> 不需要数据线！雷达 + ESP32 可以自由移动。
 
 验证雷达数据：
 
@@ -101,10 +121,15 @@ ros2 topic echo /scan --once     # 查看一帧数据
 
 ## 4. 运行雷达 + 飞控桥接（传感器全开）
 
+> 新终端先激活：`ros2env && source ~/ROS2/n10p_leishen/n10p_ws/install/setup.bash`
+
 一键启动：N10P 驱动 + 匿名飞控解析 + TF 发布：
 
 ```bash
+# 有线模式 (USB 数据线)
 ros2 launch n10p_bringup n10p_bringup_launch.py
+# 无线模式 (ESP32 WiFi)
+ros2 launch n10p_bringup n10p_bringup_launch.py scan_source:=wireless
 ```
 
 这会同时启动：
@@ -125,15 +150,22 @@ ros2 run tf2_ros tf2_echo odom base_link   # 飞控解锁后才有非零值
 
 ## 5. 运行 SLAM 建图
 
+> 新终端先激活：`ros2env && source ~/ROS2/n10p_leishen/n10p_ws/install/setup.bash`
+
 ### 5.1 手持建图模式（不需要飞控）
 
 使用占位里程计，只需雷达插上即可：
 
 ```bash
+# 有线模式 (USB 数据线)
 ros2 launch n10p_slam slam_launch.py
+
+# 无线模式 (ESP32 WiFi, 雷达可自由移动)
+ros2 launch n10p_slam slam_launch.py scan_source:=wireless
 ```
 
 启动后 RViz2 窗口自动弹出。**手持雷达缓慢走动**，地图逐渐建立。
+> 无线模式下雷达不再被数据线束缚，可以走遍整个房间建图。
 
 ### 5.2 飞控在线模式（完整传感器）
 
@@ -142,7 +174,10 @@ ros2 launch n10p_slam slam_launch.py
 **终端1** — 传感器层（飞控 + 雷达）：
 
 ```bash
+# 有线模式
 ros2 launch n10p_bringup n10p_bringup_launch.py
+# 无线模式
+ros2 launch n10p_bringup n10p_bringup_launch.py scan_source:=wireless
 ```
 
 **终端2** — SLAM + RViz2（只启动建图，不重复启动传感器）：
@@ -219,10 +254,15 @@ ls /dev/serial/by-id/                    # 确认设备已识别
 
 ## 9. Nav2 导航（真实雷达）
 
+> 新终端先激活：`ros2env && source ~/ROS2/n10p_leishen/n10p_ws/install/setup.bash`
+
 需要有已保存的地图。一键启动导航系统：
 
 ```bash
+# 有线模式
 ros2 launch n10p_nav nav_launch.py map:=/home/ubuntu22/ROS2/n10p_leishen/maps/n10p_map.yaml
+# 无线模式
+ros2 launch n10p_nav nav_launch.py map:=/home/ubuntu22/ROS2/n10p_leishen/maps/n10p_map.yaml scan_source:=wireless
 ```
 
 启动后 RViz2 窗口显示静态地图。操作步骤：
@@ -247,6 +287,8 @@ ros2 topic echo /cmd_vel --once          # 查看速度指令
 ---
 
 ## 10. Gazebo 仿真导航（无硬件）
+
+> 新终端先激活：`ros2env && source ~/ROS2/n10p_leishen/n10p_ws/install/setup.bash`
 
 无需真实硬件，在虚拟环境中完整测试 Nav2 导航。
 
@@ -323,6 +365,8 @@ ros2 topic echo /odom --once          # 机器人位置已移动
 
 ## 11. 桌面测试模式（真实N10P + 键盘导航）
 
+> 新终端先激活：`ros2env && source ~/ROS2/n10p_leishen/n10p_ws/install/setup.bash`
+
 无需机器人底盘，用真实 N10P 雷达 + 键盘控制虚拟里程计 + AMCL 定位 + Nav2 路径规划，在 RViz 中完整演示导航全流程。
 
 ### 11.1 前置准备
@@ -349,7 +393,10 @@ ros2 run n10p_bringup keyboard_odom_node
 ros2env
 cd ~/ROS2/n10p_leishen/n10p_ws
 source install/setup.bash
+# 有线模式
 ros2 launch n10p_nav desktop_test_launch.py
+# 无线模式 (ESP32 WiFi)
+ros2 launch n10p_nav desktop_test_launch.py scan_source:=wireless
 ```
 
 如地图在其他路径，用 `map:=` 指定：
@@ -474,6 +521,170 @@ ros2 daemon stop; ros2 daemon start
 ### 仿真：Gazebo 窗口启动慢
 
 首次启动需从 OSRF 服务器下载 `ground_plane`、`sun` 等模型，耗时 30-60s。后续启动使用缓存，正常 5-10s。
+
+---
+
+## 12. ESP32 WiFi 无线雷达 — 整合经验总结
+
+> 供后续开发者参考：如何将一个 ESP32 WiFi 串口转 TCP 设备接入现有 ROS2 项目，
+> 以及在此过程中踩过的坑和解决方案。
+
+### 12.1 架构设计原则
+
+**零侵入、双路径并存**。原有有线路径完全不动，新增无线路径独立运行：
+
+```
+N10P 原始数据 ───┬── 有线: lslidar_driver ──────→ /scan ──→ SLAM/Nav2/RViz2
+                 │
+                 └── 无线: ESP32 WiFi TCP → n10p_wifi_bridge_node → /scan (同上)
+```
+
+下游（SLAM/Nav2/RViz2）只订阅 `/scan`，对数据来源完全无感知。
+
+### 12.2 实现要点
+
+1. **wifi_bridge 必须是独立节点** — 发布与 lslidar_driver 完全相同的 /scan
+   （frame_id=laser_frame, 10Hz, 360° 激光扫描），不修改任何现有驱动代码
+2. **launch 文件用条件节点切换** — `scan_source:=wired` (默认) / `scan_source:=wireless`
+   通过 `IfCondition`/`UnlessCondition` 二选一启动数据源，不会同时运行
+3. **wifi_bridge 用 ROS2 参数声明 host/port** — 同时兼容 CLI 参数和 YAML 参数文件
+
+### 12.3 完整踩坑记录
+
+#### 坑 1：socat PTY 方案不可行
+
+**尝试**：用 socat 将 ESP32 TCP 映射为 PTY 虚拟串口（`socat PTY,link=/tmp/n10p_esp32,raw TCP:192.168.0.184:8888`），
+  让 lslidar_driver 无改动接入。
+**失败原因**：lslidar_driver 启动时调用 `tcsetattr()` 设置终端属性（波特率、VMIN、VTIME 等），
+  改变了 PTY 的行规约（line discipline），导致 poll() 不报告数据就绪 → 驱动永久卡住。
+**解决**：放弃 PTY 方案，改为独立 Python ROS2 节点，TCP socket 直接读流式数据，
+  在应用层做帧同步，完全不经过终端层。
+**教训**：PTY 不是真正的串口，`tcsetattr()` 对 PTY 的影响与对真实串口完全不同。
+
+#### 坑 2：N10P 帧的字节序不一致
+
+**现象**：wifi_bridge 解析出的距离值为天文数字（几万米）。
+**根因**：N10P 原始帧（108 字节）中距离和角度的字节序不同——
+  **角度用大端（Big Endian）**，起始角度在字节 5-6 (`struct.unpack('>H')`)，单位 0.01°；
+  **距离用小端（Little Endian）**，每个点 6 字节，距离在偏移 0-1 (`struct.unpack('<H')`)，单位 mm。
+  **关键：不可全部用同一种字节序解析。**
+**解决**：距离用 `<H`（小端），角度用 `>H`（大端）。
+**教训**：直接对接原始帧时，必须逐字节对照 lslidar_driver 源码确认每段的字节序。
+
+#### 坑 3：N10P 帧角度映射与 count_num 参数
+
+**现象**：初版 wifi_bridge 的 ScanAccumulator 积累点数极少（20-70 点/圈），/scan 无有效数据。
+**根因**：N10P 每帧（108 字节）16 个点，仅覆盖约 6° 扇形区域。
+  一圈扫描由约 200 帧拼接而成（332+ fps → 10Hz 发布约 33 帧/次）。
+  lslidar_driver 的点索引公式：`point_idx = round((360 - degree) * count_num / 360)`，
+  使用 `count_num`（半圈点数）而非 `scan_num`（全圈点数）。
+  wifi_bridge 需要与驱动保持完全一致的 count_num 和角度映射。
+**解决**：
+- count_num 固定为 529（N10P 典型值），scan_num = 2 × 529 = 1058
+- 角度映射：`point_idx = int(round(a * scan_num / 360.0)) % scan_num`
+- 10Hz 定时器强制发布，不等完整一圈（匹配驱动行为）
+- 发布前检查有效点数 > 10 才发布
+
+#### 坑 4：wifi_bridge 发布太早 → scan 先于 TF → costmap 消息队列爆满
+
+**现象**：启动后 RViz 和 costmap 连续报 `Message Filter dropping message: frame 'laser_frame' ... discarding message because the queue is full`。
+**根因**：wifi_bridge 连接 ESP32 后立即每秒收 330+ 帧、10Hz 发布 /scan，
+  但此时 AMCL 未初始化（无 map→odom TF）、用户未设初始位姿。
+  local_costmap 的 obstacle_layer 收到 scan 后尝试做 TF 变换
+  （laser_frame → odom），但 TF 不完整 → 变换失败 → scan 堆积在消息队列中 →
+  队列满（默认 10 条）→ 新 scan 被丢弃。
+**解决**：wifi_bridge 加入 5 秒**启动延迟**——节点启动后先连接 TCP 收帧但不发布，
+  等 5 秒后（SLAM/Nav2 已就绪）才开始发 /scan。
+  同时延迟期间积累的旧数据全部丢弃，避免一次性涌入。
+
+#### 坑 5：手持建图旋转时地图严重变形
+
+**现象**：无线手持建图，直走时地图正常（长方形），一旋转地图就跟着转，
+  同一个房间的长方形被画了好几层重叠在一起。
+**根因**：手持模式使用 dummy_odom（全零里程计），slam-toolbox 必须**全靠扫描匹配**
+  来估计运动。当前配置 `correlation_search_space_dimension: 0.5` 意味着
+  帧间匹配的搜索窗口只有 ±0.5m 和 **±0.5rad（≈±28°）**。
+  手持建图时如果旋转超过 28°/帧，扫描匹配器找不到对应帧 →
+  误判为"房间旋转了" → 地图变形。
+**解决**：调整 mapper_params_online_async.yaml 三个参数：
+```yaml
+correlation_search_space_dimension: 1.5  # 从 0.5 → 1.5 (±86°旋转搜索)
+link_scan_maximum_distance: 3.0          # 从 1.5 → 3.0 (帧间平移匹配)
+loop_search_maximum_distance: 8.0        # 从 5.0 → 8.0 (回环检测)
+```
+**补充**：**慢速转动**、**贴墙走**（墙提供更多特征点）、走完一圈**回到起点**
+  （回环检测会修正累积误差）能显著提升建图质量。
+
+#### 坑 6：launch 文件条件节点的 IfCondition 陷阱
+
+**现象**：加 `scan_source` 参数后无论设什么值都只走有线模式。
+**原因**：`IfCondition(scan_source)` 直接取 LaunchConfiguration 的布尔值，
+  `'wired'` 和 `'wireless'` 作为字符串都不会自动转为 True/False。
+**解决**：必须用 `PythonExpression` 做字符串比较：
+```python
+from launch.conditions import IfCondition, UnlessCondition
+from launch.substitutions import LaunchConfiguration, PythonExpression
+
+scan_source = LaunchConfiguration('scan_source', default='wired')
+is_wireless = PythonExpression(["'", scan_source, "' == 'wireless'"])
+
+driver_node = Node(..., condition=UnlessCondition(is_wireless))   # 有线时启动
+wifi_node   = Node(..., condition=IfCondition(is_wireless))       # 无线时启动
+```
+
+#### 坑 7：map 帧不存在导致 RViz 死锁
+
+**现象**：桌面测试启动后 RViz 一片空白，终端刷 `Timed out waiting for transform from base_link to map: frame 'map' does not exist`。
+**原因链**：
+  1. AMCL 需要用户先点 "2D Pose Estimate" 才激活并发布 map→odom TF
+  2. 激活前 `map` 帧不存在
+  3. RViz 的 Fixed Frame 设为 `map` → 所有显示渲染失败
+  4. 地图不显示 → 用户不知道在哪设初始位姿 → **死锁**
+**解决**：在 launch 文件中加一个**静态 `map→odom` 全零 TF** 做 bootstrap：
+```python
+Node(package='tf2_ros', executable='static_transform_publisher',
+     name='static_tf_map_odom',
+     arguments=['0','0','0','0','0','0','map','odom']),
+```
+AMCL 初始化后会用自己的 TF 自动覆盖这个静态值。
+**这个坑也适用于 nav_launch.py**，已在两处都加了。
+
+#### 坑 8：两个里程计源同时运行 → TF 冲突
+
+**现象**：costmap 警告 `Sensor origin at (22.11, 0.00) is out of map bounds (64.70, -1.95) to (68.67, 2.02)`，
+  机器人位置飞到了 66 米外（地图只有 10 米宽）。
+**原因**：一次修改中把 `dummy_odom` 加进了 desktop_test_launch.py，
+  但用户同时在另一终端跑 `keyboard_odom_node`——**两个节点都发布 odom→base_link TF**，
+  数值互相矛盾。
+**解决**：**二选一**。桌面测试模式固定为 launch 文件不启动里程计，
+  用户必须在单独终端先启动 `ros2 run n10p_bringup keyboard_odom_node`。
+
+#### 坑 9：AMCL 粒子云在 RViz 里看不见
+
+**现象**：AMCL 已激活、/particle_cloud 有数据，但 RViz 里看不到绿色粒子箭头。
+**原因链**：
+  1. AMCL 的 `/particle_cloud` 话题有双重类型（`nav2_msgs/ParticleCloud` 和 `geometry_msgs/PoseArray`），
+    `ros2 topic echo` 因此拒绝回显
+  2. RViz 中 PoseArray 显示的箭头默认大小是 0.01m — **肉眼完全看不见**
+**解决**：
+  - 验证 AMCL 是否在发：`ros2 node info /amcl | grep particle` 看 Publishers 列表
+  - RViz 左侧面板 PoseArray → "Arrow Length" 调为 **0.3**，"Arrow Width" 调为 **0.1**
+
+#### 坑 10：/particle_cloud 双重类型导致 ros2 topic 命令失败
+
+**现象**：`ros2 topic echo /particle_cloud` 报 `contains more than one type`。
+**原因**：AMCL 同时以 `nav2_msgs/ParticleCloud` 和 `geometry_msgs/PoseArray` 两种类型发布。
+**解决**：用 `ros2 node info /amcl` 确认发布者，或用 `ros2 topic hz /particle_cloud`（同样不行）。
+  最终判断法：只要 `ros2 node info /amcl` 的 Publishers 里有 `/particle_cloud`、且
+  `/amcl_pose` 有数据 → AMCL 正常工作。RViz 看不到纯粹是箭头尺寸问题。
+
+#### 坑 11：Fast-DDS 共享内存僵尸文件
+
+**影响范围**：主要是 Gazebo 仿真。桌面测试（无线+真实雷达）一般不受影响。
+**现象**：所有 ROS2 节点日志报 `RTPS_TRANSPORT_SHM Error: Failed init_port`。
+  虽然 DDS 会回退到 UDP 模式因此消息不完全丢失，但大量 SHM 错误会拖慢
+  DDS 发现和服务调用速度，导致 lifecycle_manager 调用 configure service 超时失败。
+**解决**：`rm -f /dev/shm/fastrtps_*` 清理所有共享内存僵尸文件。
 
 ---
 
