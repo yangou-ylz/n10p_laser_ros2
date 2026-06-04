@@ -1,8 +1,10 @@
 # CLAUDE.md — N10P ROS2 SLAM 项目最高指令
 
-> 版本: v1.0 | 创建: 2026-05-27 | 此文件每次对话自动加载
+> 版本: v2.0-pi | 更新: 2026-06-04 | 此文件每次对话自动加载
 >
-> 项目根目录: `/home/ubuntu22/ROS2/n10p_leishen/`
+> 项目根目录: `/home/ylz/n10p_leishen/`
+>
+> **当前阶段**: Phase 6 — 树莓派 4B 移植与验证
 
 ---
 
@@ -17,20 +19,38 @@
 
 ## 2. 环境约束 (最高优先级)
 
-### 2.1 ROS2 环境激活方式
+### 2.1 当前机器
 
-用户的 ROS2 Humble 与 Anaconda 不兼容，使用自定义命令 `ros2env` 来激活：
+| 项目 | 实际值 |
+|------|--------|
+| 型号 | Raspberry Pi 4 Model B Rev 1.5 |
+| 架构 | aarch64 (ARM64) |
+| 系统 | Ubuntu 22.04.5 LTS Server |
+| 内存 | ~1.8GB（2GB 版本，可用约 600MB） |
+| CPU | 4 核 Cortex-A72 @1.8GHz |
+| 存储 | microSD 59GB（无 SSD），可用 ~49GB |
+| 用户 | ylz |
+| 项目路径 | `/home/ylz/n10p_leishen/` |
+| 工作空间 | `/home/ylz/n10p_leishen/n10p_ws/` |
+
+### 2.2 ROS2 环境激活
+
+本机无 Anaconda/conda，直接 source 即可：
 
 ```bash
-# 不要直接 source /opt/ros/humble/setup.bash
-# 使用用户的 ros2env 命令（会先清除 conda 环境变量）
-ros2env
+source /opt/ros/humble/setup.bash
+source /home/ylz/n10p_leishen/n10p_ws/install/setup.bash
 ```
 
-- **任何 ROS2 操作前**，必须先执行 `ros2env`
-- 如果 ros2env 找不到，提醒用户确认该命令是否已配置
+两条命令合成一条：
+```bash
+source /opt/ros/humble/setup.bash && source /home/ylz/n10p_leishen/n10p_ws/install/setup.bash
+```
 
-### 2.2 禁止擅自安装任何软件包
+- **任何 ROS2 操作前**，必须先 source 上述两个 setup.bash
+- 需要完整 ROS2 + 工作空间环境时执行完整版
+
+### 2.3 禁止擅自安装任何软件包
 
 **绝对禁止**在未经用户明确确认的情况下执行：
 - `apt install` / `apt-get install` / `apt remove` / `apt purge`
@@ -39,79 +59,205 @@ ros2env
 - `npm install -g`
 - `sudo` 开头的任何命令
 
-**流程**：如果某个操作确实需要安装新包，必须：
+**流程**：如果需要安装新包，必须：
 1. 先向用户说明：需要安装什么包、为什么需要、是否会影响现有环境
 2. 等待用户明确回复"可以安装"或"同意"
 3. 方可执行
 
-### 2.3 Python 虚拟环境
+### 2.4 已安装的 ROS2 包（树莓派）
 
-如果测试需要新的 Python 库，且可能与原生 ROS2 环境冲突：
-- **必须**在项目内创建 Python 虚拟环境
-- 虚拟环境目录：`/home/ubuntu22/ROS2/n10p_leishen/.venv`
-- 在虚拟环境中安装和测试，不要污染原生环境
-
-### 2.4 可用命令白名单
-
-以下 ROS2 开发常用命令已在 `settings.json` 中预授权，可直接执行：
-- `ros2 *`（所有 ROS2 CLI 命令）
-- `colcon *`（编译工具）
-- `rosdep *`（依赖管理）
-- `python3 *`（Python 脚本）
-- `grep *`、`find *`、`ls *` 等文件搜索命令
-- `curl *`、`wget *`（下载）
-
-### 2.5 禁止的命令
-
-`settings.json` 已配置 deny 列表，包括：`rm -rf` 危险操作、`sudo`、`apt install`、`pip install` 等。
-
----
-
-## 3. 项目背景
-
-### 3.1 项目目标
-
-基于 **镭神智能 N10P 单线激光雷达** 的 ROS2 SLAM 建图与定位项目。
-
-最终部署目标：**树莓派 4B**（无人机机载计算机），操作系统为树莓派官方 Linux 镜像（非 Ubuntu）。
-
-### 3.2 硬件
-
-| 设备 | 型号 | 备注 |
-|------|------|------|
-| 激光雷达 | 镭神智能 N10P | 360° 单线，串口通信 |
-| 开发机 | Ubuntu 22.04, RTX 5060, 16 核 CPU, 30GB RAM | 现在在此开发 |
-| 目标平台 | 树莓派 4B (4GB/8GB RAM) | 成功后移植 |
-| 无人机 | — | 通过 MAVROS 通信 |
-
-### 3.3 已安装的关键 ROS2 包
-
-通过 `dpkg -l` 确认已有 331 个 ros-humble 包，包括：
-- `ros-humble-desktop` 全套
+191 个 ros-humble 包（ros-base，非 desktop），包括：
 - `ros-humble-slam-toolbox`（SLAM 建图）
 - `ros-humble-navigation2` + `nav2-*` 全家桶
-- `ros-humble-gazebo-ros`（仿真）
-- `ros-humble-mavros`（无人机通信）
-- `ros-humble-rviz2` + `rqt-*`（可视化与调试工具）
 - `ros-humble-tf2-*`（坐标变换）
-- `ros-humble-ros2-control` + `ros2-controllers`（控制框架）
+- `ros-humble-pcl-conversions`、`ros-humble-diagnostic-updater`
 
-### 3.4 本地知识库
-
-项目自带的 N10P 资料目录：`n10p_knowledge_base/`
-- `01_Hardware_and_Protocol_CheatSheet.md` ← 硬件参数、协议帧格式
-- `02_ROS2_Development_Guide.md` ← 驱动编译、权限配置
-- `03_Visualization_and_Troubleshooting.md` ← RViz2 配置、7 大常见坑点
-- `04_Official_Documentation_Summary.md` ← 官方资源索引
-- `assets/` ← 存放 PDF 等二进制资料（待填充）
-
-**规则**：任何关于 N10P 硬件/协议的问题，首先查阅 `n10p_knowledge_base/` 目录。
+**本机不安装/不需要的**：
+- `ros-humble-desktop`（无 GUI，用 ros-base）
+- `ros-humble-gazebo-ros`（无 GPU，不仿真）
+- `ros-humble-rviz2`（无桌面，如需可视化用 ssh -X 或开发机远端）
+- ESP-IDF（固件已在开发机编译烧录，树莓派不需要）
 
 ---
 
-## 4. 开发方法论 ⭐
+## 3. 硬件约束 ⚠️
 
-### 4.1 小步验证原则
+### 3.1 内存预算（2GB 版本 — 极其紧张）
+
+| 资源 | 容量 | 备注 |
+|------|------|------|
+| 总内存 | ~1.8GB | 系统占用约 1.2GB |
+| **可用内存** | **约 600MB** | 这是硬上限！ |
+| SLAM 预算 | < 400MB | slam-toolbox + Karto 求解器 |
+| 单节点 | < 80MB | 驱动/桥接/里程计等 |
+| Nav2 总占用 | < 200MB | AMCL + planner + controller + costmaps |
+
+### 3.2 性能红线
+
+- **编译：`colcon build --parallel-workers 2`**（不允许不带此参数编译，会 OOM）
+- **SLAM 分辨率：0.1m**（不用 0.05m，地图数据量差 4 倍）
+- **SLAM 线程：`ceres_num_threads: 2`**（最多 2，不用 4）
+- **AMCL 粒子：`max_particles: 1000`**（不用 2000）
+- **controller_frequency：10Hz**（不用 20Hz）
+- **QoS：Best Effort + Keep Last，队列深度 5**（减少内存堆积）
+- **日志级别：INFO**（DEBUG 仅在排错时临时开启）
+- **禁止在回调中写文件、sleep、阻塞 I/O**
+- **禁止 Gazebo 相关代码编译或运行**
+- **避免频繁 TF 卡写入**（rosbag 按需录制，不长期运行）
+
+### 3.3 微SD 卡注意事项
+
+- IO 速度有限，编译产物（build/install/log）已在 SD 卡上
+- 地图文件较小（PGM 几十 KB），直接放 SD 卡路径 `/home/ylz/n10p_leishen/maps/`
+- 不建议在 SD 卡上做大量 rosbag 录制
+
+---
+
+## 4. 项目架构
+
+### 4.1 项目目标
+
+基于镭神智能 N10P 单线激光雷达的 ROS2 SLAM 建图与定位项目，部署于树莓派 4B（无人机机载计算机）。
+
+### 4.2 数据流
+
+```
+N10P 原始数据 ───┬── 有线: USB串口 → lslidar_driver ──────→ /scan ──→ SLAM/Nav2
+                 │
+                 └── 无线: ESP32 WiFi TCP → n10p_wifi_bridge_node → /scan (同上)
+```
+
+两条路径输出完全相同的 `/scan`（LaserScan, frame_id=laser_frame, 10Hz），下游无感知。
+
+### 4.3 TF 树
+
+```
+map → odom → base_link → laser_frame
+      (AMCL)    (里程计)    (静态TF)
+```
+
+手持建图模式（dummy_odom/全零里程计）下：
+- `odom→base_link` 为全零
+- slam-toolbox 通过扫描匹配估计运动
+- `map→odom` 由 slam-toolbox 发布
+
+### 4.4 6 个 ROS2 包
+
+| 包 | 类型 | 功能 |
+|----|------|------|
+| `lslidar_msgs` | C++ (cmake) | 驱动自定义消息类型 |
+| `lslidar_driver` | C++ (cmake) | N10P 官方驱动，解析串口→/scan |
+| `n10p_bringup` | Python (ament_python) | 飞控解析、里程计(dummy/keyboard)、WiFi桥接、启动 |
+| `n10p_slam` | Python | SLAM 配置 + launch |
+| `n10p_nav` | Python | Nav2 导航配置 + launch |
+| `n10p_gazebo` | Python | Gazebo 仿真（**树莓派不编译不运行**） |
+
+### 4.5 目录结构
+
+```
+/home/ylz/n10p_leishen/
+├── CLAUDE.md                     # 本文件（最高指令）
+├── user.md                       # 使用教程
+├── env.md                        # 环境配置教程
+├── learn.md                      # 学习笔记
+├── n10p_knowledge_base/          # N10P 硬件/协议资料
+├── n10p_reference_doc/           # 参考文档（00-13）
+├── esp32_n10p_bridge/            # ESP32 固件工程（仅开发机编译）
+├── maps/                         # SLAM 地图文件
+├── scripts/                      # 工具脚本
+├── n10p_ws/                      # ROS2 工作空间
+│   ├── build/ install/ log/      # 编译产物
+│   └── src/
+│       ├── Lslidar_ROS2_driver/
+│       │   ├── lslidar_msgs/
+│       │   └── lslidar_driver/
+│       ├── n10p_bringup/
+│       ├── n10p_slam/
+│       ├── n10p_nav/
+│       └── n10p_gazebo/          # 树莓派不编译
+```
+
+---
+
+## 5. 架构决策记录 (ADR)
+
+> 来源：`n10p_reference_doc/05_architecture_decisions.md`
+
+| ADR | 决策 | 原因 |
+|-----|------|------|
+| 1 | SLAM 用 slam-toolbox online async | 社区活跃，支持手持无里程计，资源可控 |
+| 2 | 分阶段开发（Phase 0→7） | 每步可执行可验证，避免一次性部署困难 |
+| 3 | 零侵入双路径（有线+无线） | 两路径完全隔离，通过 scan_source 参数切换，下游只订阅 /scan |
+| 4 | 放弃 socat PTY → 独立 Python WiFi 节点 | lslidar_driver 的 tcsetattr 破坏 PTY 行规约 |
+| 5 | 键盘里程计独立运行 | 桌面测试用，WASD 控制，不与 dummy_odom 同时运行 |
+| 6 | AMCL 全向模型 + SmacPlanner2D + RPP | OmniMotionModel, MOORE 8方向, RegulatedPurePursuit |
+| 7 | 全局 costmap 禁用 rolling_window | rolling_window + obstacle_layer → planner SIGSEGV，改用 static_layer + 空白 PGM |
+| 8 | bootstrap 静态 TF（map→odom） | AMCL 激活前 map 不存在→RViz 死锁，用静态 TF 引导 |
+
+---
+
+## 6. 已知 Bug 与红线 ⚠️
+
+> 来源：`n10p_reference_doc/07_bug_fixes_and_known_issues.md`
+
+### 6.1 驱动层 Bug
+
+| Bug | 现象 | 修复 | 文件位置 |
+|-----|------|------|----------|
+| angle_increment 错误 | SLAM 丢弃所有扫描 "1058 readings, expected 529" | `angle_increment = 2*PI/scan_num`（非 count_num） | lslidar_driver.cc:990 |
+| double free + delete/delete[] | 启动崩溃 exit code -6 | 5处 delete→delete[]；删除子函数内重复 delete | lslidar_driver.cc:718,862,794,951,1379 |
+
+### 6.2 SLAM 层 Bug
+
+| Bug | 现象 | 修复 |
+|-----|------|------|
+| 旋转建图变形 | 直走正常，旋转后房间重叠 | correlation_search_space_dimension: 0.5→1.5 |
+| launch 串口冲突 | slam_launch.py + bringup 同时启动→double free | 创建 slam_only_launch.py（无 driver/odom） |
+
+### 6.3 Nav2 层 Bug
+
+| Bug | 现象 | 修复 |
+|-----|------|------|
+| planner SIGSEGV | 全局 costmap rolling_window + obstacle_layer → 崩溃 | global_costmap: static_layer + inflation_layer + 空白 PGM |
+| lifecycle 超时 | controller_server 配置超时 | bond_timeout→15s, service_timeout→15s |
+| map 帧死锁 | "frame 'map' does not exist"，RViz 白屏 | launch 加 static_transform_publisher map→odom 全零 bootstrap |
+| RemovePassedGoals 不存在 | bt_navigator 插件找不到 | 用系统 navigate_w_replanning_time.xml |
+
+### 6.4 集成层 Bug
+
+| Bug | 现象 | 修复 |
+|-----|------|------|
+| 两个里程计 TF 冲突 | 机器人定位飞到 44m 外 | dummy_odom 和 keyboard_odom 二选一，不同时运行 |
+| wifi_bridge 发布太早 | costmap 队列爆满 | wifi_bridge 加 5 秒启动延迟 |
+| Fast-DDS 共享内存僵尸 | "RTPS_TRANSPORT_SHM Error" | 启动前 `rm -f /dev/shm/fastrtps_*` |
+| ament_python entry_points | scan_relay 找不到可执行文件 | 每次 build 后手动 cp（已废弃 scan_relay） |
+
+### 6.5 已知坑点 (KI) 快速解决
+
+| KI | 现象 | 快速解决 |
+|----|------|----------|
+| KI-001 | 串口 Permission denied | 用户在 dialout 组（已配置） |
+| KI-002 | RViz 无点云 | LaserScan→Reliability 改 Best Effort |
+| KI-003 | TF extrapolation 报错 | Frame Rate 改 10Hz |
+| KI-004 | 有数据无显示 | 发布 static TF base_link→laser_frame |
+| KI-005 | 驱动 double free | 确认 install/ 中为修复后版本 |
+| KI-006 | 找不到 /dev/ttyACM0 | lsusb 查芯片型号，改 lsx10.yaml serial_port |
+
+### 6.6 绝对不可触犯的红线
+
+1. ❌ **全局 costmap 绝对不能用 `rolling_window: true + obstacle_layer`** → 必 SIGSEGV
+2. ❌ **所有 Nav2 launch 必须有 map→odom 静态 TF bootstrap** → 否则死锁
+3. ❌ **dummy_odom 和 keyboard_odom 绝不能同时运行** → TF 冲突
+4. ❌ **N10P 帧解析：距离用 `<H`(小端)，角度用 `>H`(大端)** → 不可混用
+5. ❌ **驱动源码 delete 必须为 delete[]**（已修复，编译前确认）
+6. ❌ **不许用 `pkill -f "ros2"` 或 `killall ros2`** → 只杀自己的 PID
+7. ❌ **不许用 `colcon build` 不带 `--parallel-workers 2`** → 会 OOM
+
+---
+
+## 7. 开发方法论 ⭐
+
+### 7.1 小步验证原则
 
 **不一次性部署全部功能。每个步骤必须是：可执行 → 可验证 → 确定性的。**
 
@@ -127,272 +273,169 @@ ros2env
 
 **严禁**在上一阶段未验证通过的情况下，开始下一阶段的工作。
 
-### 4.2 计划体系
+### 7.2 计划体系
 
 使用 `TodoWrite` 工具动态管理当前会话的任务计划。
 每个计划项必须有：
 - `content`：要做什么（祈使句）
 - `activeForm`：正在做的状态描述（进行时）
 
-### 4.3 测试驱动的验证
+### 7.3 测试驱动的验证
 
 每完成一个功能节点，必须给出可执行的验证命令。
-例如：驱动编译完成后 → `ros2 topic list | grep scan` 确认话题存在。
+驱动编译完成后 → `ros2 topic list | grep scan` 确认话题存在。
 
-### 4.4 阶段完成交付清单 ⭐ (硬约束)
+### 7.4 阶段完成交付清单 ⭐ (硬约束)
 
 **每完成一个 Phase 或子功能后，必须向用户罗列以下三项：**
 
 1. **运行方法**：用户需要执行什么命令来启动这个功能（可复制的一行或多行命令）
 2. **功能讲解**：这个节点/模块做了什么，关键参数含义，输入输出是什么
-3. **测试预期效果**：用户应该看到什么才算功能正常（话题名、频率、RViz 显示内容、终端日志等）
+3. **测试预期效果**：用户应该看到什么才算功能正常（话题名、频率、终端日志等）
 
 **反例（不允许）**：只说"编译通过"或"在这里改了一行"，不给出完整的运行+测试指引。
-**示例格式**：
 
-> ## Phase X 完成总结
->
-> ### 运行方法
-> ```bash
-> ros2 launch xxx yyy.launch.py
-> ```
->
-> ### 功能讲解
-> - 节点 A: 发布 /xxx 话题 (10Hz)
-> - 节点 B: 订阅 /xxx，输出 /yyy
->
-> ### 预期效果
-> - `ros2 topic hz /xxx` → 稳定 10Hz
-> - RViz2 中应看到 XXX 显示
-
-### 4.5 进程清理 (硬约束) ⚠️
+### 7.5 进程清理 (硬约束) ⚠️
 
 **任何自动化测试启动的进程，必须在测试结束后立即清理。只杀自己启动的，不伤及无辜。**
 
-**安全原则（最高优先级）**：
+安全原则：
 1. **启动时记录 PID** — 每个后台进程启动后，立刻记下它的 PID
-2. **只杀自己的 PID** — 清理时 `kill <pid>` 精准终止，确认是自己启动的才杀
-3. **禁止大范围模糊杀进程** — 绝对不允许 `pkill -f "ros2"` 之类通配符杀法，会误杀用户正在运行的其他 ROS2 程序
-4. **杀之前确认** — `ps -p <pid>` 看一眼进程名是否是测试启动的
-5. **清理后确认** — 被杀 PID 确实退出了，同时用户的其他进程不受影响
+2. **只杀自己的 PID** — `kill <pid>` 精准终止
+3. **禁止大范围模糊杀进程** — 绝对不允许 `pkill -f "ros2"` 之类通配符杀法
+4. **杀之前确认** — `ps -p <pid>` 确认是自己启动的
+5. **清理后确认** — 确认 PID 已退出
 
-**正确做法示例**：
 ```bash
-# 启动时记录 PID
-ros2 launch n10p_bringup test.launch.py &
+# ✅ 正确
 TEST_PID=$!
-echo "测试进程 PID: $TEST_PID"
-
-# 测试完毕，精准 kill
 kill $TEST_PID 2>/dev/null
-# 确认已退出
-ps -p $TEST_PID > /dev/null 2>&1 && echo "未退出，强制 kill" && kill -9 $TEST_PID
-```
 
-**禁止做法**：
-```bash
-# ❌ 绝对禁止：不分青红皂白全杀
+# ❌ 禁止
 pkill -f "ros2"
 pkill -f "python3"
 killall ros2
-# ❌ 禁止：杀整个 launch 树而不确认
-pkill -f "n10p"
 ```
-
-**原因**：
-1. 用户可能正在运行其他 ROS2 程序（如 Gazebo 仿真、MAVROS 通信等），误杀会导致用户工作丢失
-2. 用户可能正在进行文件操作、数据处理等与当前测试无关的任务
-3. 残留进程占用资源，但误杀破坏性更大
 
 ---
 
-## 5. 性能红线 (树莓派 4B 适配)
+## 8. 代码规范
 
-### 5.1 资源预算
+### 8.1 通用原则
 
-| 资源 | 树莓派 4B (4GB版) | 树莓派 4B (8GB版) |
-|------|-------------------|-------------------|
-| 可用内存 | 约 3.5GB（系统占 ~500MB） | 约 7.5GB |
-| CPU | 4 核 Cortex-A72 @1.8GHz | 同 |
-| 存储 | microSD 卡（IO 速度有限） | 同 |
+- **改代码前必须先 Read 相关文件**（不要凭记忆）
+- **最小化 diff**（局部 edit / 补缺失逻辑），禁止重写整个文件
+- 不改与当前任务无关的文件
+- 不擅自"优化"或"重构"已有代码
+- 修复 bug 时必须分析**根因**（读了哪行、为什么冲突），不只说"我改了"
+- 代码可读性优先 — 只写"为什么这样做"的注释
+- 不过早抽象 — 三行类似代码比一个函数好
+- 不引入未使用的依赖
 
-### 5.2 开发约束
+### 8.2 ROS2 特定
 
-- **内存优先**：单个节点内存占用目标 < 100MB，SLAM 总占用 < 1GB
-- **CPU 友好**：避免在回调中进行复杂计算，使用异步处理
-- **话题频率**：雷达扫描频率仅 10Hz，下游处理无需超过此频率
-- **ROS2 QoS**：优先使用 Best Effort + Keep Last 策略，减少队列堆积
-- **日志量控制**：默认 INFO 级别，DEBUG 仅在排查问题时开启
-- **避免频繁磁盘 I/O**：不在回调中写文件，使用 `rosbag2` 按需录制
-
-### 5.3 代码审查关注点
-
-每次代码审查时，额外关注：
-1. 是否有不必要的 `new`/`malloc`，能否用栈分配或智能指针替代
-2. 回调中是否有 `sleep` 或阻塞 I/O
-3. 参数 server 是否导致了不必要的 DDS 通信
-4. 话题队列深度是否合理（N10P 10Hz，队列设为 5~10 足够）
+- 节点名：`snake_case`
+- 话题名：`/` 前缀 `snake_case`，如 `/laser_scan`
+- launch 文件：Python 格式（`.launch.py`），不要 XML
+- config 文件：YAML
+- frame_id 遵循 REP-105：`base_link` → `laser_frame`
+- 包名：`ros2_<功能>` 或 `<功能>_ros2`
 
 ---
 
-## 6. 记忆系统
+## 9. 记忆系统
 
-### 6.1 记忆文件位置
+### 9.1 记忆文件位置
 
-项目的持久记忆存储在：
 ```
-/home/ubuntu22/.claude/projects/-home-ubuntu22-ROS2-n10p-leishen/memory/
+/home/ylz/.claude/projects/-home-ylz/memory/
 ```
 
-### 6.2 记忆文件清单
+### 9.2 记忆文件清单
 
-| 文件 | 类型 | 用途 | 更新时机 |
-|------|------|------|----------|
-| `dev_log.md` | project | 每次开发遇到的问题+解决方案 | **出问题并解决后立即追加** |
-| `decisions.md` | project | 重要架构/技术决策及原因 | 做出方向性选择时 |
-| `env_config.md` | reference | 环境配置快照（已安装的包、路径等） | 环境发生变化时 |
-| `known_issues.md` | project | 已知坑点清单（含规避方法） | 发现新的可复现问题时 |
-| `workspace_state.md` | project | 当前开发阶段、工作空间编译状态 | 每次完成一个验证步骤后 |
-| `user.md` (项目根目录) | reference | 保姆级使用教程，每步命令可直接复制运行 | **新增包/节点/启动方式变化时立即更新** |
+| 文件 | 类型 | 用途 |
+|------|------|------|
+| `workspace_state.md` | project | 当前开发阶段、编译状态 |
+| `dev_log.md` | project | 每次遇到的问题+解决方案 |
+| `decisions.md` | project | 重要架构/技术决策 |
+| `known_issues.md` | project | 已知坑点清单 |
+| `env_config.md` | reference | 环境配置快照 |
 
-### 6.3 记忆操作规则
+### 9.3 记忆操作规则
 
-- **每次新对话开始时**：检查 `workspace_state.md` 了解当前开发到哪一步
-- **每次解决问题后**：追加记录到 `dev_log.md`（不要只记在聊天里，聊天会压缩）
+- **每次新对话开始时**：检查 `workspace_state.md`
+- **每次解决问题后**：追加 `dev_log.md`
 - **发现新坑点**：写入 `known_issues.md`
 - **环境变化**：更新 `env_config.md`
 - **方向性决策**：写入 `decisions.md`
-- **新功能/新节点/新包**：更新项目根目录的 `user.md` 使用教程，确保用户可以直接复制命令运行
+- **新功能/新节点**：更新项目根目录 `user.md`
 
----
-
-## 7. 日志与可追溯性
-
-### 7.1 对话内日志
-
-- 使用 `TodoWrite` 跟踪当前会话的任务进展
-- 关键输出用代码块包裹，方便回溯
-- 运行命令的结果如果是关键验证，显式标注"验证通过 ✓"或"验证失败 ✗"
-
-### 7.2 开发日志格式
-
-在 `dev_log.md` 中追加记录时，使用统一格式：
+### 9.4 开发日志格式
 
 ```markdown
 ### YYYY-MM-DD HH:MM — [问题简述]
-
-**现象**：[描述发生了什么]
-**根因**：[分析出的根本原因]
-**解决**：[具体的修复步骤]
-**验证**：[如何确认已修复]
-**关联**：[相关文件/commit/issue]
+**现象**：[描述]
+**根因**：[分析]
+**解决**：[修复步骤]
+**验证**：[确认方法]
+**关联**：[相关文件]
 ```
 
 ---
 
-## 8. 安全规范
+## 10. 安全规范
 
-### 8.1 内容安全
-
-- 不在代码或日志中硬编码密钥、密码、Token
-- 不在 commit message 中包含敏感信息
-- rosbag 录制数据如涉及隐私场所需脱敏
-
-### 8.2 系统安全
-
-- 不执行 `sudo` 命令（已在 settings.json deny）
+- 不在代码或日志中硬编码密钥/密码/Token
+- 不执行 `sudo` 命令
 - 不修改 `/opt/ros/` 下的系统文件
 - 修改 Udev 规则前提醒用户备份
 - 不对 `/dev/` 做危险操作（如 `dd`）
 
-### 8.3 数据传输安全
-
-- 无人机通信链路（MAVROS）默认不加密，测试环境可接受
-- 生产环境需评估是否需要加密链路
-
 ---
 
-## 9. 代码规范
-
-### 9.1 通用原则
-
-- **代码可读性优先** — 用必要的中文注释说明关键流程和数据结构含义，让团队其他人能快速理解代码
-- **不写注释解释"做了什么"** — 代码本身就说明了。只写 **"为什么这样做"** 的注释（坑点、非常规做法、隐藏约束）
-- **不过早抽象** — 三行类似的代码比一个函数更好，除非真的需要复用三次以上
-- **不引入未使用的依赖**
-- **不添加"以防万一"的错误处理** — 只处理可能发生的错误
-
-### 9.2 ROS2 特定规范
-
-- 节点名使用 `snake_case`
-- 话题名使用 `/` 前缀的 `snake_case`，如 `/laser_scan`
-- launch 文件使用 Python 格式（`.launch.py`），不要用 XML
-- config 文件使用 YAML
-- frame_id 遵循 REP-105 坐标系约定：`base_link` → `laser_link` → `laser`
-- 包名遵循 `ros2_<功能>` 或 `<功能>_ros2` 的命名风格
-
-### 9.3 目录结构推荐
-
-```
-n10p_leishen/
-├── CLAUDE.md                  ← 本文件（最高指令）
-├── user.md                    ← 保姆级使用教程（新功能及时更新）
-├── n10p_knowledge_base/       ← N10P 硬件资料
-├── n10p_ws/                   ← ROS2 工作空间
-│   └── src/
-│       ├── lslidar_driver/    ← 官方驱动（从 GitHub 克隆）
-│       ├── n10p_bringup/      ← 项目启动配置
-│       ├── n10p_slam/         ← SLAM 配置与 launch
-│       └── n10p_nav/          ← 导航配置与 launch
-├── scripts/                   ← 工具脚本
-│   ├── env_setup.sh           ← 环境配置脚本
-│   └── verify_env.sh          ← 环境验证脚本
-├── config/                    ← 全局配置文件
-└── docs/                      ← 开发文档
-```
-
----
-
-## 10. 对话效率约定
-
-### 10.1 回复风格
+## 11. 对话效率约定
 
 - 简洁直接
-- 发现问题时：先描述现象，再分析根因，最后给出修复建议
-- 需要确认时：明确列出选项和利弊，等待用户决策
-
-### 10.2 关键行为
-
-- 修改文件后不需要重复读取确认 — 如果 Edit/Write 失败会自动报错
-- 并行处理：可以同时进行的独立操作（如多个文件搜索），批量发出
+- 发现问题：先现象→再根因→最后修复建议
+- 需要确认：列出选项和利弊，等待用户决策
+- 修改文件后**不需要重复读取确认**
+- 并行处理独立操作（批量发出）
+- 普通任务：一行结论 + 做了什么
+- 禁止："当然！/好问题！/没问题！"开头、结尾客套、复述问题原文
 
 ---
 
-## 交付要求
-- 每次改代码前：**必须先 Read 相关文件**（不要凭记忆写）
-- 改动方式：优先**最小化 diff**（局部 edit / 补缺失逻辑），禁止“重写整个文件”除非我说重构
-- 改完必须：做快速健全性检查（至少能让目标包/模块加载；若项目有 `colcon build` / `pytest` / `mypy` 等，跑最小集）
-- 若编译/测试失败：给出**定位依据**（读了哪行、为什么冲突），不要只说“我重试”
+## 12. 当前任务：Phase 6 树莓派移植
 
-## 输出格式（省 token，但不砍信息）
-- 普通任务完成：一行结论 + 做了什么（清单式）
-  - 例：`✓ 修了 Foo::bar：加 null-guard；已通过 colcon build（无新 warning）`
-- 只在以下情况展开详细内容：
-  - 涉及 ABI/接口/跨包依赖/你主动问“为什么”
-  - 有多条可行方案需要你拍板
-- 永远禁止：
-  - 以“当然！/好问题！/没问题！”开头
-  - 结尾的客套（“希望对你有帮助…”）
-  - 复述我的问题原文
+### 12.1 Phase 6 子任务链
 
-## 不要主动做的（避免无效消耗）
-- 不要生成多余示例/演示代码（除非我说要）
-- 不要把已经成功的 stdout 日志再总结成散文
+```
+6.0 环境验证 → 6.1 编译验证 → 6.2 有线雷达 → 6.3 无线ESP32
+→ 6.4 SLAM建图 → 6.5 建图质量对比 → 6.6 Nav2导航 → 6.7 性能调优 → 6.8 文档更新
+```
 
-## 11. 版本记录
+### 12.2 树莓派 vs 开发机关键差异
+
+| 项目 | 开发机 (x86) | 树莓派 (arm64) |
+|------|-------------|----------------|
+| 内存 | 30GB | **1.8GB** |
+| ROS2 包 | ros-desktop (331包) | ros-base (191包) |
+| 可视化 | RViz2 本地 | ssh -X 或开发机远端 |
+| 编译 | -j16 | `--parallel-workers 2` |
+| 地图分辨率 | 0.05m | **0.1m** |
+| SLAM 线程 | 4 | **2** |
+| AMCL 粒子 | 2000 | **1000** |
+| Gazebo | ✅ | ❌ 不装不编译 |
+| ESP-IDF | ✅ 编译固件 | ❌ 不需要 |
+| 串口路径 | 开发机 USB ID | **需实际 ls 确认** |
+
+---
+
+## 13. 版本记录
 
 | 日期 | 版本 | 变更 |
 |------|------|------|
-| 2026-05-27 | v1.0 | 初始创建 |
-| 2026-05-27 | v1.1 | 新增 user.md 使用教程 + 代码可读性规范 |
-| 2026-05-30 | v1.2 | 新增 4.5 进程清理硬约束 |
+| 2026-05-27 | v1.0 | 初始创建（开发机 x86） |
+| 2026-05-27 | v1.1 | 新增 user.md + 代码可读性规范 |
+| 2026-05-30 | v1.2 | 新增进程清理硬约束 |
+| 2026-06-04 | v2.0-pi | 树莓派适配：更新路径/内存/性能红线/已知Bug/ADR/禁用Gazebo |
