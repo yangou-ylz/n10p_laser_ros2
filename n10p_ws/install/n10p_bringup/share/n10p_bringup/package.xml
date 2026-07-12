@@ -1,1 +1,21 @@
-/home/ylz/n10p_leishen/n10p_ws/build/n10p_bringup/package.xml
+<?xml version="1.0"?>
+<package format="3">
+  <name>n10p_bringup</name>
+  <version>0.1.0</version>
+  <description>N10P LiDAR + 匿名凌霄飞控 启动配置与串口解析节点</description>
+  <maintainer email="user@example.com">N10P Developer</maintainer>
+  <license>MIT</license>
+
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>tf2_ros</depend>
+
+  <exec_depend>python3-pyserial</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

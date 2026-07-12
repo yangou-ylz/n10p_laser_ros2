@@ -5,6 +5,28 @@
 > 保姆级教程，每一步直接复制命令运行即可。
 > **有新节点/新包时，实时更新此文件。**
 
+# 终端1
+```bash
+ros2 launch n10p_bringup n10p_bringup_launch.py
+```
+# 终端2
+```bash
+ros2 launch n10p_slam slam_only_launch.py
+```
+# 保存地图
+```bash
+ros2 service call /slam_toolbox/save_map slam_toolbox/srv/SaveMap "{name: {data: '/home/ylz/n10p_leishen/maps/n10p_map'}}"
+```
+
+#导航
+```bash
+r# 1. 启动传感器（保持运行）
+ros2 launch n10p_bringup n10p_bringup_launch.py
+
+# 2. 启动导航
+ros2 launch n10p_nav nav_only_launch.py map:=/home/ylz/n10p_leishen/maps/n10p_map.yaml
+```
+
 ---
 
 ## 目录

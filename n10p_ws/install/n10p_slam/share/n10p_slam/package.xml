@@ -1,15 +1,1 @@
-<?xml version="1.0"?>
-<package format="3">
-  <name>n10p_slam</name>
-  <version>0.1.0</version>
-  <description>N10P SLAM 建图配置 (slam-toolbox)</description>
-  <maintainer email="user@example.com">N10P Developer</maintainer>
-  <license>MIT</license>
-
-  <exec_depend>slam_toolbox</exec_depend>
-  <exec_depend>n10p_bringup</exec_depend>
-
-  <export>
-    <build_type>ament_python</build_type>
-  </export>
-</package>
+/home/ylz/n10p_leishen/n10p_ws/build/n10p_slam/package.xml

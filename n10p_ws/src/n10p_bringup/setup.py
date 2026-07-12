@@ -25,6 +25,7 @@ setup(
             'dummy_odom_node = n10p_bringup.dummy_odom_node:main',
             'keyboard_odom_node = n10p_bringup.keyboard_odom_node:main',
             'n10p_wifi_bridge_node = n10p_bringup.n10p_wifi_bridge:main',
+            'ano_data_logger = n10p_bringup.ano_data_logger:main',
         ],
     },
 )

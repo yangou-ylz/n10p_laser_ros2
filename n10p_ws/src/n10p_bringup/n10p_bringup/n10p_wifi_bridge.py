@@ -205,8 +205,8 @@ class N10PWifiBridge(Node):
             offset = DATA_START + i * POINT_LEN
             if offset + 5 >= FRAME_SIZE:
                 break
-            dist_raw = struct.unpack('>H', frame[offset:offset + 2])[0]
-            conf_raw = struct.unpack('>H', frame[offset + 2:offset + 4])[0]
+            dist_raw = struct.unpack('<H', frame[offset:offset + 2])[0]
+            conf_raw = struct.unpack('<H', frame[offset + 2:offset + 4])[0]
             # 匹配有线驱动: dist_raw==0 或 0xFFFF 的点也保留(角度信息有价值),
             # range_m=0 会在 build_scan 中被转换为 inf
             if dist_raw == 0xFFFF:
@@ -231,6 +231,10 @@ class N10PWifiBridge(Node):
                 raise
 
             buf += data
+            # 首次收到数据时打印 hex dump, 诊断帧格式
+            if data and not hasattr(self, '_dumped'):
+                self._dumped = True
+                self.get_logger().info(f"首次收到 {len(data)} 字节: {data[:64].hex()}")
             while len(buf) > 0:
                 b = buf[0]
                 buf = buf[1:]
@@ -260,7 +264,7 @@ class N10PWifiBridge(Node):
             if now - self.last_report > 5.0:
                 fps = self.valid_frames / (now - self.last_report)
                 self.get_logger().info(
-                    f"帧: valid={self.valid_frames} fps={fps:.0f} 缓点={len(self.acc.raw_points)}",
+                    f"收到={len(data)}B 帧: valid={self.valid_frames} 总={self.total_frames} 缓点={len(self.acc.raw_points)}",
                     throttle_duration_sec=5.0)
                 self.total_frames = 0
                 self.valid_frames = 0
