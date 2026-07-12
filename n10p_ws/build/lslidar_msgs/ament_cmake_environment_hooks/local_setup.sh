@@ -2,7 +2,7 @@
 
 # since this file is sourced use either the provided AMENT_CURRENT_PREFIX
 # or fall back to the destination set at configure time
-: ${AMENT_CURRENT_PREFIX:="/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs"}
+: ${AMENT_CURRENT_PREFIX:="/home/ylz/n10p_leishen/n10p_ws/install/lslidar_msgs"}
 if [ ! -d "$AMENT_CURRENT_PREFIX" ]; then
   if [ -z "$COLCON_CURRENT_PREFIX" ]; then
     echo "The compile time prefix path '$AMENT_CURRENT_PREFIX' doesn't " \

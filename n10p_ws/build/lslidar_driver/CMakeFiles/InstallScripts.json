@@ -1,7 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/cmake_install.cmake"
-	],
-	"Parallel" : false
-}

@@ -1,8 +1,8 @@
-# Install script for directory: /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/lslidar_msgs__py
+# Install script for directory: /home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/lslidar_msgs__py
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs")
+  set(CMAKE_INSTALL_PREFIX "/home/ylz/n10p_leishen/n10p_ws/install/lslidar_msgs")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 

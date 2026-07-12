@@ -1,16 +1,16 @@
 CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
- /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver/src/lslidar_driver.cc \
+ /home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver/src/lslidar_driver.cc \
  /usr/include/stdc-predef.h /usr/include/c++/11/string \
- /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h \
+ /usr/include/aarch64-linux-gnu/c++/11/bits/c++config.h \
+ /usr/include/aarch64-linux-gnu/c++/11/bits/os_defines.h \
  /usr/include/features.h /usr/include/features-time64.h \
- /usr/include/x86_64-linux-gnu/bits/wordsize.h \
- /usr/include/x86_64-linux-gnu/bits/timesize.h \
- /usr/include/x86_64-linux-gnu/sys/cdefs.h \
- /usr/include/x86_64-linux-gnu/bits/long-double.h \
- /usr/include/x86_64-linux-gnu/gnu/stubs.h \
- /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/cpu_defines.h \
+ /usr/include/aarch64-linux-gnu/bits/wordsize.h \
+ /usr/include/aarch64-linux-gnu/bits/timesize.h \
+ /usr/include/aarch64-linux-gnu/sys/cdefs.h \
+ /usr/include/aarch64-linux-gnu/bits/long-double.h \
+ /usr/include/aarch64-linux-gnu/gnu/stubs.h \
+ /usr/include/aarch64-linux-gnu/gnu/stubs-lp64.h \
+ /usr/include/aarch64-linux-gnu/c++/11/bits/cpu_defines.h \
  /usr/include/c++/11/pstl/pstl_config.h \
  /usr/include/c++/11/bits/stringfwd.h \
  /usr/include/c++/11/bits/memoryfwd.h \
@@ -32,37 +32,37 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /usr/include/c++/11/bits/predefined_ops.h \
  /usr/include/c++/11/bits/postypes.h /usr/include/c++/11/cwchar \
  /usr/include/wchar.h \
- /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
- /usr/include/x86_64-linux-gnu/bits/floatn.h \
- /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
- /usr/include/x86_64-linux-gnu/bits/wchar.h \
- /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
- /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
- /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
+ /usr/include/aarch64-linux-gnu/bits/libc-header-start.h \
+ /usr/include/aarch64-linux-gnu/bits/floatn.h \
+ /usr/include/aarch64-linux-gnu/bits/floatn-common.h \
+ /usr/lib/gcc/aarch64-linux-gnu/11/include/stddef.h \
+ /usr/lib/gcc/aarch64-linux-gnu/11/include/stdarg.h \
+ /usr/include/aarch64-linux-gnu/bits/wchar.h \
+ /usr/include/aarch64-linux-gnu/bits/types/wint_t.h \
+ /usr/include/aarch64-linux-gnu/bits/types/mbstate_t.h \
+ /usr/include/aarch64-linux-gnu/bits/types/__mbstate_t.h \
+ /usr/include/aarch64-linux-gnu/bits/types/__FILE.h \
+ /usr/include/aarch64-linux-gnu/bits/types/FILE.h \
+ /usr/include/aarch64-linux-gnu/bits/types/locale_t.h \
+ /usr/include/aarch64-linux-gnu/bits/types/__locale_t.h \
  /usr/include/c++/11/cstdint \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h /usr/include/stdint.h \
- /usr/include/x86_64-linux-gnu/bits/types.h \
- /usr/include/x86_64-linux-gnu/bits/typesizes.h \
- /usr/include/x86_64-linux-gnu/bits/time64.h \
- /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
- /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+ /usr/lib/gcc/aarch64-linux-gnu/11/include/stdint.h /usr/include/stdint.h \
+ /usr/include/aarch64-linux-gnu/bits/types.h \
+ /usr/include/aarch64-linux-gnu/bits/typesizes.h \
+ /usr/include/aarch64-linux-gnu/bits/time64.h \
+ /usr/include/aarch64-linux-gnu/bits/stdint-intn.h \
+ /usr/include/aarch64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/c++/11/bits/allocator.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/c++allocator.h \
+ /usr/include/aarch64-linux-gnu/c++/11/bits/c++allocator.h \
  /usr/include/c++/11/ext/new_allocator.h /usr/include/c++/11/new \
  /usr/include/c++/11/bits/exception.h \
  /usr/include/c++/11/bits/localefwd.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/c++locale.h \
+ /usr/include/aarch64-linux-gnu/c++/11/bits/c++locale.h \
  /usr/include/c++/11/clocale /usr/include/locale.h \
- /usr/include/x86_64-linux-gnu/bits/locale.h /usr/include/c++/11/iosfwd \
+ /usr/include/aarch64-linux-gnu/bits/locale.h /usr/include/c++/11/iosfwd \
  /usr/include/c++/11/cctype /usr/include/ctype.h \
- /usr/include/x86_64-linux-gnu/bits/endian.h \
- /usr/include/x86_64-linux-gnu/bits/endianness.h \
+ /usr/include/aarch64-linux-gnu/bits/endian.h \
+ /usr/include/aarch64-linux-gnu/bits/endianness.h \
  /usr/include/c++/11/bits/ostream_insert.h \
  /usr/include/c++/11/bits/cxxabi_forced.h \
  /usr/include/c++/11/bits/stl_function.h \
@@ -71,34 +71,34 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /usr/include/c++/11/initializer_list \
  /usr/include/c++/11/bits/basic_string.h \
  /usr/include/c++/11/ext/atomicity.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/gthr.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/gthr-default.h \
+ /usr/include/aarch64-linux-gnu/c++/11/bits/gthr.h \
+ /usr/include/aarch64-linux-gnu/c++/11/bits/gthr-default.h \
  /usr/include/pthread.h /usr/include/sched.h \
- /usr/include/x86_64-linux-gnu/bits/types/time_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h \
- /usr/include/x86_64-linux-gnu/bits/sched.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h \
- /usr/include/x86_64-linux-gnu/bits/cpu-set.h /usr/include/time.h \
- /usr/include/x86_64-linux-gnu/bits/time.h \
- /usr/include/x86_64-linux-gnu/bits/timex.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h \
- /usr/include/x86_64-linux-gnu/bits/types/clock_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
- /usr/include/x86_64-linux-gnu/bits/types/clockid_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/timer_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
- /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
- /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
- /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
- /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h \
- /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
- /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
- /usr/include/x86_64-linux-gnu/bits/setjmp.h \
- /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
- /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/atomic_word.h \
- /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
+ /usr/include/aarch64-linux-gnu/bits/types/time_t.h \
+ /usr/include/aarch64-linux-gnu/bits/types/struct_timespec.h \
+ /usr/include/aarch64-linux-gnu/bits/sched.h \
+ /usr/include/aarch64-linux-gnu/bits/types/struct_sched_param.h \
+ /usr/include/aarch64-linux-gnu/bits/cpu-set.h /usr/include/time.h \
+ /usr/include/aarch64-linux-gnu/bits/time.h \
+ /usr/include/aarch64-linux-gnu/bits/timex.h \
+ /usr/include/aarch64-linux-gnu/bits/types/struct_timeval.h \
+ /usr/include/aarch64-linux-gnu/bits/types/clock_t.h \
+ /usr/include/aarch64-linux-gnu/bits/types/struct_tm.h \
+ /usr/include/aarch64-linux-gnu/bits/types/clockid_t.h \
+ /usr/include/aarch64-linux-gnu/bits/types/timer_t.h \
+ /usr/include/aarch64-linux-gnu/bits/types/struct_itimerspec.h \
+ /usr/include/aarch64-linux-gnu/bits/pthreadtypes.h \
+ /usr/include/aarch64-linux-gnu/bits/thread-shared-types.h \
+ /usr/include/aarch64-linux-gnu/bits/pthreadtypes-arch.h \
+ /usr/include/aarch64-linux-gnu/bits/atomic_wide_counter.h \
+ /usr/include/aarch64-linux-gnu/bits/struct_mutex.h \
+ /usr/include/aarch64-linux-gnu/bits/struct_rwlock.h \
+ /usr/include/aarch64-linux-gnu/bits/setjmp.h \
+ /usr/include/aarch64-linux-gnu/bits/types/__sigset_t.h \
+ /usr/include/aarch64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
+ /usr/include/aarch64-linux-gnu/bits/pthread_stack_min-dynamic.h \
+ /usr/include/aarch64-linux-gnu/c++/11/bits/atomic_word.h \
+ /usr/include/aarch64-linux-gnu/sys/single_threaded.h \
  /usr/include/c++/11/ext/alloc_traits.h \
  /usr/include/c++/11/bits/alloc_traits.h \
  /usr/include/c++/11/bits/stl_construct.h /usr/include/c++/11/string_view \
@@ -106,37 +106,38 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /usr/include/c++/11/bits/hash_bytes.h \
  /usr/include/c++/11/bits/string_view.tcc \
  /usr/include/c++/11/ext/string_conversions.h /usr/include/c++/11/cstdlib \
- /usr/include/stdlib.h /usr/include/x86_64-linux-gnu/bits/waitflags.h \
- /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
- /usr/include/x86_64-linux-gnu/sys/types.h /usr/include/endian.h \
- /usr/include/x86_64-linux-gnu/bits/byteswap.h \
- /usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
- /usr/include/x86_64-linux-gnu/sys/select.h \
- /usr/include/x86_64-linux-gnu/bits/select.h \
- /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h \
- /usr/include/alloca.h /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
+ /usr/include/stdlib.h /usr/include/aarch64-linux-gnu/bits/waitflags.h \
+ /usr/include/aarch64-linux-gnu/bits/waitstatus.h \
+ /usr/include/aarch64-linux-gnu/sys/types.h /usr/include/endian.h \
+ /usr/include/aarch64-linux-gnu/bits/byteswap.h \
+ /usr/include/aarch64-linux-gnu/bits/uintn-identity.h \
+ /usr/include/aarch64-linux-gnu/sys/select.h \
+ /usr/include/aarch64-linux-gnu/bits/select.h \
+ /usr/include/aarch64-linux-gnu/bits/types/sigset_t.h \
+ /usr/include/alloca.h /usr/include/aarch64-linux-gnu/bits/stdlib-float.h \
  /usr/include/c++/11/bits/std_abs.h /usr/include/c++/11/cstdio \
- /usr/include/stdio.h /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
- /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h \
- /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+ /usr/include/stdio.h \
+ /usr/include/aarch64-linux-gnu/bits/types/__fpos_t.h \
+ /usr/include/aarch64-linux-gnu/bits/types/__fpos64_t.h \
+ /usr/include/aarch64-linux-gnu/bits/types/struct_FILE.h \
+ /usr/include/aarch64-linux-gnu/bits/types/cookie_io_functions_t.h \
+ /usr/include/aarch64-linux-gnu/bits/stdio_lim.h \
  /usr/include/c++/11/cerrno /usr/include/errno.h \
- /usr/include/x86_64-linux-gnu/bits/errno.h /usr/include/linux/errno.h \
- /usr/include/x86_64-linux-gnu/asm/errno.h \
+ /usr/include/aarch64-linux-gnu/bits/errno.h /usr/include/linux/errno.h \
+ /usr/include/aarch64-linux-gnu/asm/errno.h \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
- /usr/include/x86_64-linux-gnu/bits/types/error_t.h \
+ /usr/include/aarch64-linux-gnu/bits/types/error_t.h \
  /usr/include/c++/11/bits/charconv.h \
  /usr/include/c++/11/bits/basic_string.tcc /usr/include/c++/11/cmath \
- /usr/include/math.h /usr/include/x86_64-linux-gnu/bits/math-vector.h \
- /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
- /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
- /usr/include/x86_64-linux-gnu/bits/fp-logb.h \
- /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
- /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
- /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
- /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h \
- /usr/include/x86_64-linux-gnu/bits/iscanonical.h \
+ /usr/include/math.h /usr/include/aarch64-linux-gnu/bits/math-vector.h \
+ /usr/include/aarch64-linux-gnu/bits/libm-simd-decl-stubs.h \
+ /usr/include/aarch64-linux-gnu/bits/flt-eval-method.h \
+ /usr/include/aarch64-linux-gnu/bits/fp-logb.h \
+ /usr/include/aarch64-linux-gnu/bits/fp-fast.h \
+ /usr/include/aarch64-linux-gnu/bits/mathcalls-helper-functions.h \
+ /usr/include/aarch64-linux-gnu/bits/mathcalls.h \
+ /usr/include/aarch64-linux-gnu/bits/mathcalls-narrow.h \
+ /usr/include/aarch64-linux-gnu/bits/iscanonical.h \
  /usr/include/c++/11/bits/specfun.h /usr/include/c++/11/limits \
  /usr/include/c++/11/tr1/gamma.tcc \
  /usr/include/c++/11/tr1/special_function_util.h \
@@ -150,61 +151,70 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /usr/include/c++/11/tr1/poly_hermite.tcc \
  /usr/include/c++/11/tr1/poly_laguerre.tcc \
  /usr/include/c++/11/tr1/riemann_zeta.tcc /usr/include/unistd.h \
- /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
- /usr/include/x86_64-linux-gnu/bits/environments.h \
- /usr/include/x86_64-linux-gnu/bits/confname.h \
- /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
- /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
- /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
+ /usr/include/aarch64-linux-gnu/bits/posix_opt.h \
+ /usr/include/aarch64-linux-gnu/bits/environments.h \
+ /usr/include/aarch64-linux-gnu/bits/confname.h \
+ /usr/include/aarch64-linux-gnu/bits/getopt_posix.h \
+ /usr/include/aarch64-linux-gnu/bits/getopt_core.h \
+ /usr/include/aarch64-linux-gnu/bits/unistd_ext.h \
  /usr/include/linux/close_range.h \
- /usr/include/x86_64-linux-gnu/sys/socket.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h \
- /usr/include/x86_64-linux-gnu/bits/socket.h \
- /usr/include/x86_64-linux-gnu/bits/socket_type.h \
- /usr/include/x86_64-linux-gnu/bits/sockaddr.h \
- /usr/include/x86_64-linux-gnu/asm/socket.h \
+ /usr/include/aarch64-linux-gnu/sys/socket.h \
+ /usr/include/aarch64-linux-gnu/bits/types/struct_iovec.h \
+ /usr/include/aarch64-linux-gnu/bits/socket.h \
+ /usr/include/aarch64-linux-gnu/bits/socket_type.h \
+ /usr/include/aarch64-linux-gnu/bits/sockaddr.h \
+ /usr/include/aarch64-linux-gnu/asm/socket.h \
  /usr/include/asm-generic/socket.h /usr/include/linux/posix_types.h \
  /usr/include/linux/stddef.h \
- /usr/include/x86_64-linux-gnu/asm/posix_types.h \
- /usr/include/x86_64-linux-gnu/asm/posix_types_64.h \
+ /usr/include/aarch64-linux-gnu/asm/posix_types.h \
  /usr/include/asm-generic/posix_types.h \
- /usr/include/x86_64-linux-gnu/asm/bitsperlong.h \
+ /usr/include/aarch64-linux-gnu/asm/bitsperlong.h \
  /usr/include/asm-generic/bitsperlong.h \
- /usr/include/x86_64-linux-gnu/asm/sockios.h \
+ /usr/include/aarch64-linux-gnu/asm/sockios.h \
  /usr/include/asm-generic/sockios.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_osockaddr.h \
- /usr/include/x86_64-linux-gnu/sys/time.h /usr/include/arpa/inet.h \
- /usr/include/netinet/in.h /usr/include/x86_64-linux-gnu/bits/in.h \
- /usr/include/poll.h /usr/include/x86_64-linux-gnu/sys/poll.h \
- /usr/include/x86_64-linux-gnu/bits/poll.h /usr/include/fcntl.h \
- /usr/include/x86_64-linux-gnu/bits/fcntl.h \
- /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h \
- /usr/include/linux/falloc.h /usr/include/x86_64-linux-gnu/bits/stat.h \
- /usr/include/x86_64-linux-gnu/bits/struct_stat.h \
- /usr/include/x86_64-linux-gnu/sys/file.h /usr/include/c++/11/stdlib.h \
+ /usr/include/aarch64-linux-gnu/bits/types/struct_osockaddr.h \
+ /usr/include/aarch64-linux-gnu/sys/time.h /usr/include/arpa/inet.h \
+ /usr/include/netinet/in.h /usr/include/aarch64-linux-gnu/bits/in.h \
+ /usr/include/poll.h /usr/include/aarch64-linux-gnu/sys/poll.h \
+ /usr/include/aarch64-linux-gnu/bits/poll.h /usr/include/fcntl.h \
+ /usr/include/aarch64-linux-gnu/bits/fcntl.h \
+ /usr/include/aarch64-linux-gnu/bits/fcntl-linux.h \
+ /usr/include/linux/falloc.h /usr/include/aarch64-linux-gnu/bits/stat.h \
+ /usr/include/aarch64-linux-gnu/bits/struct_stat.h \
+ /usr/include/aarch64-linux-gnu/sys/file.h /usr/include/c++/11/stdlib.h \
  /opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp \
  /usr/include/c++/11/csignal /usr/include/signal.h \
- /usr/include/x86_64-linux-gnu/bits/signum-generic.h \
- /usr/include/x86_64-linux-gnu/bits/signum-arch.h \
- /usr/include/x86_64-linux-gnu/bits/types/sig_atomic_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/siginfo_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__sigval_t.h \
- /usr/include/x86_64-linux-gnu/bits/siginfo-arch.h \
- /usr/include/x86_64-linux-gnu/bits/siginfo-consts.h \
- /usr/include/x86_64-linux-gnu/bits/siginfo-consts-arch.h \
- /usr/include/x86_64-linux-gnu/bits/types/sigval_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/sigevent_t.h \
- /usr/include/x86_64-linux-gnu/bits/sigevent-consts.h \
- /usr/include/x86_64-linux-gnu/bits/sigaction.h \
- /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
- /usr/include/x86_64-linux-gnu/bits/types/stack_t.h \
- /usr/include/x86_64-linux-gnu/sys/ucontext.h \
- /usr/include/x86_64-linux-gnu/bits/sigstack.h \
- /usr/include/x86_64-linux-gnu/bits/sigstksz.h \
- /usr/include/x86_64-linux-gnu/bits/ss_flags.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_sigstack.h \
- /usr/include/x86_64-linux-gnu/bits/sigthread.h \
- /usr/include/x86_64-linux-gnu/bits/signal_ext.h \
+ /usr/include/aarch64-linux-gnu/bits/signum-generic.h \
+ /usr/include/aarch64-linux-gnu/bits/signum-arch.h \
+ /usr/include/aarch64-linux-gnu/bits/types/sig_atomic_t.h \
+ /usr/include/aarch64-linux-gnu/bits/types/siginfo_t.h \
+ /usr/include/aarch64-linux-gnu/bits/types/__sigval_t.h \
+ /usr/include/aarch64-linux-gnu/bits/siginfo-arch.h \
+ /usr/include/aarch64-linux-gnu/bits/siginfo-consts.h \
+ /usr/include/aarch64-linux-gnu/bits/siginfo-consts-arch.h \
+ /usr/include/aarch64-linux-gnu/bits/types/sigval_t.h \
+ /usr/include/aarch64-linux-gnu/bits/types/sigevent_t.h \
+ /usr/include/aarch64-linux-gnu/bits/sigevent-consts.h \
+ /usr/include/aarch64-linux-gnu/bits/sigaction.h \
+ /usr/include/aarch64-linux-gnu/bits/sigcontext.h \
+ /usr/include/aarch64-linux-gnu/asm/sigcontext.h \
+ /usr/include/linux/types.h /usr/include/aarch64-linux-gnu/asm/types.h \
+ /usr/include/asm-generic/types.h /usr/include/asm-generic/int-ll64.h \
+ /usr/include/aarch64-linux-gnu/asm/sve_context.h \
+ /usr/include/aarch64-linux-gnu/bits/types/stack_t.h \
+ /usr/include/aarch64-linux-gnu/sys/ucontext.h \
+ /usr/include/aarch64-linux-gnu/sys/procfs.h \
+ /usr/include/aarch64-linux-gnu/sys/user.h \
+ /usr/include/aarch64-linux-gnu/bits/procfs.h \
+ /usr/include/aarch64-linux-gnu/bits/procfs-id.h \
+ /usr/include/aarch64-linux-gnu/bits/procfs-prregset.h \
+ /usr/include/aarch64-linux-gnu/bits/procfs-extra.h \
+ /usr/include/aarch64-linux-gnu/bits/sigstack.h \
+ /usr/include/aarch64-linux-gnu/bits/sigstksz.h \
+ /usr/include/aarch64-linux-gnu/bits/ss_flags.h \
+ /usr/include/aarch64-linux-gnu/bits/types/struct_sigstack.h \
+ /usr/include/aarch64-linux-gnu/bits/sigthread.h \
+ /usr/include/aarch64-linux-gnu/bits/signal_ext.h \
  /usr/include/c++/11/memory /usr/include/c++/11/bits/stl_uninitialized.h \
  /usr/include/c++/11/bits/stl_tempbuf.h \
  /usr/include/c++/11/bits/stl_raw_storage_iter.h \
@@ -233,7 +243,7 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /usr/include/c++/11/chrono /usr/include/c++/11/ratio \
  /usr/include/c++/11/ctime /usr/include/c++/11/bits/parse_numbers.h \
  /usr/include/c++/11/system_error \
- /usr/include/x86_64-linux-gnu/c++/11/bits/error_constants.h \
+ /usr/include/aarch64-linux-gnu/c++/11/bits/error_constants.h \
  /usr/include/c++/11/stdexcept /usr/include/c++/11/bits/std_mutex.h \
  /usr/include/c++/11/bits/unique_lock.h \
  /usr/include/c++/11/condition_variable /usr/include/c++/11/atomic \
@@ -269,10 +279,10 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /usr/include/c++/11/streambuf /usr/include/c++/11/bits/streambuf.tcc \
  /usr/include/c++/11/bits/basic_ios.h \
  /usr/include/c++/11/bits/locale_facets.h /usr/include/c++/11/cwctype \
- /usr/include/wctype.h /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/ctype_base.h \
+ /usr/include/wctype.h /usr/include/aarch64-linux-gnu/bits/wctype-wchar.h \
+ /usr/include/aarch64-linux-gnu/c++/11/bits/ctype_base.h \
  /usr/include/c++/11/bits/streambuf_iterator.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/ctype_inline.h \
+ /usr/include/aarch64-linux-gnu/c++/11/bits/ctype_inline.h \
  /usr/include/c++/11/bits/locale_facets.tcc \
  /usr/include/c++/11/bits/basic_ios.tcc \
  /usr/include/c++/11/bits/ostream.tcc /usr/include/c++/11/istream \
@@ -283,7 +293,7 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /opt/ros/humble/include/rcl/rcl/guard_condition.h \
  /opt/ros/humble/include/rcl/rcl/allocator.h \
  /opt/ros/humble/include/rcutils/rcutils/allocator.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h \
+ /usr/lib/gcc/aarch64-linux-gnu/11/include/stdbool.h \
  /opt/ros/humble/include/rcutils/rcutils/macros.h \
  /opt/ros/humble/include/rcutils/rcutils/testing/fault_injection.h \
  /opt/ros/humble/include/rcutils/rcutils/visibility_control.h \
@@ -330,7 +340,7 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /opt/ros/humble/include/rcl/rcl/visibility_control.h \
  /opt/ros/humble/include/rcl_yaml_param_parser/rcl_yaml_param_parser/types.h \
  /opt/ros/humble/include/rcl/rcl/init_options.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/stdalign.h \
+ /usr/lib/gcc/aarch64-linux-gnu/11/include/stdalign.h \
  /opt/ros/humble/include/rcl/rcl/wait.h \
  /opt/ros/humble/include/rcl/rcl/client.h \
  /opt/ros/humble/include/rosidl_runtime_c/rosidl_runtime_c/service_type_support_struct.h \
@@ -407,8 +417,8 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /usr/include/c++/11/codecvt /usr/include/c++/11/bits/codecvt.h \
  /usr/include/c++/11/iomanip /usr/include/c++/11/locale \
  /usr/include/c++/11/bits/locale_facets_nonio.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/time_members.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/messages_members.h \
+ /usr/include/aarch64-linux-gnu/c++/11/bits/time_members.h \
+ /usr/include/aarch64-linux-gnu/c++/11/bits/messages_members.h \
  /usr/include/libintl.h /usr/include/c++/11/bits/locale_facets_nonio.tcc \
  /usr/include/c++/11/bits/locale_conv.h \
  /usr/include/c++/11/bits/quoted_string.h \
@@ -424,7 +434,7 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /opt/ros/humble/include/rmw/rmw/error_handling.h \
  /opt/ros/humble/include/rmw/rmw/impl/cpp/demangle.hpp \
  /usr/include/c++/11/cxxabi.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/cxxabi_tweaks.h \
+ /usr/include/aarch64-linux-gnu/c++/11/bits/cxxabi_tweaks.h \
  /opt/ros/humble/include/rmw/rmw/impl/config.h \
  /opt/ros/humble/include/rclcpp/rclcpp/publisher_base.hpp \
  /opt/ros/humble/include/rclcpp/rclcpp/network_flow_endpoint.hpp \
@@ -644,7 +654,7 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /opt/ros/humble/include/rclcpp/rclcpp/wait_set_policies/thread_safe_synchronization.hpp \
  /opt/ros/humble/include/rclcpp/rclcpp/wait_set_policies/detail/write_preferring_read_write_lock.hpp \
  /opt/ros/humble/include/rclcpp/rclcpp/wait_set_template.hpp \
- /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver/include/lslidar_driver/lslidar_driver.h \
+ /home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver/include/lslidar_driver/lslidar_driver.h \
  /usr/include/boost/shared_ptr.hpp \
  /usr/include/boost/smart_ptr/shared_ptr.hpp \
  /usr/include/boost/smart_ptr/detail/shared_count.hpp \
@@ -976,14 +986,14 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /usr/include/boost/range/detail/misc_concept.hpp \
  /usr/include/boost/type_traits/make_unsigned.hpp \
  /usr/include/boost/type_traits/is_signed.hpp /usr/include/c++/11/climits \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/limits.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/syslimits.h \
- /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
- /usr/include/x86_64-linux-gnu/bits/local_lim.h \
+ /usr/lib/gcc/aarch64-linux-gnu/11/include/limits.h \
+ /usr/lib/gcc/aarch64-linux-gnu/11/include/syslimits.h \
+ /usr/include/limits.h /usr/include/aarch64-linux-gnu/bits/posix1_lim.h \
+ /usr/include/aarch64-linux-gnu/bits/local_lim.h \
  /usr/include/linux/limits.h \
- /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
- /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
- /usr/include/x86_64-linux-gnu/bits/uio_lim.h \
+ /usr/include/aarch64-linux-gnu/bits/posix2_lim.h \
+ /usr/include/aarch64-linux-gnu/bits/xopen_lim.h \
+ /usr/include/aarch64-linux-gnu/bits/uio_lim.h \
  /usr/include/boost/type_traits/is_unsigned.hpp \
  /usr/include/boost/type_traits/add_volatile.hpp \
  /usr/include/boost/range/detail/has_member_size.hpp \
@@ -1136,7 +1146,7 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /usr/include/boost/predef/make.h /usr/include/boost/predef/detail/test.h \
  /usr/include/boost/predef/architecture/x86/64.h \
  /usr/include/c++/11/cfloat \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
+ /usr/lib/gcc/aarch64-linux-gnu/11/include/float.h \
  /usr/include/boost/math/tools/user.hpp \
  /usr/include/boost/math/special_functions/math_fwd.hpp \
  /usr/include/boost/math/special_functions/detail/round_fwd.hpp \
@@ -1283,7 +1293,6 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /usr/include/boost/predef/platform/android.h \
  /usr/include/boost/math/special_functions/fpclassify.hpp \
  /usr/include/boost/math/tools/real_cast.hpp \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/quadmath.h \
  /usr/include/boost/integer.hpp /usr/include/boost/integer_fwd.hpp \
  /usr/include/boost/detail/basic_pointerbuf.hpp \
  /usr/include/boost/date_time/strings_from_facet.hpp \
@@ -1543,19 +1552,17 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /usr/include/boost/atomic/detail/capabilities.hpp \
  /usr/include/boost/atomic/detail/platform.hpp \
  /usr/include/boost/atomic/detail/futex.hpp \
- /usr/include/x86_64-linux-gnu/sys/syscall.h \
- /usr/include/x86_64-linux-gnu/asm/unistd.h \
- /usr/include/x86_64-linux-gnu/asm/unistd_64.h \
- /usr/include/x86_64-linux-gnu/bits/syscall.h /usr/include/linux/futex.h \
- /usr/include/linux/types.h /usr/include/x86_64-linux-gnu/asm/types.h \
- /usr/include/asm-generic/types.h /usr/include/asm-generic/int-ll64.h \
+ /usr/include/aarch64-linux-gnu/sys/syscall.h \
+ /usr/include/aarch64-linux-gnu/asm/unistd.h \
+ /usr/include/asm-generic/unistd.h \
+ /usr/include/aarch64-linux-gnu/bits/syscall.h /usr/include/linux/futex.h \
  /usr/include/boost/atomic/detail/intptr.hpp \
  /usr/include/boost/atomic/detail/header.hpp \
  /usr/include/boost/atomic/detail/footer.hpp \
  /usr/include/boost/atomic/detail/int_sizes.hpp \
  /usr/include/boost/atomic/detail/float_sizes.hpp \
  /usr/include/boost/atomic/detail/caps_gcc_atomic.hpp \
- /usr/include/boost/atomic/detail/caps_arch_gcc_x86.hpp \
+ /usr/include/boost/atomic/detail/caps_arch_gcc_aarch64.hpp \
  /usr/include/boost/atomic/detail/wait_capabilities.hpp \
  /usr/include/boost/atomic/detail/wait_caps_futex.hpp \
  /usr/include/boost/atomic/atomic.hpp \
@@ -1583,7 +1590,8 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /usr/include/boost/atomic/detail/core_operations_emulated_fwd.hpp \
  /usr/include/boost/atomic/detail/lock_pool.hpp \
  /usr/include/boost/atomic/detail/link.hpp \
- /usr/include/boost/atomic/detail/core_arch_ops_gcc_x86.hpp \
+ /usr/include/boost/atomic/detail/core_arch_ops_gcc_aarch64.hpp \
+ /usr/include/boost/atomic/detail/ops_gcc_aarch64_common.hpp \
  /usr/include/boost/atomic/detail/core_operations_fwd.hpp \
  /usr/include/boost/atomic/detail/core_ops_gcc_atomic.hpp \
  /usr/include/boost/atomic/detail/gcc_atomic_memory_order_utils.hpp \
@@ -1597,7 +1605,7 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /usr/include/boost/atomic/detail/extra_ops_generic.hpp \
  /usr/include/boost/atomic/detail/extra_operations_fwd.hpp \
  /usr/include/boost/atomic/detail/extra_ops_emulated.hpp \
- /usr/include/boost/atomic/detail/extra_ops_gcc_x86.hpp \
+ /usr/include/boost/atomic/detail/extra_ops_gcc_aarch64.hpp \
  /usr/include/boost/atomic/detail/memory_order_utils.hpp \
  /usr/include/boost/atomic/detail/type_traits/is_trivially_default_constructible.hpp \
  /usr/include/boost/atomic/detail/type_traits/conditional.hpp \
@@ -1623,7 +1631,7 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /usr/include/boost/atomic/detail/fence_operations.hpp \
  /usr/include/boost/atomic/detail/fence_ops_gcc_atomic.hpp \
  /usr/include/boost/atomic/detail/fence_arch_operations.hpp \
- /usr/include/boost/atomic/detail/fence_arch_ops_gcc_x86.hpp \
+ /usr/include/boost/atomic/detail/fence_arch_ops_gcc_aarch64.hpp \
  /usr/include/boost/thread/recursive_mutex.hpp \
  /usr/include/boost/thread/pthread/recursive_mutex.hpp \
  /usr/include/boost/thread/tss.hpp /usr/include/boost/thread/locks.hpp \
@@ -1760,12 +1768,12 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /opt/ros/humble/include/diagnostic_updater/diagnostic_status_wrapper.hpp \
  /opt/ros/humble/include/diagnostic_updater/publisher.hpp \
  /opt/ros/humble/include/diagnostic_updater/update_functions.hpp \
- /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_generator_cpp/lslidar_msgs/msg/lslidar_packet.hpp \
- /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_generator_cpp/lslidar_msgs/msg/detail/lslidar_packet__struct.hpp \
- /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_generator_cpp/lslidar_msgs/msg/detail/lslidar_packet__builder.hpp \
- /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_generator_cpp/lslidar_msgs/msg/detail/lslidar_packet__traits.hpp \
- /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_generator_cpp/lslidar_msgs/msg/detail/lslidar_packet__type_support.hpp \
- /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_generator_cpp/lslidar_msgs/msg/rosidl_generator_cpp__visibility_control.hpp \
+ /home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_generator_cpp/lslidar_msgs/msg/lslidar_packet.hpp \
+ /home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_generator_cpp/lslidar_msgs/msg/detail/lslidar_packet__struct.hpp \
+ /home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_generator_cpp/lslidar_msgs/msg/detail/lslidar_packet__builder.hpp \
+ /home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_generator_cpp/lslidar_msgs/msg/detail/lslidar_packet__traits.hpp \
+ /home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_generator_cpp/lslidar_msgs/msg/detail/lslidar_packet__type_support.hpp \
+ /home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_generator_cpp/lslidar_msgs/msg/rosidl_generator_cpp__visibility_control.hpp \
  /opt/ros/humble/include/std_msgs/std_msgs/msg/byte.hpp \
  /opt/ros/humble/include/std_msgs/std_msgs/msg/detail/byte__struct.hpp \
  /opt/ros/humble/include/std_msgs/std_msgs/msg/detail/byte__builder.hpp \
@@ -1792,10 +1800,9 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /usr/include/eigen3/Eigen/src/Core/util/DisableStupidWarnings.h \
  /usr/include/eigen3/Eigen/src/Core/util/Macros.h \
  /usr/include/eigen3/Eigen/src/Core/util/ConfigureVectorization.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/mmintrin.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/emmintrin.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/xmmintrin.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/mm_malloc.h \
+ /usr/lib/gcc/aarch64-linux-gnu/11/include/arm_neon.h \
+ /usr/lib/gcc/aarch64-linux-gnu/11/include/arm_fp16.h \
+ /usr/lib/gcc/aarch64-linux-gnu/11/include/arm_bf16.h \
  /usr/include/eigen3/Eigen/src/Core/util/MKL_support.h \
  /usr/include/eigen3/Eigen/src/Core/util/Constants.h \
  /usr/include/eigen3/Eigen/src/Core/util/Meta.h \
@@ -1814,10 +1821,10 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /usr/include/eigen3/Eigen/src/Core/arch/Default/BFloat16.h \
  /usr/include/eigen3/Eigen/src/Core/arch/Default/TypeCasting.h \
  /usr/include/eigen3/Eigen/src/Core/arch/Default/GenericPacketMathFunctionsFwd.h \
- /usr/include/eigen3/Eigen/src/Core/arch/SSE/PacketMath.h \
- /usr/include/eigen3/Eigen/src/Core/arch/SSE/TypeCasting.h \
- /usr/include/eigen3/Eigen/src/Core/arch/SSE/MathFunctions.h \
- /usr/include/eigen3/Eigen/src/Core/arch/SSE/Complex.h \
+ /usr/include/eigen3/Eigen/src/Core/arch/NEON/PacketMath.h \
+ /usr/include/eigen3/Eigen/src/Core/arch/NEON/TypeCasting.h \
+ /usr/include/eigen3/Eigen/src/Core/arch/NEON/MathFunctions.h \
+ /usr/include/eigen3/Eigen/src/Core/arch/NEON/Complex.h \
  /usr/include/eigen3/Eigen/src/Core/arch/Default/Settings.h \
  /usr/include/eigen3/Eigen/src/Core/arch/Default/GenericPacketMathFunctions.h \
  /usr/include/eigen3/Eigen/src/Core/functors/TernaryFunctors.h \
@@ -1909,6 +1916,7 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /usr/include/eigen3/Eigen/src/Core/BandMatrix.h \
  /usr/include/eigen3/Eigen/src/Core/CoreIterators.h \
  /usr/include/eigen3/Eigen/src/Core/ConditionEstimator.h \
+ /usr/include/eigen3/Eigen/src/Core/arch/NEON/GeneralBlockPanelKernel.h \
  /usr/include/eigen3/Eigen/src/Core/BooleanRedux.h \
  /usr/include/eigen3/Eigen/src/Core/Select.h \
  /usr/include/eigen3/Eigen/src/Core/VectorwiseOp.h \
@@ -2032,13 +2040,13 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /usr/include/boost/interprocess/permissions.hpp \
  /usr/include/boost/interprocess/interprocess_fwd.hpp \
  /usr/include/boost/interprocess/detail/std_fwd.hpp \
- /usr/include/x86_64-linux-gnu/sys/stat.h \
- /usr/include/x86_64-linux-gnu/bits/statx.h /usr/include/linux/stat.h \
- /usr/include/x86_64-linux-gnu/bits/statx-generic.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_statx_timestamp.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_statx.h \
- /usr/include/dirent.h /usr/include/x86_64-linux-gnu/bits/dirent.h \
- /usr/include/x86_64-linux-gnu/bits/dirent_ext.h \
+ /usr/include/aarch64-linux-gnu/sys/stat.h \
+ /usr/include/aarch64-linux-gnu/bits/statx.h /usr/include/linux/stat.h \
+ /usr/include/aarch64-linux-gnu/bits/statx-generic.h \
+ /usr/include/aarch64-linux-gnu/bits/types/struct_statx_timestamp.h \
+ /usr/include/aarch64-linux-gnu/bits/types/struct_statx.h \
+ /usr/include/dirent.h /usr/include/aarch64-linux-gnu/bits/dirent.h \
+ /usr/include/aarch64-linux-gnu/bits/dirent_ext.h \
  /usr/include/boost/interprocess/detail/os_thread_functions.hpp \
  /usr/include/boost/interprocess/streams/bufferstream.hpp \
  /usr/include/boost/interprocess/detail/posix_time_types_wrk.hpp \
@@ -2052,8 +2060,8 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /usr/include/boost/algorithm/string/detail/classification.hpp \
  /usr/include/boost/algorithm/string/predicate_facade.hpp \
  /usr/include/c++/11/fstream \
- /usr/include/x86_64-linux-gnu/c++/11/bits/basic_file.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/c++io.h \
+ /usr/include/aarch64-linux-gnu/c++/11/bits/basic_file.h \
+ /usr/include/aarch64-linux-gnu/c++/11/bits/c++io.h \
  /usr/include/c++/11/bits/fstream.tcc \
  /usr/include/pcl-1.12/pcl/common/io.h \
  /usr/include/pcl-1.12/pcl/common/impl/io.hpp \
@@ -2065,19 +2073,19 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /usr/include/pcl-1.12/pcl/register_point_struct.h \
  /usr/include/boost/preprocessor/seq/for_each.hpp \
  /usr/include/pcl-1.12/pcl/io/low_level_io.h \
- /usr/include/x86_64-linux-gnu/sys/mman.h \
- /usr/include/x86_64-linux-gnu/bits/mman.h \
- /usr/include/x86_64-linux-gnu/bits/mman-map-flags-generic.h \
- /usr/include/x86_64-linux-gnu/bits/mman-linux.h \
- /usr/include/x86_64-linux-gnu/bits/mman-shared.h \
- /usr/include/x86_64-linux-gnu/sys/fcntl.h \
+ /usr/include/aarch64-linux-gnu/sys/mman.h \
+ /usr/include/aarch64-linux-gnu/bits/mman.h \
+ /usr/include/aarch64-linux-gnu/bits/mman-map-flags-generic.h \
+ /usr/include/aarch64-linux-gnu/bits/mman-linux.h \
+ /usr/include/aarch64-linux-gnu/bits/mman-shared.h \
+ /usr/include/aarch64-linux-gnu/sys/fcntl.h \
  /usr/include/pcl-1.12/pcl/io/lzf.h \
- /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver/include/lslidar_driver/input.h \
+ /home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver/include/lslidar_driver/input.h \
  /usr/include/pcap.h /usr/include/pcap/pcap.h \
  /usr/include/pcap/funcattrs.h /usr/include/pcap/compiler-tests.h \
  /usr/include/pcap/pcap-inttypes.h /usr/include/inttypes.h \
  /usr/include/pcap/socket.h /usr/include/netdb.h /usr/include/rpc/netdb.h \
- /usr/include/x86_64-linux-gnu/bits/netdb.h /usr/include/pcap/bpf.h \
+ /usr/include/aarch64-linux-gnu/bits/netdb.h /usr/include/pcap/bpf.h \
  /usr/include/pcap/dlt.h \
  /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/time_reference.hpp \
  /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/time_reference__struct.hpp \
@@ -2089,18 +2097,18 @@ CMakeFiles/lslidar_driver_node.dir/src/lslidar_driver.cc.o: \
  /opt/ros/humble/include/std_msgs/std_msgs/msg/detail/int8__builder.hpp \
  /opt/ros/humble/include/std_msgs/std_msgs/msg/detail/int8__traits.hpp \
  /opt/ros/humble/include/std_msgs/std_msgs/msg/detail/int8__type_support.hpp \
- /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver/include/lslidar_driver/lsiosr.h \
- /usr/include/termios.h /usr/include/x86_64-linux-gnu/bits/termios.h \
- /usr/include/x86_64-linux-gnu/bits/termios-struct.h \
- /usr/include/x86_64-linux-gnu/bits/termios-c_cc.h \
- /usr/include/x86_64-linux-gnu/bits/termios-c_iflag.h \
- /usr/include/x86_64-linux-gnu/bits/termios-c_oflag.h \
- /usr/include/x86_64-linux-gnu/bits/termios-baud.h \
- /usr/include/x86_64-linux-gnu/bits/termios-c_cflag.h \
- /usr/include/x86_64-linux-gnu/bits/termios-c_lflag.h \
- /usr/include/x86_64-linux-gnu/bits/termios-tcflow.h \
- /usr/include/x86_64-linux-gnu/bits/termios-misc.h \
- /usr/include/x86_64-linux-gnu/sys/ttydefaults.h \
+ /home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver/include/lslidar_driver/lsiosr.h \
+ /usr/include/termios.h /usr/include/aarch64-linux-gnu/bits/termios.h \
+ /usr/include/aarch64-linux-gnu/bits/termios-struct.h \
+ /usr/include/aarch64-linux-gnu/bits/termios-c_cc.h \
+ /usr/include/aarch64-linux-gnu/bits/termios-c_iflag.h \
+ /usr/include/aarch64-linux-gnu/bits/termios-c_oflag.h \
+ /usr/include/aarch64-linux-gnu/bits/termios-baud.h \
+ /usr/include/aarch64-linux-gnu/bits/termios-c_cflag.h \
+ /usr/include/aarch64-linux-gnu/bits/termios-c_lflag.h \
+ /usr/include/aarch64-linux-gnu/bits/termios-tcflow.h \
+ /usr/include/aarch64-linux-gnu/bits/termios-misc.h \
+ /usr/include/aarch64-linux-gnu/sys/ttydefaults.h \
  /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/laser_scan.hpp \
  /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/laser_scan__struct.hpp \
  /opt/ros/humble/include/sensor_msgs/sensor_msgs/msg/detail/laser_scan__builder.hpp \

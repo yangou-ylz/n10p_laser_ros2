@@ -23,7 +23,7 @@ function(ament_cmake_symlink_install_directory cmake_current_source_dir)
 
   # make destination absolute path and ensure that it exists
   if(NOT IS_ABSOLUTE "${ARG_DESTINATION}")
-    set(ARG_DESTINATION "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/${ARG_DESTINATION}")
+    set(ARG_DESTINATION "/home/ylz/n10p_leishen/n10p_ws/install/lslidar_driver/${ARG_DESTINATION}")
   endif()
   if(NOT EXISTS "${ARG_DESTINATION}")
     file(MAKE_DIRECTORY "${ARG_DESTINATION}")
@@ -128,7 +128,7 @@ function(ament_cmake_symlink_install_files cmake_current_source_dir)
 
   # make destination an absolute path and ensure that it exists
   if(NOT IS_ABSOLUTE "${ARG_DESTINATION}")
-    set(ARG_DESTINATION "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/${ARG_DESTINATION}")
+    set(ARG_DESTINATION "/home/ylz/n10p_leishen/n10p_ws/install/lslidar_driver/${ARG_DESTINATION}")
   endif()
   if(NOT EXISTS "${ARG_DESTINATION}")
     file(MAKE_DIRECTORY "${ARG_DESTINATION}")
@@ -186,7 +186,7 @@ function(ament_cmake_symlink_install_programs cmake_current_source_dir)
 
   # make destination an absolute path and ensure that it exists
   if(NOT IS_ABSOLUTE "${ARG_DESTINATION}")
-    set(ARG_DESTINATION "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/${ARG_DESTINATION}")
+    set(ARG_DESTINATION "/home/ylz/n10p_leishen/n10p_ws/install/lslidar_driver/${ARG_DESTINATION}")
   endif()
   if(NOT EXISTS "${ARG_DESTINATION}")
     file(MAKE_DIRECTORY "${ARG_DESTINATION}")
@@ -256,7 +256,7 @@ function(ament_cmake_symlink_install_targets)
 
     # make destination an absolute path and ensure that it exists
     if(NOT IS_ABSOLUTE "${destination}")
-      set(destination "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_driver/${destination}")
+      set(destination "/home/ylz/n10p_leishen/n10p_ws/install/lslidar_driver/${destination}")
     endif()
     if(NOT EXISTS "${destination}")
       file(MAKE_DIRECTORY "${destination}")
@@ -297,7 +297,7 @@ function(_ament_cmake_symlink_install_create_symlink absolute_file symlink)
   endif()
 
   execute_process(
-    COMMAND "/home/ubuntu22/.local/lib/python3.10/site-packages/cmake/data/bin/cmake" "-E" "create_symlink"
+    COMMAND "/usr/bin/cmake" "-E" "create_symlink"
       "${absolute_file}"
       "${symlink}"
   )
@@ -316,55 +316,55 @@ message(STATUS "Execute custom install script")
 # begin of custom install code
 
 # install(DIRECTORY "launch" "params" "rviz" "DESTINATION" "share/lslidar_driver")
-ament_cmake_symlink_install_directory("/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" DIRECTORY "launch" "params" "rviz" "DESTINATION" "share/lslidar_driver")
+ament_cmake_symlink_install_directory("/home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" DIRECTORY "launch" "params" "rviz" "DESTINATION" "share/lslidar_driver")
 
 # install("TARGETS" "lslidar_driver_node" "DESTINATION" "lib/lslidar_driver")
-include("/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_symlink_install_targets_0_${CMAKE_INSTALL_CONFIG_NAME}.cmake")
+include("/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_symlink_install_targets_0_${CMAKE_INSTALL_CONFIG_NAME}.cmake")
 
-# install(FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/lslidar_driver" "DESTINATION" "share/ament_index/resource_index/package_run_dependencies")
-ament_cmake_symlink_install_files("/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/lslidar_driver" "DESTINATION" "share/ament_index/resource_index/package_run_dependencies")
+# install(FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/lslidar_driver" "DESTINATION" "share/ament_index/resource_index/package_run_dependencies")
+ament_cmake_symlink_install_files("/home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/lslidar_driver" "DESTINATION" "share/ament_index/resource_index/package_run_dependencies")
 
-# install(FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_index/share/ament_index/resource_index/parent_prefix_path/lslidar_driver" "DESTINATION" "share/ament_index/resource_index/parent_prefix_path")
-ament_cmake_symlink_install_files("/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_index/share/ament_index/resource_index/parent_prefix_path/lslidar_driver" "DESTINATION" "share/ament_index/resource_index/parent_prefix_path")
+# install(FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_index/share/ament_index/resource_index/parent_prefix_path/lslidar_driver" "DESTINATION" "share/ament_index/resource_index/parent_prefix_path")
+ament_cmake_symlink_install_files("/home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_index/share/ament_index/resource_index/parent_prefix_path/lslidar_driver" "DESTINATION" "share/ament_index/resource_index/parent_prefix_path")
 
 # install(FILES "/opt/ros/humble/share/ament_cmake_core/cmake/environment_hooks/environment/ament_prefix_path.sh" "DESTINATION" "share/lslidar_driver/environment")
-ament_cmake_symlink_install_files("/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/opt/ros/humble/share/ament_cmake_core/cmake/environment_hooks/environment/ament_prefix_path.sh" "DESTINATION" "share/lslidar_driver/environment")
+ament_cmake_symlink_install_files("/home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/opt/ros/humble/share/ament_cmake_core/cmake/environment_hooks/environment/ament_prefix_path.sh" "DESTINATION" "share/lslidar_driver/environment")
 
-# install(FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/ament_prefix_path.dsv" "DESTINATION" "share/lslidar_driver/environment")
-ament_cmake_symlink_install_files("/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/ament_prefix_path.dsv" "DESTINATION" "share/lslidar_driver/environment")
+# install(FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/ament_prefix_path.dsv" "DESTINATION" "share/lslidar_driver/environment")
+ament_cmake_symlink_install_files("/home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/ament_prefix_path.dsv" "DESTINATION" "share/lslidar_driver/environment")
 
 # install(FILES "/opt/ros/humble/share/ament_cmake_core/cmake/environment_hooks/environment/path.sh" "DESTINATION" "share/lslidar_driver/environment")
-ament_cmake_symlink_install_files("/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/opt/ros/humble/share/ament_cmake_core/cmake/environment_hooks/environment/path.sh" "DESTINATION" "share/lslidar_driver/environment")
+ament_cmake_symlink_install_files("/home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/opt/ros/humble/share/ament_cmake_core/cmake/environment_hooks/environment/path.sh" "DESTINATION" "share/lslidar_driver/environment")
 
-# install(FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/path.dsv" "DESTINATION" "share/lslidar_driver/environment")
-ament_cmake_symlink_install_files("/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/path.dsv" "DESTINATION" "share/lslidar_driver/environment")
+# install(FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/path.dsv" "DESTINATION" "share/lslidar_driver/environment")
+ament_cmake_symlink_install_files("/home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/path.dsv" "DESTINATION" "share/lslidar_driver/environment")
 
-# install(FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/local_setup.bash" "DESTINATION" "share/lslidar_driver")
-ament_cmake_symlink_install_files("/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/local_setup.bash" "DESTINATION" "share/lslidar_driver")
+# install(FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/local_setup.bash" "DESTINATION" "share/lslidar_driver")
+ament_cmake_symlink_install_files("/home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/local_setup.bash" "DESTINATION" "share/lslidar_driver")
 
-# install(FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/local_setup.sh" "DESTINATION" "share/lslidar_driver")
-ament_cmake_symlink_install_files("/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/local_setup.sh" "DESTINATION" "share/lslidar_driver")
+# install(FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/local_setup.sh" "DESTINATION" "share/lslidar_driver")
+ament_cmake_symlink_install_files("/home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/local_setup.sh" "DESTINATION" "share/lslidar_driver")
 
-# install(FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/local_setup.zsh" "DESTINATION" "share/lslidar_driver")
-ament_cmake_symlink_install_files("/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/local_setup.zsh" "DESTINATION" "share/lslidar_driver")
+# install(FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/local_setup.zsh" "DESTINATION" "share/lslidar_driver")
+ament_cmake_symlink_install_files("/home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/local_setup.zsh" "DESTINATION" "share/lslidar_driver")
 
-# install(FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/local_setup.dsv" "DESTINATION" "share/lslidar_driver")
-ament_cmake_symlink_install_files("/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/local_setup.dsv" "DESTINATION" "share/lslidar_driver")
+# install(FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/local_setup.dsv" "DESTINATION" "share/lslidar_driver")
+ament_cmake_symlink_install_files("/home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/local_setup.dsv" "DESTINATION" "share/lslidar_driver")
 
-# install(FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/package.dsv" "DESTINATION" "share/lslidar_driver")
-ament_cmake_symlink_install_files("/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/package.dsv" "DESTINATION" "share/lslidar_driver")
+# install(FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/package.dsv" "DESTINATION" "share/lslidar_driver")
+ament_cmake_symlink_install_files("/home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_environment_hooks/package.dsv" "DESTINATION" "share/lslidar_driver")
 
-# install(FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_index/share/ament_index/resource_index/packages/lslidar_driver" "DESTINATION" "share/ament_index/resource_index/packages")
-ament_cmake_symlink_install_files("/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_index/share/ament_index/resource_index/packages/lslidar_driver" "DESTINATION" "share/ament_index/resource_index/packages")
+# install(FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_index/share/ament_index/resource_index/packages/lslidar_driver" "DESTINATION" "share/ament_index/resource_index/packages")
+ament_cmake_symlink_install_files("/home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_index/share/ament_index/resource_index/packages/lslidar_driver" "DESTINATION" "share/ament_index/resource_index/packages")
 
-# install(FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_export_dependencies/ament_cmake_export_dependencies-extras.cmake" "DESTINATION" "share/lslidar_driver/cmake")
-ament_cmake_symlink_install_files("/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_export_dependencies/ament_cmake_export_dependencies-extras.cmake" "DESTINATION" "share/lslidar_driver/cmake")
+# install(FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_export_dependencies/ament_cmake_export_dependencies-extras.cmake" "DESTINATION" "share/lslidar_driver/cmake")
+ament_cmake_symlink_install_files("/home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_export_dependencies/ament_cmake_export_dependencies-extras.cmake" "DESTINATION" "share/lslidar_driver/cmake")
 
-# install(FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_export_include_directories/ament_cmake_export_include_directories-extras.cmake" "DESTINATION" "share/lslidar_driver/cmake")
-ament_cmake_symlink_install_files("/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_export_include_directories/ament_cmake_export_include_directories-extras.cmake" "DESTINATION" "share/lslidar_driver/cmake")
+# install(FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_export_include_directories/ament_cmake_export_include_directories-extras.cmake" "DESTINATION" "share/lslidar_driver/cmake")
+ament_cmake_symlink_install_files("/home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_export_include_directories/ament_cmake_export_include_directories-extras.cmake" "DESTINATION" "share/lslidar_driver/cmake")
 
-# install(FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_core/lslidar_driverConfig.cmake" "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_core/lslidar_driverConfig-version.cmake" "DESTINATION" "share/lslidar_driver/cmake")
-ament_cmake_symlink_install_files("/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_core/lslidar_driverConfig.cmake" "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_core/lslidar_driverConfig-version.cmake" "DESTINATION" "share/lslidar_driver/cmake")
+# install(FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_core/lslidar_driverConfig.cmake" "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_core/lslidar_driverConfig-version.cmake" "DESTINATION" "share/lslidar_driver/cmake")
+ament_cmake_symlink_install_files("/home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_core/lslidar_driverConfig.cmake" "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/ament_cmake_core/lslidar_driverConfig-version.cmake" "DESTINATION" "share/lslidar_driver/cmake")
 
-# install(FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver/package.xml" "DESTINATION" "share/lslidar_driver")
-ament_cmake_symlink_install_files("/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver/package.xml" "DESTINATION" "share/lslidar_driver")
+# install(FILES "/home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver/package.xml" "DESTINATION" "share/lslidar_driver")
+ament_cmake_symlink_install_files("/home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver" FILES "/home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver/package.xml" "DESTINATION" "share/lslidar_driver")

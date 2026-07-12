@@ -343,12 +343,18 @@ killall ros2
 
 ---
 
-## 9. 记忆系统
+## 9. 文件写入约束 (最高优先级) ⚠️
+
+**所有文件只允许写在 `/home/ylz/n10p_leishen/` 内，绝对禁止写任何文件到项目目录之外。**
+
+- ❌ 禁止写 `~/.claude/`、`/tmp/`、`/home/ylz/` 等外部路径
+- ❌ 禁止在项目外创建记忆文件、日志、临时文件
+- ✅ 所有产出（记忆、脚本、配置、编译产物）均在 `/home/ylz/n10p_leishen/` 内
 
 ### 9.1 记忆文件位置
 
 ```
-/home/ylz/.claude/projects/-home-ylz/memory/
+/home/ylz/n10p_leishen/memory/
 ```
 
 ### 9.2 记忆文件清单
@@ -356,30 +362,16 @@ killall ros2
 | 文件 | 类型 | 用途 |
 |------|------|------|
 | `workspace_state.md` | project | 当前开发阶段、编译状态 |
-| `dev_log.md` | project | 每次遇到的问题+解决方案 |
-| `decisions.md` | project | 重要架构/技术决策 |
 | `known_issues.md` | project | 已知坑点清单 |
 | `env_config.md` | reference | 环境配置快照 |
 
 ### 9.3 记忆操作规则
 
-- **每次新对话开始时**：检查 `workspace_state.md`
-- **每次解决问题后**：追加 `dev_log.md`
-- **发现新坑点**：写入 `known_issues.md`
-- **环境变化**：更新 `env_config.md`
-- **方向性决策**：写入 `decisions.md`
-- **新功能/新节点**：更新项目根目录 `user.md`
-
-### 9.4 开发日志格式
-
-```markdown
-### YYYY-MM-DD HH:MM — [问题简述]
-**现象**：[描述]
-**根因**：[分析]
-**解决**：[修复步骤]
-**验证**：[确认方法]
-**关联**：[相关文件]
-```
+- 发现新坑点 → 写入 `memory/known_issues.md`
+- 环境变化 → 更新 `memory/env_config.md`
+- 阶段推进 → 更新 `memory/workspace_state.md`
+- 出问题解决 → 追加 `memory/workspace_state.md`
+- 新功能/新节点 → 更新项目根目录 `user.md`
 
 ---
 

@@ -1,2 +1,2 @@
 # generated from colcon_core/shell/template/command_prefix.sh.em
-. "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/package.sh"
+. "/home/ylz/n10p_leishen/n10p_ws/install/lslidar_msgs/share/lslidar_msgs/package.sh"

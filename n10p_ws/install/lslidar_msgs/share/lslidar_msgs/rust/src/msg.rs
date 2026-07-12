@@ -1,1 +1,1 @@
-/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_generator_rs/lslidar_msgs/rust/src/msg.rs
+/home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_generator_rs/lslidar_msgs/rust/src/msg.rs

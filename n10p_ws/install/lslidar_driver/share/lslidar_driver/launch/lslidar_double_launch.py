@@ -1,1 +1,1 @@
-/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver/launch/lslidar_double_launch.py
+/home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_driver/launch/lslidar_double_launch.py

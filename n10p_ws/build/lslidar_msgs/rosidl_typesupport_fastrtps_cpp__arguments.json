@@ -1,13 +1,13 @@
 {
   "package_name": "lslidar_msgs",
-  "output_dir": "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_typesupport_fastrtps_cpp/lslidar_msgs",
+  "output_dir": "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_typesupport_fastrtps_cpp/lslidar_msgs",
   "template_dir": "/opt/ros/humble/share/rosidl_typesupport_fastrtps_cpp/resource",
   "idl_tuples": [
-    "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs:msg/LslidarDifop.idl",
-    "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs:msg/LslidarPacket.idl",
-    "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs:msg/LslidarPoint.idl",
-    "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs:msg/LslidarScan.idl",
-    "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs:msg/LslidarSweep.idl"
+    "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs:msg/LslidarDifop.idl",
+    "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs:msg/LslidarPacket.idl",
+    "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs:msg/LslidarPoint.idl",
+    "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs:msg/LslidarScan.idl",
+    "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs:msg/LslidarSweep.idl"
   ],
   "ros_interface_dependencies": [
     "builtin_interfaces:/opt/ros/humble/share/builtin_interfaces/msg/Duration.idl",
@@ -52,11 +52,11 @@
     "/opt/ros/humble/share/rosidl_typesupport_fastrtps_cpp/resource/msg__type_support.cpp.em",
     "/opt/ros/humble/share/rosidl_typesupport_fastrtps_cpp/resource/srv__rosidl_typesupport_fastrtps_cpp.hpp.em",
     "/opt/ros/humble/share/rosidl_typesupport_fastrtps_cpp/resource/srv__type_support.cpp.em",
-    "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs/msg/LslidarDifop.idl",
-    "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs/msg/LslidarPacket.idl",
-    "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs/msg/LslidarPoint.idl",
-    "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs/msg/LslidarScan.idl",
-    "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs/msg/LslidarSweep.idl",
+    "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs/msg/LslidarDifop.idl",
+    "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs/msg/LslidarPacket.idl",
+    "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs/msg/LslidarPoint.idl",
+    "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs/msg/LslidarScan.idl",
+    "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs/msg/LslidarSweep.idl",
     "/opt/ros/humble/share/builtin_interfaces/msg/Duration.idl",
     "/opt/ros/humble/share/builtin_interfaces/msg/Time.idl",
     "/opt/ros/humble/share/std_msgs/msg/Bool.idl",

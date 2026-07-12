@@ -1,13 +1,12 @@
-Metadata-Version: 2.4
-Name: n10p_nav
+Metadata-Version: 2.1
+Name: n10p-nav
 Version: 0.1.0
 Summary: N10P Nav2 导航启动配置
+Home-page: UNKNOWN
 Maintainer: N10P Developer
 Maintainer-email: user@example.com
 License: MIT
-Requires-Dist: setuptools
-Dynamic: license
-Dynamic: maintainer
-Dynamic: maintainer-email
-Dynamic: requires-dist
-Dynamic: summary
+Platform: UNKNOWN
+
+UNKNOWN
+

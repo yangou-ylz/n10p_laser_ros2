@@ -1,1 +1,1 @@
-ament_cmake_symlink_install_targets("TARGET_FILES" "/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_driver/lslidar_driver_node" "TARGETS" "lslidar_driver_node" "DESTINATION" "lib/lslidar_driver")
+ament_cmake_symlink_install_targets("TARGET_FILES" "/home/ylz/n10p_leishen/n10p_ws/build/lslidar_driver/lslidar_driver_node" "TARGETS" "lslidar_driver_node" "DESTINATION" "lib/lslidar_driver")

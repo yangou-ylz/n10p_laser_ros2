@@ -1,5 +1,5 @@
-/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs:msg/LslidarDifop.idl
-/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs:msg/LslidarPacket.idl
-/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs:msg/LslidarPoint.idl
-/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs:msg/LslidarScan.idl
-/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs:msg/LslidarSweep.idl
+/home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs:msg/LslidarDifop.idl
+/home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs:msg/LslidarPacket.idl
+/home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs:msg/LslidarPoint.idl
+/home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs:msg/LslidarScan.idl
+/home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_adapter/lslidar_msgs:msg/LslidarSweep.idl

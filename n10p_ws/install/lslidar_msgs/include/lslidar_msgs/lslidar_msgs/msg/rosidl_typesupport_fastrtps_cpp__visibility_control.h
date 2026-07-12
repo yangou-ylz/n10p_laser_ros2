@@ -1,1 +1,1 @@
-/home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_typesupport_fastrtps_cpp/lslidar_msgs/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h
+/home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/rosidl_typesupport_fastrtps_cpp/lslidar_msgs/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h

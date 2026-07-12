@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_msgs
+CMAKE_SOURCE_DIR = /home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_msgs
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs
+CMAKE_BINARY_DIR = /home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs
 
 # Utility rule file for uninstall.
 
@@ -78,6 +78,6 @@ CMakeFiles/uninstall.dir/clean:
 .PHONY : CMakeFiles/uninstall.dir/clean
 
 CMakeFiles/uninstall.dir/depend:
-	cd /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_msgs /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_msgs /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs /home/ubuntu22/ROS2/n10p_leishen/n10p_ws/build/lslidar_msgs/CMakeFiles/uninstall.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_msgs /home/ylz/n10p_leishen/n10p_ws/src/Lslidar_ROS2_driver/lslidar_msgs /home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs /home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs /home/ylz/n10p_leishen/n10p_ws/build/lslidar_msgs/CMakeFiles/uninstall.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/uninstall.dir/depend
 
