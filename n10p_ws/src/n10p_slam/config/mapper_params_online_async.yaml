@@ -19,12 +19,11 @@ slam_toolbox:
     map_start_pose: [0.0, 0.0, 0.0]           # 地图原点
     map_update_interval: 3.0                   # 地图更新间隔 (s)
     max_laser_range: 12.0                      # 最大激光距离 (N10P 实际量程)
-    minimum_laser_range: 0.02                  # 最小激光距离
+    minimum_laser_range: 0.2                   # 过滤 20cm 内自检 (无人机机身)
 
     # ── 扫描匹配 ────────────────────────────────
-    minimum_travel_distance: 0.0               # 手持建图: 每帧都处理 (scan matching 会自动补偿运动)
+    minimum_travel_distance: 0.0               # 手持建图: 每帧都处理
     minimum_travel_heading: 0.0                # 手持建图: 不依赖里程计转角
-    minimum_laser_range: 0.2                   # 过滤 20cm 内自检 (无人机机身)
     scan_buffer_size: 10
     scan_buffer_max_scan_time: 10.0            # 缓冲区最大扫描时间 (s)
     link_match_min_response_fine: 0.1

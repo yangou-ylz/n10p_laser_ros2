@@ -271,6 +271,31 @@ class SerialTransport:
                 logger.error("串口写入失败: %s", e)
                 return False
 
+    def send_raw(self, data: bytes) -> bool:
+        """
+        发送原始字节数据到串口（不经过 ANO 协议编码）。
+
+        用于发送非 ANO 格式的自定义帧（如位置下行帧 0xAA）。
+        线程安全：内部使用 _send_lock 保护串口写入。
+
+        参数:
+            data: 要发送的原始字节
+
+        返回:
+            True = 发送成功, False = 串口不可用
+        """
+        if not self.is_running() or self._ser is None:
+            logger.warning("串口未打开，无法发送原始数据")
+            return False
+
+        with self._send_lock:
+            try:
+                self._ser.write(data)
+                return True
+            except serial.SerialException as e:
+                logger.error("串口原始写入失败: %s", e)
+                return False
+
     def send_cmd(self, cid: int, cmd_0: int, cmd_1: int = 0) -> bool:
         """
         发送 0xE0 CMD 命令帧（广播地址）。

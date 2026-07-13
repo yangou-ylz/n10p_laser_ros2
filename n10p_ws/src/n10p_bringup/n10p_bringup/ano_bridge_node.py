@@ -39,6 +39,9 @@ from geometry_msgs.msg import TransformStamped
 from tf2_ros import TransformBroadcaster
 
 from .ano_transport import SerialTransport
+from .rpi_pos_frame import (
+    build_f5_frame, build_invalid_frame, build_hover_frame,
+    FLAG_SLAM_VALID, FLAG_TARGET_VALID, FLAG_VISUAL_MODE)
 
 
 class AnoBridgeNode(Node):
@@ -59,6 +62,13 @@ class AnoBridgeNode(Node):
         self.declare_parameter('gyr_offset_y', 0.0)
         self.declare_parameter('gyr_offset_z', 0.0)
         self.declare_parameter('pub_rate', 20.0)           # 里程计发布频率 Hz
+        # 位置下行参数 (0xF5 帧)
+        self.declare_parameter('pos_downlink_enable', False) # 启用位置下行
+        self.declare_parameter('pos_downlink_rate', 50.0)    # 下行频率 Hz
+        self.declare_parameter('pos_downlink_mode', 'waypoint')  # 'waypoint' | 'visual'
+        self.declare_parameter('wp_x_cm', 100.0)             # 默认航点X cm
+        self.declare_parameter('wp_y_cm', 0.0)               # 默认航点Y cm
+        self.declare_parameter('wp_z_cm', 80.0)              # 默认航点Z cm
 
         # ── 参数读取 ──────────────────────────────────────
         port = self.get_parameter('serial_port').value
@@ -152,6 +162,33 @@ class AnoBridgeNode(Node):
 
         # ── 定时器：每秒打印统计 ──────────────────────────
         self._stats_timer = self.create_timer(10.0, self._print_stats)
+
+        # ── 位置下行：AMCL 定位 → 0xAA 帧 → 飞控 ──────────
+        pos_downlink_enable = self.get_parameter('pos_downlink_enable').value
+        pos_downlink_rate = self.get_parameter('pos_downlink_rate').value
+        self._pos_downlink_enabled = pos_downlink_enable
+        # AMCL 位姿缓存 (None = 未收到有效定位)
+        self._amcl_x = None
+        self._amcl_y = None
+        self._amcl_z = None
+        self._amcl_age = 0.0       # 距上次收到 AMCL 数据的秒数
+        self._amcl_last_ts = None  # 上次收到 AMCL 的时间 (monotonic)
+
+        # 订阅 AMCL 位姿
+        from geometry_msgs.msg import PoseWithCovarianceStamped
+        self._amcl_sub = self.create_subscription(
+            PoseWithCovarianceStamped, '/amcl_pose',
+            self._on_amcl_pose, 10)
+        self.get_logger().info('已订阅 /amcl_pose，等待 AMCL 定位数据...')
+
+        # 位置下行定时器 (50Hz)
+        if pos_downlink_enable:
+            pos_period = 1.0 / pos_downlink_rate
+            self._pos_timer = self.create_timer(
+                pos_period, self._send_position_downlink)
+            self.get_logger().info(
+                f'位置下行: 已启用, {pos_downlink_rate}Hz, '
+                f'目标 STM32 UART2 (PD6 RX)')
 
         self.get_logger().info(f'凌霄飞控桥接节点已启动 ({port} @ {baud} bps)')
 
@@ -285,17 +322,16 @@ class AnoBridgeNode(Node):
         msg.twist.twist.angular.y = self.gyr[1]
         msg.twist.twist.angular.z = self.gyr[2]
 
-        # 协方差（经验值）
-        # 位置协方差拉满（飞控0x08位置不可靠，完全交给扫描匹配）
-        # 姿态协方差设为1.0 rad²（±57°），飞控四元数仅作初始化参考，
-        # 实际旋转由 slam_toolbox 扫描匹配主导纠正
+        # 协方差 (2026-07-12 实测: Yaw偏差0.85°@90°, σ<0.03° → 四元数A级可信)
+        # 位置: 1.0 — 飞控 0x08 XY_Pos 无外部定位时不可靠, 交给 AMCL 扫描匹配
+        # 姿态: 0.001 — 飞控四元数高度可信 (±1.8°), AMCL 可直接信任旋转分量
         cov_pose = [
             1.0, 0.0, 0.0, 0.0, 0.0, 0.0,
             0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
             0.0, 0.0, 1.0, 0.0, 0.0, 0.0,
-            0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
-            0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
-            0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+            0.0, 0.0, 0.0, 0.001, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.001, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.001,
         ]
         cov_twist = [
             0.01, 0.0, 0.0, 0.0, 0.0, 0.0,
@@ -408,6 +444,104 @@ class AnoBridgeNode(Node):
             name = FRAME_NAME.get(cmd, f'0x{cmd:02X}')
             lines.append(f'{name}={count}')
         self.get_logger().info(f'帧统计 (校验错误={errors}): ' + ', '.join(lines))
+
+    # ═══════════════════════════════════════════════════════════════
+    # 位置下行：AMCL 定位 → 0xAA 位置帧 → 串口 → 飞控
+    # ═══════════════════════════════════════════════════════════════
+
+    def _on_amcl_pose(self, msg) -> None:
+        """
+        AMCL 定位回调：缓存最新位姿用于位置下行。
+
+        AMCL 发布的 /amcl_pose 是机器人在地图坐标系(map)中的位姿。
+        我们将它作为"相对起飞点的绝对位移"发送给飞控。
+
+        坐标系对齐:
+          ROS map: x=前, y=左, z=上 (REP-105)
+          飞控:    x=前, y=左, z=上
+          → 直接对应，无需旋转
+
+        单位转换: 米(m) → 厘米(cm)
+        """
+        self._amcl_x = msg.pose.pose.position.x * 100.0
+        self._amcl_y = msg.pose.pose.position.y * 100.0
+        self._amcl_z = msg.pose.pose.position.z * 100.0
+        self._amcl_last_ts = time.monotonic()
+
+    def _send_position_downlink(self) -> None:
+        """
+        定时器回调：根据当前模式构造 0xF5 帧并发送 (50Hz)。
+
+        双模式:
+          waypoint 模式: tar=预设航点, flags=0x03
+          visual 模式:   tar=cur+K230偏移, flags=0x07 (视觉丢失时 tar=cur 悬停)
+
+        AMCL 超时 (>200ms) → 自动发送全无效帧 (flags=0x00)
+        """
+        import time as time_module
+        now = time_module.monotonic()
+
+        # ── 检查 AMCL 新鲜度 ──────────────────────────
+        if self._amcl_last_ts is not None:
+            self._amcl_age = now - self._amcl_last_ts
+
+        if (self._amcl_last_ts is None or self._amcl_age > 0.2
+                or self._amcl_x is None):
+            # SLAM 无效: 发全无效帧, 飞控暂停 PID 悬停
+            frame = build_invalid_frame()
+            self._transport.send_raw(frame)
+            if self._amcl_last_ts is None or int(now) % 5 == 0:
+                self.get_logger().warn(
+                    f'0xF5↓: SLAM 无数据 (age={self._amcl_age:.1f}s) → 无效帧',
+                    throttle_duration_sec=5.0)
+            return
+
+        # ── 模式选择 ──────────────────────────────────
+        mode = self.get_parameter('pos_downlink_mode').value
+
+        if mode == 'visual':
+            # 视觉模式: 用 K230 偏移计算目标
+            frame = self._build_visual_frame()
+        else:
+            # 航点模式: 用预设航点
+            wp_x = self.get_parameter('wp_x_cm').value
+            wp_y = self.get_parameter('wp_y_cm').value
+            wp_z = self.get_parameter('wp_z_cm').value
+            frame = build_f5_frame(
+                self._amcl_x, self._amcl_y, self._amcl_z,
+                wp_x, wp_y, wp_z,
+                FLAG_SLAM_VALID | FLAG_TARGET_VALID)
+
+        ok = self._transport.send_raw(frame)
+        if not ok:
+            self.get_logger().error('0xF5↓: 串口发送失败', throttle_duration_sec=2.0)
+
+    def _build_visual_frame(self) -> bytes:
+        """
+        构造视觉模式帧 (0xF5 flags=0x07)。
+
+        K230 占位: 当前 K230 未接入, 默认 tar=cur (悬停)。
+        后续接入 K230 后, 读取 /k230_detection 话题的 dx/dy/dz 叠加到 cur。
+        """
+        # ── K230 占位 (后续从 /k230_detection 话题读取) ──
+        dx, dy, dz = 0.0, 0.0, 0.0       # 默认无偏移 = 悬停
+        target_valid = False               # 默认无视觉目标
+
+        # TODO: 从 self._k230_dx 等缓存读取实际值 (订阅 /k230_detection)
+
+        if target_valid:
+            tar_x = self._amcl_x + dx
+            tar_y = self._amcl_y + dy
+            tar_z = self._amcl_z + dz
+            flags = FLAG_SLAM_VALID | FLAG_TARGET_VALID | FLAG_VISUAL_MODE
+        else:
+            # 视觉丢失 → 悬停
+            tar_x, tar_y, tar_z = self._amcl_x, self._amcl_y, self._amcl_z
+            flags = FLAG_SLAM_VALID | FLAG_TARGET_VALID
+
+        return build_f5_frame(
+            self._amcl_x, self._amcl_y, self._amcl_z,
+            tar_x, tar_y, tar_z, flags)
 
 
 def main(args=None):

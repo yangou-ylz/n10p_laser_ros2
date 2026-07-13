@@ -11,7 +11,7 @@ metadata:
 |------|-----|
 | 型号 | Raspberry Pi 4B Rev 1.5 |
 | 架构 | aarch64 |
-| 内存 | ~1.8GB |
+| 内存 | ~7.6GB |
 | 系统 | Ubuntu 22.04.5 LTS Server |
 | ROS2 | Humble, 244 包, /opt/ros/humble/ |
 | 用户 | ylz |

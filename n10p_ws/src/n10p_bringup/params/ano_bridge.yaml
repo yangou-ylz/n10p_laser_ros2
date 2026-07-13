@@ -11,3 +11,10 @@
     gyr_offset_x: 0.0                   # 陀螺仪 X 轴零偏补偿
     gyr_offset_y: 0.0
     gyr_offset_z: 0.0
+    # ── 0xF5 位置下行 (树莓派→飞控) ────────────────────
+    pos_downlink_enable: false            # 启用位置下行 (需 AMCL 就绪后改 true)
+    pos_downlink_rate: 50.0               # 下行频率 Hz
+    pos_downlink_mode: waypoint           # 工作模式: waypoint (航点) | visual (视觉)
+    wp_x_cm: 100.0                        # 默认航点 X (cm), 机头前方
+    wp_y_cm: 0.0                          # 默认航点 Y (cm)
+    wp_z_cm: 80.0                         # 默认航点 Z (cm) = 悬停高度
