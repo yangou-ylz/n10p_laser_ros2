@@ -8,12 +8,12 @@
 # 重要：这个文件启动了雷达驱动，所以不能和 slam_launch.py（也自带驱动）同时运行！
 #       串口冲突 → 驱动崩溃(double free)
 # ============================================================================
-"""启动匿名凌霄飞控桥接节点 + N10P 驱动"""
+"""启动匿名凌霄飞控桥接节点 + N10P 驱动 (+ 可选 EKF 融合)"""
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch_ros.actions import Node        # 普通节点（非生命周期管理）
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, ExecuteProcess
 from launch.conditions import IfCondition, UnlessCondition
 from launch.substitutions import LaunchConfiguration, PythonExpression
 import os
@@ -24,8 +24,12 @@ def generate_launch_description():
     scan_source = LaunchConfiguration('scan_source', default='wired')
     is_wireless = PythonExpression(["'", scan_source, "' == 'wireless'"])
 
+    # ── EKF 融合开关 ─────────────────────────────────
+    use_ekf = LaunchConfiguration('use_ekf', default='true')
+
     # ── 节点 1：匿名凌霄飞控桥接 ─────────────────────────
     # 作用：读取飞控串口 → 解析匿名协议 V7 → 发布 /odom + /imu + TF(odom→base_link)
+    # 当 use_ekf=true 时，禁用 ano_bridge 的 TF 发布（由 EKF 节点替代）
     bridge_params = os.path.join(
         get_package_share_directory('n10p_bringup'),
         'params', 'ano_bridge.yaml')       # 指定飞控的串口号、波特率、scale 因子等
@@ -78,13 +82,41 @@ def generate_launch_description():
         arguments=['0', '0', '-0.1', '0', '0', '0', 'base_link', 'laser_frame'],
     )
 
+    # ── 节点 4：EKF 里程计融合 (可选) ────────────────
+    # 当 use_ekf=true 时，ekf_filter_node 订阅 /imu + /odom，
+    # 发布过滤后的 odom→base_link TF 替代 ano_bridge 的原生 TF
+    ekf_config = os.path.join(
+        get_package_share_directory('n10p_fusion'),
+        'config', 'ekf.yaml')
+
+    ekf_node = Node(
+        package='n10p_fusion',
+        executable='imu_filter_node',
+        name='imu_filter_node',
+        output='screen',
+        parameters=[ekf_config],
+        condition=IfCondition(use_ekf),
+    )
+
     # ── 返回：所有节点一起启动 ───────────────────────────
     # ros2 launch 会同时启动这些节点，它们各自独立运行
+    # ── 启动前清理: 仅清理 DDS 共享内存和 daemon，不杀进程 (会误杀自身) ──
+    cleanup_dds = ExecuteProcess(
+        cmd=['bash', '-c',
+             'rm -f /dev/shm/fastrtps_* 2>/dev/null;'
+             'exit 0'],
+        name='cleanup_dds',
+    )
+
     return LaunchDescription([
+        cleanup_dds,           # ← 先清理 DDS (防止共享内存僵尸)
         DeclareLaunchArgument('scan_source', default_value='wired',
                               description='雷达数据源: wired (有线串口) | wireless (ESP32 WiFi)'),
-        bridge_node,         # → 飞控数据 → /odom + /imu + TF
-        driver_node,         # → 有线雷达 → /scan
-        wifi_bridge_node,    # → 无线雷达 → /scan
-        static_tf_node,      # → 静态 TF → base_link→laser_frame
+        DeclareLaunchArgument('use_ekf', default_value='true',
+                              description='启用 EKF 融合 (默认=true, false=关闭回退原始)'),
+        bridge_node,
+        driver_node,
+        wifi_bridge_node,
+        static_tf_node,
+        ekf_node,
     ])

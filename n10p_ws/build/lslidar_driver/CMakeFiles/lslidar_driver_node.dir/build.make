@@ -502,6 +502,7 @@ lslidar_driver_node: /home/ylz/n10p_leishen/n10p_ws/install/lslidar_msgs/lib/lib
 lslidar_driver_node: /home/ylz/n10p_leishen/n10p_ws/install/lslidar_msgs/lib/liblslidar_msgs__rosidl_typesupport_introspection_cpp.so
 lslidar_driver_node: /home/ylz/n10p_leishen/n10p_ws/install/lslidar_msgs/lib/liblslidar_msgs__rosidl_typesupport_cpp.so
 lslidar_driver_node: /home/ylz/n10p_leishen/n10p_ws/install/lslidar_msgs/lib/liblslidar_msgs__rosidl_generator_py.so
+lslidar_driver_node: /opt/ros/humble/lib/libdiagnostic_updater.so
 lslidar_driver_node: /opt/ros/humble/lib/libmessage_filters.so
 lslidar_driver_node: /opt/ros/humble/lib/librclcpp.so
 lslidar_driver_node: /opt/ros/humble/lib/libgeometry_msgs__rosidl_generator_c.so

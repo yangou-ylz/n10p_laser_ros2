@@ -2295,3 +2295,272 @@ TF断链                           ros2 run tf2_tools view_frames            生
 > **第三阶段理解确认**：你能说出N10P帧、匿名V7帧、0xF5帧各自的帧头、校验方式和典型帧长吗？你能说出LaserScan消息中 `ranges[]` 和 `angle_increment` 的关系吗？你能说出Odometry消息中 `frame_id` 和 `child_frame_id` 分别是什么吗？你能说出地图消息中 `data[]` 的 `-1/0/100` 各代表什么吗？
 >
 > 如果完全理解了，我们进入第四阶段——代码级深入。
+
+---
+
+# 第四阶段：代码级深入 — 看懂源码、能改代码
+
+> 目标：掌握本项目所有 Python 节点的通用代码模式，理解帧同步算法，知道怎么加新功能。
+> 本阶段不讲重复的内容（第二阶段已逐包讲过逻辑），只讲第二阶段没覆盖的"代码怎么写"。
+
+---
+
+## 4.1 ROS2 Python 节点的通用模板
+
+本项目所有 Python 节点都遵循同一个结构模板。看懂了这个模板，所有节点的代码都能读通。
+
+```mermaid
+flowchart TB
+    subgraph TEMPLATE["ROS2 Python 节点五段式"]
+        S1["① 参数声明 declare_parameter"]
+        S2["② 数据缓存 self.xxx = 0.0"]
+        S3["③ 发布者/订阅者 create_publisher / create_subscription"]
+        S4["④ 定时器 create_timer (固定频率干活)"]
+        S5["⑤ spin 循环 rclpy.spin(node) ← 事件驱动"]
+    end
+
+    S1 --> S2 --> S3 --> S4 --> S5
+```
+
+**为什么是这五步？** ROS2 节点是事件驱动的——你不主动调用函数，而是"注册回调"，等事件发生（定时器到点/消息到达/参数改变）时 ROS2 自动调用你的回调。
+
+**对照 `dummy_odom_node.py`（最简单，156行）**：
+
+```python
+class DummyOdomNode(Node):
+    def __init__(self):
+        super().__init__('dummy_odom_node')
+
+        # ── ① 参数声明 ──
+        self.declare_parameter('serial_port', '/dev/ttyAMA0')
+        self.declare_parameter('baud_rate', 500000)
+        port = self.get_parameter('serial_port').value
+
+        # ── ② 数据缓存 ──
+        self.q0, self.q1, self.q2, self.q3 = 1.0, 0.0, 0.0, 0.0  # 四元数
+
+        # ── ③ 发布者 ──
+        self.odom_pub = self.create_publisher(Odometry, '/odom', 10)
+        self.tf_broadcaster = TransformBroadcaster(self)
+
+        # ── ④ 数据来源 (传输层+回调) ──
+        self._transport = SerialTransport(port, baud)
+        self._transport.register_callback(0x04, self._on_quaternion)  # 注册帧回调
+        self._transport.start()
+
+        # ── ⑤ 定时器 ──
+        self._pub_timer = self.create_timer(0.05, self._publish)  # 每50ms调_publish()
+
+    def _on_quaternion(self, d):  # ← 帧回调（后台线程中执行）
+        self.q0, self.q1, self.q2, self.q3 = d['w'], d['x'], d['y'], d['z']
+
+    def _publish(self):           # ← 定时器回调（主线程中执行）
+        # 从缓存读数据 → 组装消息 → 发布
+        ...
+
+def main():
+    rclpy.init()
+    node = DummyOdomNode()
+    rclpy.spin(node)  # ← ⑤ spin: 阻塞等待事件（定时器+订阅），事件来了调回调
+```
+
+**关键理解——两股数据流的回调机制**：
+
+| 数据流 | 谁触发 | 在哪里执行 | 频率 |
+|--------|--------|----------|------|
+| 串口帧回调 `_on_quaternion()` | 传输层后台线程 | **后台线程**（不能做重活！） | 飞控决定的频率(~67Hz) |
+| 定时器回调 `_publish()` | ROS2 事件循环 | **主线程**（可以做重活） | 你决定的频率(20Hz) |
+
+后台线程只做"写缓存"（`self.q0 = d['w']`），主线程做"读缓存 + 组装消息 + 发布"。这是本项目最核心的线程安全模式。
+
+---
+
+## 4.2 帧同步算法——最精巧的代码
+
+`ano_transport.py` 的 `_parse_buffer()` 是整个项目最需要仔细看的算法。
+
+### 问题描述
+
+串口字节流是这样的：
+
+```
+... 0xAA 0xFF 0x04 0x09 ...数据... SC AC 0xAA 0xFF 0x01 ...数据... SC AC ...
+      ↑── 帧头 ──→                        ↑── 下一帧头 ──→
+```
+
+但有一个陷阱：**DATA 区里的数据字节也可能恰好等于 0xAA**。如果你天真地"找下一个 0xAA 就是帧头"，就会把数据当帧头——这被称为"帧内伪帧头"。
+
+### 算法逐行拆解
+
+```python
+def _parse_buffer(self):
+    buf = self._buf
+    while len(buf) >= 6:          # 至少 6 字节才能构成最小帧
+        # ── 步骤1：找帧头 ──
+        idx = buf.find(FRAME_HEAD) # FRAME_HEAD = 0xAA
+        if idx == -1:
+            buf.clear()            # 缓冲区全是垃圾，清空
+            return
+        if idx > 0:
+            del buf[:idx]          # 跳过帧头前的垃圾字节
+            buf = self._buf        # buf 已变，重新获取引用！
+
+        # ── 步骤2：帧长检查 ──
+        if len(buf) < 4:
+            break                  # 连 LEN 字段都不够，等更多数据
+
+        payload_len = buf[3]                 # 第4字节 = DATA长度
+        frame_total = 4 + payload_len + 2    # HEAD(1)+DEST(1)+CMD(1)+LEN(1) + DATA + SC+AC
+
+        if len(buf) < frame_total:
+            break                  # 帧不完整，等更多数据
+
+        # ── 步骤3：校验 ──
+        frame = bytes(buf[:frame_total])
+
+        if verify_frame(frame):    # SC+AC 双重校验通过
+            # 解码 → 缓存 → 回调 → 移除已处理帧
+            del buf[:frame_total]
+        else:
+            # ⚡ 关键！只跳 1 字节！
+            # 原因：可能是帧内伪帧头（DATA区恰好有0xAA）
+            # 如果跳整个frame_total，可能跳过真正的下一帧
+            del buf[:1]
+```
+
+**为什么校验失败只跳1字节，而不是跳整个帧？**
+
+```
+假设串口数据是这样的：
+  [0xAA 0xFF 0x04 0x09 ...数据(里面有0xAA)... 0xAA 0xFF 0x01 ...]
+                          ↑ 这个0xAA是数据！      ↑ 这个才是真帧头！
+                      不是帧头！
+
+如果校验失败跳整帧：
+  从假帧头0xAA开始，读frame_total=15字节 → 校验失败
+  → 跳过15字节 → 把真帧头也跳过去了 → 丢了一整帧有效数据
+
+如果校验失败只跳1字节：
+  从假帧头0xAA开始 → 校验失败
+  → 只跳1字节 → 下一次循环又回到 "找帧头"
+  → 最终能找到真帧头 0xAA
+```
+
+**这是通信协议最经典的设计决策**——牺牲一点 CPU（多扫描几次），换取零丢帧的可靠性。
+
+---
+
+## 4.3 编译系统——`ros2 run` 是怎么找到你的代码的
+
+```mermaid
+flowchart LR
+    subgraph SOURCE["你写的代码"]
+        A["n10p_bringup/keyboard_odom_node.py<br/>def main(): ..."]
+    end
+
+    subgraph BUILD["setup.py"]
+        B["entry_points={
+            'console_scripts': [
+                'keyboard_odom_node = n10p_bringup.keyboard_odom_node:main',
+            ]
+        }"]
+    end
+
+    subgraph INSTALL["编译后"]
+        C["install/n10p_bringup/lib/n10p_bringup/<br/>keyboard_odom_node ← 可执行脚本"]
+    end
+
+    subgraph RUNTIME["运行时"]
+        D["ros2 run n10p_bringup keyboard_odom_node"]
+        E["→ 找到 install/.../keyboard_odom_node → 执行 main()"]
+    end
+
+    A --> B --> C --> D --> E
+```
+
+**`entry_points` 的语法**：
+
+```python
+'可执行文件名 = Python模块路径:函数名'
+
+'ano_bridge_node = n10p_bringup.ano_bridge_node:main'
+# ↑ros2 run用的名字  ↑包.文件名           ↑入口函数
+```
+
+编译后 `colcon build` 会为每个 entry_point 生成一个包装脚本放到 `install/` 下。`ros2 run` 就是找到这个脚本并执行它。
+
+**如果你要新增一个节点**，三步：
+
+1. 写一个 `.py` 文件，里面有一个 `main()` 函数
+2. 在 `setup.py` 的 `entry_points` 里加一行
+3. `colcon build` 编译 → `ros2 run` 就能找到
+
+---
+
+## 4.4 五个节点的代码复杂度对比
+
+| 节点 | 行数 | 核心难点 | 用什么回调 |
+|------|:---:|---------|----------|
+| `dummy_odom_node.py` | 156 | 最简，入门首选 | 串口帧回调 + 定时器回调 |
+| `keyboard_odom_node.py` | 175 | 全向运动模型公式、非阻塞键盘读取 | 键盘线程 + 定时器回调 |
+| `n10p_wifi_bridge.py` | 291 | 状态机帧同步(0→1→2)、ScanAccumulator | TCP 接收线程 + 定时器回调 |
+| `ano_bridge_node.py` | 564 | 双线程模型、9种帧ID分发、位置下行 | 串口帧回调(9个) + 定时器回调(2个) + 话题订阅回调 |
+| `ano_transport.py` | 435 | 帧同步算法、线程安全、校验失败回退 | 内部回调分发 |
+
+**推荐的阅读顺序**（由浅入深）：dummy_odom → keyboard_odom → wifi_bridge → ano_bridge → ano_transport
+
+---
+
+## 4.5 修改代码的常见场景与操作指南
+
+### 场景 A：改一个参数
+
+```
+需要改什么: 只改 YAML 文件
+需要编译吗: 不需要（-symlink-install 时）
+需要重启吗: 需要重启节点
+```
+
+### 场景 B：改一个 Python 节点的逻辑
+
+```
+需要改什么: .py 文件
+需要编译吗: 不需要（-symlink-install 时 Python 文件是软链接）
+需要重启吗: 需要重启节点
+```
+
+### 场景 C：改 C++ 驱动代码
+
+```
+需要改什么: lslidar_driver.cc 等
+需要编译吗: 需要！colcon build --packages-select lslidar_driver --parallel-workers 2
+需要重启吗: 需要
+```
+
+### 场景 D：新增一个 Python 节点
+
+```
+1. 写 .py 文件（按 4.1 节的模板）
+2. 在 setup.py 的 entry_points 里加一行
+3. colcon build --packages-select <包名>
+4. ros2 run <包名> <节点名>
+```
+
+### 场景 E：新增一个 launch 文件
+
+```
+1. 写 .launch.py（参考已有的，复制改）
+2. setup.py 的 data_files 里确认 launch/*.py 已被包含
+3. colcon build --packages-select <包名>
+4. ros2 launch <包名> <文件名>
+```
+
+---
+
+> **第四阶段是开放式的**——代码细节无尽，不可能逐一讲解。到这里你已经有了：
+> - 第一阶段：项目全景图（知道每层干什么）
+> - 第二阶段：每个包的内部结构（知道每个文件干什么）
+> - 第三阶段：所有协议和消息格式（知道数据长什么样）
+> - 第四阶段：代码通用模式和修改指南（知道怎么改）
+>
+> **现在你可以独立阅读项目中的任何代码，理解它做什么，并修改它。** 如果在阅读某段具体代码时有疑问，随时问。

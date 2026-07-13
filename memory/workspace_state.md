@@ -7,49 +7,48 @@ metadata:
 
 # 工作空间状态
 
-**更新**: 2026-07-12
+**更新**: 2026-07-13
 
 ## 当前阶段
 
-Phase 7 — 飞控 0xF5 下行通信 (树莓派→STM32)
+Phase 7 — EKF 互补滤波集成 ✅  (建图验证通过)
+Phase 8 — 优化整合 (待开始)
 
-## 目标
+## 关键成果
 
-树莓派融合 SLAM 定位 + K230 视觉 → 打包为 0xF5 自定义帧(31B)
-→ 串口发飞控 → STM32 PID 位置控制
+- **EKF 互补滤波**: 旋转建图地图无变形, 显著优于原始方案
+- **方案**: Python imu_filter_node (互补滤波, alpha=0.02, 100Hz)
+- **robot_localization**: ARM64 二进制有 NaN bug, 已放弃
 
-## 已完成
+## 7 ROS2 包
 
-| Phase | 名称 | 状态 |
-|-------|------|:--:|
-| 6.0 | 环境验证 | ✅ |
-| 6.1 | 编译验证 | ✅ |
-| 6.2 | 凌霄飞控串口驱动 | ✅ |
-| 6.3 | 有线雷达 (scan修复) | ✅ |
-| 6.4 | SLAM建图 | ⚠️ |
-| 6.5  | Nav2导航 (含nav_only_launch.py) | ✅ |
-| 6.6 | **odom协方差修正** (实测0.85°@90°→0.001) | ✅ |
-| 7.0 | 0xF5 下行帧 | ✅ (暂停, 待硬件接线) |
+| 包 | 状态 |
+|----|:--:|
+| lslidar_msgs | ✅ |
+| lslidar_driver | ✅ |
+| n10p_bringup | ✅ (已加 use_ekf 参数) |
+| n10p_slam | ✅ |
+| n10p_nav | ✅ |
+| n10p_gazebo | ✅ (树莓派不编译) |
+| **n10p_fusion** | ✅ (新增, EKF 互补滤波) |
 
-## 0xF5 帧格式 (31 字节)
+## 当前推荐用法
 
+```bash
+# 建图
+ros2 launch n10p_bringup n10p_bringup_launch.py scan_source:=wired use_ekf:=true
+ros2 launch n10p_slam slam_only_launch.py
+
+# 导航
+ros2 launch n10p_bringup n10p_bringup_launch.py scan_source:=wired use_ekf:=true
+ros2 launch n10p_nav nav_only_launch.py map:=/path/to/map.yaml
+
+# 传统方案 (无飞控, 仍可用)
+ros2 launch n10p_slam slam_launch.py scan_source:=wired
 ```
-[0]=0xAA [1]=0x61 [2]=0xF5 [3]=0x19
-[4-7] cur_x s32 LE cm   [8-11] cur_y  [12-15] cur_z
-[16-19] tar_x s32 LE cm  [20-23] tar_y [24-27] tar_z
-[28] flags (bit0=SLAM_VALID bit1=TARGET_VALID bit2=VISUAL_MODE)
-[29] SC [30] AC — 校验覆盖 [0]~[28]
-```
 
-## 硬件串口
+## 硬件
 
-- 树莓派 GPIO14(TXD) → STM32 PD6(UART2 RX)
-- 波特率: 500000
-- 校验: SC/AC 算法
-
-## 树莓派环境
-
-- 型号: Raspberry Pi 4B, 8GB
-- 系统: Ubuntu 22.04.5 LTS Server (arm64)
-- ROS2: Humble 244包
-- 用户: ylz
+- 树莓派 4B, 8GB, Ubuntu 22.04.5 Server arm64
+- N10P 雷达: /dev/serial/by-id/usb-1a86_USB_Single_Serial_58EB011256-if00
+- 飞控: USB-TTL CH340, /dev/ttyUSB0, 500000bps, 已校准 acc_scale=0.007198

@@ -1,28 +1,55 @@
-# N10P ROS2 SLAM 项目 — 使用教程
 
-# 有飞控时，运行两个命令：
-# 终端1
+# 单独运行雷达节点看点云
+### 终端1  发布laser的坐标
 ```bash
-ros2 launch n10p_bringup n10p_bringup_launch.py
+ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link laser_frame
 ```
-# 终端2
+### 终端2
 ```bash
-ros2 launch n10p_slam slam_only_launch.py
+ros2 launch lslidar_driver lslidar_launch.py
 ```
+#### 然后rviz2打开即可，注意fix frame选择laser_frame而不是map或odom
+
+
 # 保存地图
 ```bash
 ros2 service call /slam_toolbox/save_map slam_toolbox/srv/SaveMap "{name: {data: '/home/ylz/n10p_leishen/maps/n10p_map'}}"
 ```
 
-# 没飞控时，运行一个命令：
+# SLAM有卡尔曼滤波
+```bash
+ros2 launch n10p_slam slam_ekf_launch.py
+```
+
+# 导航有卡尔曼滤波
+```bash
+ros2 launch n10p_nav nav_ekf_launch.py map:=/home/ylz/n10p_leishen/maps/n10p_map.yaml
+
+```
+
+
+# SLAM无卡尔曼滤波
+
+## 一、有飞控时，运行两个命令：
+### 终端1
+```bash
+ros2 launch n10p_bringup n10p_bringup_launch.py
+```
+### 终端2
+```bash
+ros2 launch n10p_slam slam_only_launch.py
+```
+
+
+## 二、没飞控时，运行一个命令：
 ```bash
 ros2 launch n10p_slam slam_launch.py
 ```
 
 
-# 导航
+# 导航无卡尔曼滤波
 
-# 有飞控时，运行两个命令：
+## 一、有飞控时，运行两个命令：
 ```bash
 # 1. 启动传感器（保持运行）
 ros2 launch n10p_bringup n10p_bringup_launch.py
@@ -31,28 +58,18 @@ ros2 launch n10p_bringup n10p_bringup_launch.py
 ros2 launch n10p_nav nav_only_launch.py map:=/home/ylz/n10p_leishen/maps/n10p_map.yaml
 ```
 
-# 没飞控时，运行一个命令：
+## 二、没飞控时，运行一个命令：
 ```bash
 ros2 launch n10p_nav nav_launch.py
 ```
 
-
-
-
-# 单独运行雷达节点看点云
-
-### 终端1  发布laser的坐标
+# 僵尸节点强制清理
 ```bash
-ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 base_link laser_frame
+bash ~/n10p_leishen/scripts/clean_ros2.sh 
 ```
----
 
-### 终端2
-```bash
-ros2 launch lslidar_driver lslidar_launch.py
-```
-然后rviz2打开即可，注意fix frame选择laser_frame而不是map或odom
----
+
+
 
 ## 目录
 

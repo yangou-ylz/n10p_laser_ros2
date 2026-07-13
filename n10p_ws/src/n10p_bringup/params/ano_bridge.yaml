@@ -6,11 +6,11 @@
     odom_frame_id: odom                 # 里程计坐标系
     publish_tf: true                    # 是否发布 odom → base_link TF
     pub_rate: 160.0                     # 里程计发布频率 (Hz), 实测上限 ~163Hz
-    acc_scale: 0.004788                 # 加速度计 LSB → m/s² (±16g)
+    acc_scale: 0.007198                 # 加速度计 LSB → m/s² (2026-07 校准: Z轴静置9.807)
     gyr_scale: 0.001065                 # 陀螺仪 LSB → rad/s (±2000dps)
-    gyr_offset_x: 0.0                   # 陀螺仪 X 轴零偏补偿
-    gyr_offset_y: 0.0
-    gyr_offset_z: 0.0
+    gyr_offset_x: -0.000360             # 陀螺仪 X 轴零偏 (2026-07 静置标定)
+    gyr_offset_y: 0.000152              # 陀螺仪 Y 轴零偏
+    gyr_offset_z: 0.000277              # 陀螺仪 Z 轴零偏
     # ── 0xF5 位置下行 (树莓派→飞控) ────────────────────
     pos_downlink_enable: false            # 启用位置下行 (需 AMCL 就绪后改 true)
     pos_downlink_rate: 50.0               # 下行频率 Hz

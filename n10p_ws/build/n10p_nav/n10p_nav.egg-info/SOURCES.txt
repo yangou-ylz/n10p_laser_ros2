@@ -12,4 +12,10 @@ launch/desktop_test_launch.py
 launch/nav_launch.py
 launch/nav_only_launch.py
 n10p_nav/__init__.py
+n10p_nav.egg-info/PKG-INFO
+n10p_nav.egg-info/SOURCES.txt
+n10p_nav.egg-info/dependency_links.txt
+n10p_nav.egg-info/requires.txt
+n10p_nav.egg-info/top_level.txt
+n10p_nav.egg-info/zip-safe
 resource/n10p_nav

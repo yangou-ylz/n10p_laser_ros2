@@ -1,10 +1,10 @@
 # CLAUDE.md — N10P ROS2 SLAM 项目最高指令
 
-> 版本: v2.0-pi | 更新: 2026-06-04 | 此文件每次对话自动加载
+> 版本: v3.0-ekf | 更新: 2026-07-13 | 此文件每次对话自动加载
 >
 > 项目根目录: `/home/ylz/n10p_leishen/`
 >
-> **当前阶段**: Phase 6 — 树莓派 4B 移植与验证
+> **当前阶段**: Phase 7 — EKF 互补滤波集成 ✅ → Phase 8 优化整合
 
 ---
 
@@ -129,19 +129,48 @@ N10P 原始数据 ───┬── 有线: USB串口 → lslidar_driver ──
 
 两条路径输出完全相同的 `/scan`（LaserScan, frame_id=laser_frame, 10Hz），下游无感知。
 
-### 4.3 TF 树
+### 4.3 TF 树（含 EKF 滤波）
 
 ```
 map → odom → base_link → laser_frame
-      (AMCL)    (里程计)    (静态TF)
+  (AMCL)  (EKF滤波/里程计)  (静态TF)
 ```
 
-手持建图模式（dummy_odom/全零里程计）下：
-- `odom→base_link` 为全零
+**有飞控 + EKF（推荐）**：
+- `odom→base_link` 由 `imu_filter_node` 发布（IMU 陀螺仪+四元数互补滤波）
 - slam-toolbox 通过扫描匹配估计运动
 - `map→odom` 由 slam-toolbox 发布
 
-### 4.4 6 个 ROS2 包
+**无飞控（传统方案，保留）**：
+- `odom→base_link` 由 dummy_odom 发布（全零，SLAM 自估）
+
+### 4.3.1 EKF 互补滤波
+
+- **节点**: `imu_filter_node` (n10p_fusion 包, Python)
+- **算法**: 互补滤波 — 高频 IMU 陀螺仪积分 + 低频飞控四元数修正 (alpha=0.02)
+- **输入**: `/imu` + `/odom` (来自 ano_bridge)
+- **输出**: `/odometry/filtered` + `odom→base_link` TF (100Hz)
+- **验证**: 旋转建图测试通过，地图无变形，效果显著优于原始方案
+
+### 4.3.2 推荐用法
+
+```bash
+# 建图 (有飞控, 推荐)
+ros2 launch n10p_bringup n10p_bringup_launch.py scan_source:=wired use_ekf:=true
+ros2 launch n10p_slam slam_only_launch.py
+
+# 导航 (有飞控, 推荐)
+ros2 launch n10p_bringup n10p_bringup_launch.py scan_source:=wired use_ekf:=true
+ros2 launch n10p_nav nav_only_launch.py map:=/path/to/map.yaml
+
+# 传统方案 (无飞控, 保留)
+ros2 launch n10p_slam slam_launch.py scan_source:=wired
+
+# 环境清理 (如有残留进程)
+bash ~/n10p_leishen/scripts/clean_ros2.sh
+```
+
+### 4.4 7 个 ROS2 包
 
 | 包 | 类型 | 功能 |
 |----|------|------|
@@ -151,6 +180,7 @@ map → odom → base_link → laser_frame
 | `n10p_slam` | Python | SLAM 配置 + launch |
 | `n10p_nav` | Python | Nav2 导航配置 + launch |
 | `n10p_gazebo` | Python | Gazebo 仿真（**树莓派不编译不运行**） |
+| **`n10p_fusion`** | **Python (ament_python)** | **EKF 互补滤波，IMU+飞控融合→平滑里程计 TF** |
 
 ### 4.5 目录结构
 
