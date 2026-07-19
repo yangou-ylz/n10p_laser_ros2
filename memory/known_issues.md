@@ -7,6 +7,13 @@ metadata:
 
 # 已知坑点
 
+## 开发铁律 (2026-07-19)
+
+**每次改代码前必须读完全部记忆文件和 CLAUDE.md。**
+**用户没让改代码时只分析不修改。**
+**改一处的后果必须追溯到所有下游节点/话题/TF。**
+**四元数姿态相关的改动涉及 4 个位置：ano_bridge、imu_filter 输入、imu_filter 输出(TF+odom)、yaw_util。**
+
 ## 绝对红线
 
 1. global_costmap 绝不用 rolling_window + obstacle_layer → SIGSEGV
