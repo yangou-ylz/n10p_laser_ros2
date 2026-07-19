@@ -42,11 +42,30 @@ def generate_launch_description():
     # ══════════════════════════════════════════════════
     bridge_params = os.path.join(
         get_package_share_directory('n10p_bringup'), 'params', 'ano_bridge.yaml')
+
+    # 自动识别 FC 数据口: 扫描 /dev/ttyUSB* @500k, 找发 0xAA 帧的那个
+    def _detect_fc_port():
+        import subprocess
+        script = os.path.expanduser('~/n10p_leishen/n10p_ws/scripts/auto_detect_serial.py')
+        try:
+            r = subprocess.run(['python3', script], capture_output=True, text=True, timeout=10)
+            for line in r.stdout.split('\n'):
+                if 'N10P_FC_DATA=' in line:
+                    port = line.split('=')[1].strip()
+                    print(f'\n[bringup] 自动识别 FC 数据口: {port}\n')
+                    return port
+        except Exception as e:
+            print(f'\n[bringup] 串口识别失败: {e}, 回退到 /dev/ttyUSB1\n')
+        return '/dev/ttyUSB1'
+
+    fc_port = _detect_fc_port()
+
     # use_ekf=true 时 ano_bridge 不发 TF (由 EKF 节点发)，避免两个 TF 源冲突
     bridge_node = TimerAction(period=2.0, actions=[Node(
         package='n10p_bringup', executable='ano_bridge_node',
         name='ano_bridge_node', output='screen',
-        parameters=[bridge_params, {'publish_tf': PythonExpression(["'", use_ekf, "' != 'true'"])}])])
+        parameters=[bridge_params, {'serial_port': fc_port,
+                    'publish_tf': PythonExpression(["'", use_ekf, "' != 'true'"])}])])
 
     driver_params = os.path.join(
         get_package_share_directory('lslidar_driver'), 'params', 'lsx10.yaml')

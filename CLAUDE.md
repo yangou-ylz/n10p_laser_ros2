@@ -1,10 +1,10 @@
 # CLAUDE.md — N10P ROS2 SLAM 项目最高指令
 
-> 版本: v3.0-ekf | 更新: 2026-07-13 | 此文件每次对话自动加载
+> 版本: v3.1-f5 | 更新: 2026-07-19 | 此文件每次对话自动加载
 >
 > 项目根目录: `/home/ylz/n10p_leishen/`
 >
-> **当前阶段**: Phase 7 — EKF 互补滤波集成 ✅ → Phase 8 优化整合
+> **当前阶段**: Phase 8 — 飞控 0xF5 下行联调中 🔄
 
 ---
 
@@ -155,13 +155,21 @@ map → odom → base_link → laser_frame
 ### 4.3.2 推荐用法
 
 ```bash
-# 建图 (有飞控, 推荐)
-ros2 launch n10p_bringup n10p_bringup_launch.py scan_source:=wired use_ekf:=true
-ros2 launch n10p_slam slam_only_launch.py
+# 建图 (EKF, 一键启动)
+ros2 launch n10p_slam slam_ekf_launch.py
 
-# 导航 (有飞控, 推荐)
-ros2 launch n10p_bringup n10p_bringup_launch.py scan_source:=wired use_ekf:=true
-ros2 launch n10p_nav nav_only_launch.py map:=/path/to/map.yaml
+# 导航 (EKF, 一键启动)
+ros2 launch n10p_nav nav_ekf_launch.py map:=/home/ylz/n10p_leishen/maps/n10p_map.yaml
+
+# F5 下行测试 (需先启动导航)
+cd /home/ylz/n10p_leishen
+python3 send_slam_cur_f5.py --port /dev/ttyUSB0 --rate 10 --duration 30 --log-file logs/slam_cur_static.log
+
+# AMCL 收敛监控
+python3 /home/ylz/n10p_leishen/n10p_ws/scripts/amcl_convergence.py
+
+# 自动串口检测
+python3 /home/ylz/n10p_leishen/n10p_ws/scripts/auto_detect_serial.py
 
 # 传统方案 (无飞控, 保留)
 ros2 launch n10p_slam slam_launch.py scan_source:=wired
@@ -223,6 +231,9 @@ bash ~/n10p_leishen/scripts/clean_ros2.sh
 | 6 | AMCL 全向模型 + SmacPlanner2D + RPP | OmniMotionModel, MOORE 8方向, RegulatedPurePursuit |
 | 7 | 全局 costmap 禁用 rolling_window | rolling_window + obstacle_layer → planner SIGSEGV，改用 static_layer + 空白 PGM |
 | 8 | bootstrap 静态 TF（map→odom） | AMCL 激活前 map 不存在→RViz 死锁，用静态 TF 引导 |
+| 9 | 自动串口检测 | USB-TTL 串口可能互换(/dev/ttyUSB0↔USB1)，根据 USB ID 自动匹配 CH340(飞控)/CP2102(雷达) |
+| 10 | AMCL 自动初始姿态 | launch 启动时从飞控 0x04 四元数获取 yaw 作为 AMCL initial_pose，位置 (0,0) 由扫描匹配收敛 |
+| 11 | 0x04 四元数符号修正 | 标准公式转欧拉后 pitch/yaw 符号与凌霄 0x03 直出帧相反（与飞控方对账确认），ano_bridge 已取反 |
 
 ---
 
@@ -261,6 +272,8 @@ bash ~/n10p_leishen/scripts/clean_ros2.sh
 | wifi_bridge 发布太早 | costmap 队列爆满 | wifi_bridge 加 5 秒启动延迟 |
 | Fast-DDS 共享内存僵尸 | "RTPS_TRANSPORT_SHM Error" | 启动前 `rm -f /dev/shm/fastrtps_*` |
 | ament_python entry_points | scan_relay 找不到可执行文件 | 每次 build 后手动 cp（已废弃 scan_relay） |
+| 0x04 四元数符号错误 | RViz 旋转方向与现实相反 | pitch/yaw 符号取反（与凌霄 0x03 对账确认） |
+| 串口互换 | /dev/ttyUSB0↔USB1 顺序不定 | auto_detect_serial.py 根据 USB ID 自动匹配 |
 
 ### 6.5 已知坑点 (KI) 快速解决
 
@@ -282,6 +295,11 @@ bash ~/n10p_leishen/scripts/clean_ros2.sh
 5. ❌ **驱动源码 delete 必须为 delete[]**（已修复，编译前确认）
 6. ❌ **不许用 `pkill -f "ros2"` 或 `killall ros2`** → 只杀自己的 PID
 7. ❌ **不许用 `colcon build` 不带 `--parallel-workers 2`** → 会 OOM
+8. ❌ **N10P 扫描方向 `idx=(360-deg)*1058/360`** — CW→CCW 反转不可删除 → Y轴镜像
+9. ❌ **odom 协方差(姿态)不能改回 1.0** — 四元数 A 级可信, covariance=0.001
+10. ❌ **TF yaw 不能改** — 雷达箭头朝机头前方, yaw=0（2026-07-16 双验证通过）
+11. ❌ **未授权不准改代码** — 先说明改什么/为什么/影响，等用户明确说"改"
+12. ❌ **用户回退 git 后必须立即更新记忆文件** — 不要记忆错乱，把回退前的状态当成当前状态
 
 ---
 
@@ -495,21 +513,29 @@ killall ros2
 ```
 
 ### 12.4 已完成阶段
+
+| Phase | 内容 | 状态 |
+|-------|------|:--:|
 | 6.0 | 环境验证 | ✅ |
 | 6.1 | 编译验证 (5包arm64) | ✅ |
 | 6.2 | 凌霄飞控串口驱动 (三层架构) | ✅ |
 | 6.3 | 有线雷达驱动 (scan修复: 后半圈+180°/固定1058/强度过滤) | ✅ |
 | 6.4 | SLAM建图 (参数回退原始好配置) | ✅ |
-| 6.5 | 建图质量 (直走OK, 旋转待优化) | ⚠️ |
-| 6.6 | Nav2导航 (AMCL+成本图+BT, 基本通过) | ⚠️ |
-| 6.7 | 性能调优 (odom 160Hz, AMCL 500粒/30束) | ✅ |
+| 6.5 | 建图质量 (直走OK, 旋转优化) | ✅ (EKF已解决) |
+| 6.6 | Nav2导航 (AMCL+成本图+BT) | ✅ (基本通过) |
+| 6.7 | 性能调优 (odom 50Hz, AMCL 2000/500粒) | ✅ |
+| 7.0 | EKF 互补滤波集成 | ✅ |
+| 7.1 | 坐标系验证 (N10P+飞控+ROS REP-105) | ✅ |
+| 7.2 | AMCL 自动初始姿态 (yaw_util) | ✅ |
+| 7.3 | 自动串口检测 | ✅ |
+| 7.4 | 0xF5 固定帧联调 (步骤1-5) | ✅ |
+| 8.0 | **0xF5 接入真实 SLAM 数据** | 🔄 当前攻坚 |
 
-### 12.4 当前攻坚任务：飞控位置下行 (Phase 7)
+### 12.5 当前攻坚任务：F5 接入真实 SLAM 数据 (Phase 8)
 
-**目标**：树莓派通过USB-TTL模块TX→飞控PD6(RX)发送0xAA位置帧
-**帧格式**：18字节, 帧头0xAA, ID=0x32, X/Y/Z(s32 cm), SC/AC校验
-**数据源**：AMCL定位 /amcl_pose
-**频率**：50Hz
+**目标**：`send_slam_cur_f5.py` 从 AMCL `/amcl_pose` 取实时坐标→打包 0xF5→串口→飞控
+**当前 Bug**：cur=(None,None,None)，AMCL pose 数据未正确获取
+**频率**：50Hz (当前测试 10Hz)
 
 ### 12.5 开发原则
 
@@ -535,3 +561,5 @@ killall ros2
 | 2026-05-27 | v1.1 | 新增 user.md + 代码可读性规范 |
 | 2026-05-30 | v1.2 | 新增进程清理硬约束 |
 | 2026-06-04 | v2.0-pi | 树莓派适配：更新路径/内存/性能红线/已知Bug/ADR/禁用Gazebo |
+| 2026-07-13 | v3.0-ekf | EKF 互补滤波集成：imu_filter_node + 7包编译验证 + 旋转建图通过 |
+| 2026-07-19 | v3.1-f5 | 坐标系验证通过 + AMCL自动初始姿态 + 自动串口检测 + 0xF5联调步骤1-5通过 |

@@ -7,11 +7,12 @@ metadata:
 
 # 工作空间状态
 
-**更新**: 2026-07-14
+**更新**: 2026-07-19
 
 ## 当前阶段
 
-Phase 8 — 导航验证 + 建图验证通过，待飞控下行硬件接线
+Phase 8 — 飞控 0xF5 下行联调中。SLAM+Nav+EKF 全部验证通过，自动串口识别已完成。
+**当前攻坚**: `send_slam_cur_f5.py` 接入真实 AMCL 数据发送 0xF5 帧给飞控。
 
 ## ⛔ 绝对红线（不可再犯）
 
@@ -23,7 +24,9 @@ Phase 8 — 导航验证 + 建图验证通过，待飞控下行硬件接线
 4. **强度过滤 intensity>0** — 不可删除, 否则噪声点重新出现
 5. **odom 协方差 0.001** — 飞控四元数 A 级可信, 不可改回 1.0
 6. **TF laser_frame Z=+0.05** — 雷达在飞控上方 5cm
-7. **静态 TF yaw=0** — 雷达箭头朝机头前方, 不需要旋转
+7. **静态 TF yaw=0** — 雷达箭头朝机头前方, 不需要旋转（2026-07-16 建图+导航双验证通过）
+8. **未授权不准改代码** — 必须先向用户说明要改什么、为什么、有什么影响，等用户明确说"改"
+9. **回退到 git commit 后** — 必须立即更新记忆文件，说明当前真实状态，不要记忆错乱
 
 ## 7 ROS2 包
 
@@ -32,26 +35,37 @@ Phase 8 — 导航验证 + 建图验证通过，待飞控下行硬件接线
 | lslidar_msgs | ✅ |
 | lslidar_driver | ✅ (CW→CCW反转+180°偏移+强度过滤+固定1058) |
 | n10p_bringup | ✅ (ano_bridge: 50Hz, IMU限速100Hz, 协方差0.001, xyz=0) |
-| n10p_slam | ✅ (slam_ekf_launch, minimum_laser_range=0.2) |
-| n10p_nav | ✅ (nav_ekf_launch, AMCL自动初始位姿) |
-| **n10p_fusion** | ✅ (imu_filter: 重力去除+死区+Z固定+自适应alpha+50Hz) |
+| n10p_slam | ✅ (slam_ekf_launch, 自动串口识别, minimum_laser_range=0.3) |
+| n10p_nav | ✅ (nav_ekf_launch, 自动串口识别, AMCL动态粒子收敛) |
+| **n10p_fusion** | ✅ (imu_filter: 四元数符号修正+重力去除+死区+Z固定+自适应alpha+50Hz) |
 | n10p_gazebo | ✅ (树莓派不编译) |
 
 ## 当前推荐用法
 
 ```bash
-# 建图 (EKF)
+# 建图 (EKF, 一键启动)
 ros2 launch n10p_slam slam_ekf_launch.py
 
-# 导航 (EKF)
+# 导航 (EKF, 一键启动)
 ros2 launch n10p_nav nav_ekf_launch.py map:=/home/ylz/n10p_leishen/maps/n10p_map.yaml
+
+# F5 下行测试 (需先启动导航)
+cd /home/ylz/n10p_leishen
+python3 send_slam_cur_f5.py --port /dev/ttyUSB0 --rate 10 --duration 30 --log-file logs/slam_cur_static.log
+
+# AMCL 收敛监控
+python3 /home/ylz/n10p_leishen/n10p_ws/scripts/amcl_convergence.py
+
+# 自动串口检测
+python3 /home/ylz/n10p_leishen/n10p_ws/scripts/auto_detect_serial.py
 ```
 
 ## 硬件
 
 - 树莓派 4B, 8GB, Ubuntu 22.04.5 Server arm64
-- N10P: /dev/serial/by-id/usb-1a86_USB_Single_Serial_58EB011256-if00, 460800bps
-- 飞控: USB-TTL CH340, /dev/ttyUSB0, 500000bps
+- N10P: `/dev/serial/by-id/usb-1a86_USB_Single_Serial_58EB011256-if00`, 460800bps
+- 飞控: USB-TTL CH340, `/dev/ttyUSB0` 或 `/dev/ttyUSB1`, 500000bps
+- 自动串口检测脚本会根据 USB ID 自动识别 `/dev/ttyUSB0` vs `/dev/ttyUSB1`
 
 ## 关键参数速查
 
@@ -61,14 +75,36 @@ ros2 launch n10p_nav nav_ekf_launch.py map:=/home/ylz/n10p_leishen/maps/n10p_map
 | 角度映射 | `idx=(360-deg)*1058/360` | lslidar_driver.cc |
 | 后半圈 | degree+180° | lslidar_driver.cc data_processing_2() |
 | 强度过滤 | intensity>0 | lslidar_driver.cc pubScan() |
+| minimum_laser_range | 0.3m (过滤无人机本体30cm) | mapper_params_online_async.yaml |
 | TF Z | +0.05 | bringup/slam/nav launch |
 | TF yaw | 0 | bringup/slam/nav launch |
-| odom 协方差 | 0.001 | ano_bridge_node.py |
+| odom 协方差(姿态) | 0.001 | ano_bridge_node.py |
+| odom 协方差(位置) | 1.0 (交给AMCL) | ano_bridge_node.py |
 | EKF alpha_ori | 0.02 (自适应) | ekf.yaml |
 | EKF alpha_vel | 0.05 | ekf.yaml |
 | EKF publish_rate | 50Hz | ekf.yaml |
 | ano_bridge pub_rate | 50Hz | ano_bridge.yaml |
 | IMU 限速 | 100Hz | ano_bridge + imu_filter |
+| 0x04 四元数符号 | pitch/yaw 取反(与0x03对账确认) | ano_bridge_node.py |
 | 重力去除 | 四元数旋转法 | imu_filter_node.py |
 | 加速度死区 | 0.05 m/s² | imu_filter_node.py |
 | Z轴 | 固定为0 | imu_filter_node.py |
+| AMCL max_particles | 2000 (收敛后自动降为500) | nav2_params_n10p.yaml |
+| AMCL min_particles | 500 | nav2_params_n10p.yaml |
+| AMCL 收敛阈值 | σ<5cm且Yawσ<3°持续3秒 | amcl_convergence.py |
+
+## 0xF5 下行联调状态
+
+| 步骤 | 内容 | 状态 |
+|------|------|:--:|
+| 1 | 离线帧测试 (黄金帧校验) | ✅ |
+| 2 | 串口模块 (linux_serial.py, send_f5.py) | ✅ |
+| 3 | 固定帧发送 + STM32 0xA0 ACK | ✅ |
+| 4 | 方向测试 X/Y/Z 三轴 | ✅ 全部ACK, 0丢帧 |
+| 5 | flags 失效测试 | ✅ |
+| 6 | 接入真实SLAM (send_slam_cur_f5.py) | 🔄 当前: cur=(None,None,None) 待修复 |
+
+## 已知当前 Bug
+
+1. **`send_slam_cur_f5.py` cur=(None,None,None)**: AMCL pose 订阅未获取到有效数据。需要检查 `/amcl_pose` 话题是否正常发布、消息格式是否正确。
+2. **路径规划偶尔失败**: 待排查 Nav2 planner 配置。
