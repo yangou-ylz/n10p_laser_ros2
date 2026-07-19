@@ -16,6 +16,9 @@ metadata:
 5. 树莓派编译必须 `--parallel-workers 2`
 6. 禁止 `pkill -f "ros2"` 或 `killall ros2`
 7. **所有文件只写在 /home/ylz/n10p_leishen/ 内，绝不写外部**
+8. **N10P 扫描方向**: `idx=(360-deg)*1058/360` — CW→CCW反转，不可改成 `deg*1058/360`
+9. **odom 协方差 0.001** — 四元数A级可信, 不可改回1.0
+10. **TF yaw=0** — 雷达箭头朝机头前方, 不需要旋转
 
 ## 飞控串口相关
 

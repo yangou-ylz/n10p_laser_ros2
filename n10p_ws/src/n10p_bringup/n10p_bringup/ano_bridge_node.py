@@ -31,6 +31,7 @@ ano_bridge_node.py — 凌霄飞控 → ROS2 桥接节点
 """
 
 import rclpy
+import time
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy, HistoryPolicy
 from nav_msgs.msg import Odometry
@@ -129,6 +130,7 @@ class AnoBridgeNode(Node):
         # ── 发布者 ────────────────────────────────────────
         self.odom_pub = self.create_publisher(Odometry, '/odom', sensor_qos)
         self.imu_pub = self.create_publisher(Imu, '/imu', sensor_qos)
+        self._last_imu_pub_ts = 0.0               # IMU 限速: 上次发布时间
         self.battery_pub = self.create_publisher(BatteryState, '/battery', reliable_qos)
         # /fc_status 使用标准消息中已有的类型 — 这里用简单的日志发布
         # TODO: 如需结构化飞控状态消息，可定义自定义 msg
@@ -210,7 +212,11 @@ class AnoBridgeNode(Node):
             d['gyr_y'] * self.gyr_scale + self.gyr_offset[1],
             d['gyr_z'] * self.gyr_scale + self.gyr_offset[2],
         ]
-        self._publish_imu()
+        # 限制 /imu 发布频率 ≤100Hz (IMU帧源501Hz, 跳过冗余帧省CPU)
+        now_mono = time.monotonic()
+        if now_mono - self._last_imu_pub_ts >= 0.01:
+            self._last_imu_pub_ts = now_mono
+            self._publish_imu()
 
     def _on_baro_mag(self, d: dict) -> None:
         """0x02 气压计+磁力计 → 缓存气压高度"""
@@ -478,8 +484,7 @@ class AnoBridgeNode(Node):
 
         AMCL 超时 (>200ms) → 自动发送全无效帧 (flags=0x00)
         """
-        import time as time_module
-        now = time_module.monotonic()
+        now = time.monotonic()
 
         # ── 检查 AMCL 新鲜度 ──────────────────────────
         if self._amcl_last_ts is not None:
@@ -549,13 +554,21 @@ def main(args=None):
     node = AnoBridgeNode()
     try:
         rclpy.spin(node)
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, rclpy.executors.ExternalShutdownException):
         pass
     finally:
+        # 先停后台串口线程, 再销毁 ROS2 资源 (避免回调在 context 销毁后 publish)
         if hasattr(node, '_transport'):
             node._transport.stop()
-        node.destroy_node()
-        rclpy.shutdown()
+        try:
+            node.destroy_node()
+        except Exception:
+            pass
+        try:
+            if rclpy.ok():
+                rclpy.shutdown()
+        except Exception:
+            pass
 
 
 if __name__ == '__main__':

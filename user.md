@@ -1,3 +1,9 @@
+# 进入环境
+```bash
+cd n10p_leishen/n10p_ws
+ros2env
+```
+
 
 # 单独运行雷达节点看点云
 ### 终端1  发布laser的坐标
@@ -11,11 +17,6 @@ ros2 launch lslidar_driver lslidar_launch.py
 #### 然后rviz2打开即可，注意fix frame选择laser_frame而不是map或odom
 
 
-# 保存地图
-```bash
-ros2 service call /slam_toolbox/save_map slam_toolbox/srv/SaveMap "{name: {data: '/home/ylz/n10p_leishen/maps/n10p_map'}}"
-```
-
 # SLAM有卡尔曼滤波
 ```bash
 ros2 launch n10p_slam slam_ekf_launch.py
@@ -23,11 +24,86 @@ ros2 launch n10p_slam slam_ekf_launch.py
 
 # 导航有卡尔曼滤波
 ```bash
+# 默认加载配置n10p_ws/src/n10p_nav/config/nav2_params_n10p.yaml的初始无人机姿态
 ros2 launch n10p_nav nav_ekf_launch.py map:=/home/ylz/n10p_leishen/maps/n10p_map.yaml
 
+# 直接传入初始无人机姿态
+ros2 launch n10p_nav nav_ekf_launch.py initial_x:=-1.23 initial_y:=0.87 initial_yaw:=-0.24   #注意是弧度，不是角度！！！90度就填1.57!!!
+```
+
+# 保存地图
+```bash
+ros2 service call /slam_toolbox/save_map slam_toolbox/srv/SaveMap "{name: {data: '/home/ylz/n10p_leishen/maps/n10p_map'}}"
+```
+
+# 将地图pgm变成png图片
+```bash
+python3 /home/ylz/n10p_leishen/scripts/pgm2png.py 输入.pgm 输出.png
 ```
 
 
+# 测试节点健康状态
+```bash
+cd ~/n10p_leishen
+
+# SLAM 模式
+python3 n10p_ws/scripts/n10p_health_check.py --mode slam
+
+# NAV 模式  
+python3 n10p_ws/scripts/n10p_health_check.py --mode nav
+
+# 自动检测当前模式
+python3 n10p_ws/scripts/n10p_health_check.py
+
+# 持续监控 (每5秒刷新)
+python3 n10p_ws/scripts/n10p_health_check.py --mode nav --watch
+
+```
+
+# 获取当前yaw朝向（单位：弧度rad)
+```bash
+python3 /home/ylz/n10p_leishen/n10p_ws/scripts/get_fc_yaw.py
+```
+
+
+# colcon build 通用指南
+### 基本规则
+必须在工作空间根目录执行：/home/ylz/n10p_leishen/n10p_ws
+
+### 每次 build 前必须 source ROS2 环境：
+```bash
+source /opt/ros/humble/setup.bash
+```
+
+```bash
+#全量编译（所有包）
+cd ~/n10p_leishen/n10p_ws
+source /opt/ros/humble/setup.bash
+colcon build --symlink-install --parallel-workers 2
+#场景1：只编译某一个包
+colcon build --packages-select n10p_fusion --symlink-install --parallel-workers 2
+#场景2：编译多个指定的包
+colcon build --packages-select n10p_bringup n10p_fusion n10p_slam --symlink-install --parallel-workers 2
+#场景3：跳过某个包编译
+colcon build --packages-ignore n10p_gazebo lslidar_driver --symlink-install --parallel-workers 2
+# n10p_gazebo 仿真包 和 lslidar_driver C++包 编译慢，日常改 Python 时可以跳过
+#场景4：只编译 Python 包（跳过慢的 C++ 包）
+colcon build --packages-select n10p_bringup n10p_slam n10p_nav n10p_fusion --symlink-install --parallel-workers 2
+#场景5：改了 C++ 代码需要重新编译
+colcon build --packages-select lslidar_driver lslidar_msgs --parallel-workers 2
+# C++ 包必须编译，不能用 --symlink-install 跳过
+#场景6：全量但跳过仿真
+colcon build --packages-ignore n10p_gazebo --symlink-install --parallel-workers 2
+```
+
+| 参数 | 作用 | 什么时候用 |
+|------|------|------------|
+| `--symlink-install` | Python 文件软链接到 install，改代码不用重编 | 每次都加（改 Python 时） |
+| `--parallel-workers 2` | 限制编译并行数 | 树莓派必加（防止 OOM） |
+| `--packages-select A B C` | 只编译指定的包 | 只改了一个包时，快很多 |
+| `--packages-ignore A B` | 跳过指定包 | 跳过大包/仿真包 |
+| `--cmake-clean-cache` | 清除 CMake 缓存强制重编 | C++ 包改 CMakeLists 后 |
+| `--continue-on-error` | 某个包报错也不停 | 调试时，看哪些包能编译通过 |
 # SLAM无卡尔曼滤波
 
 ## 一、有飞控时，运行两个命令：

@@ -28,12 +28,20 @@ amcl:
     pf_err: 0.05
     pf_z: 0.99
     resample_interval: 1
-    recovery_alpha_slow: 0.001
-    recovery_alpha_fast: 0.1
+
+    # ── 自动初始位姿 (比赛模式，无需手点RViz) ──
+    # 无人机固定在起飞点启动，设为地图原点附近。AMCL 启动时自动从此位置开始搜索。
+    # 校准方法: 先用手持建图确定起飞点在地图中的坐标，然后填入下面的 initial_pose。
+    set_initial_pose: true
+    initial_pose:
+      x: 0.0                       # 起飞点在地图中的X坐标 (m)
+      y: 0.0                       # 起飞点在地图中的Y坐标 (m)
+      z: 0.0
+      yaw: 0.0                     # 起飞时机头朝向 (rad, 0=map的+X方向)
 
     # 更新阈值
-    update_min_d: 0.1              # 平移 10cm 触发，减 CPU 频率
-    update_min_a: 0.1              # 旋转 6° 触发，减 CPU 频率
+    update_min_d: 0.02             # 平移 2cm 触发 (高实时性)
+    update_min_a: 0.02             # 旋转 1° 触发 (高实时性)
     transform_tolerance: 0.5
 
     # 似然场参数
@@ -43,6 +51,9 @@ amcl:
     z_max: 0.05
     sigma_hit: 0.2
 
+    # 如果初始位姿不准，AMCL 需快速恢复 — 增大快速恢复权重
+    recovery_alpha_slow: 0.001
+    recovery_alpha_fast: 0.5       # 原0.1→0.5，出错时快速注入随机粒子
     tf_broadcast: true
 
 # ══════════════════════════════════════════════════
@@ -98,7 +109,7 @@ controller_server:
       use_velocity_scaled_lookahead_dist: true
       min_approach_linear_vel: 0.1
       max_allowed_time_to_collision: 1.0
-      use_collision_detection: true
+      use_collision_detection: false   # 无人机飞行中无需地面碰撞检测
       transform_tolerance: 0.3
 
       # 目标收敛
@@ -215,7 +226,7 @@ local_costmap:
         scan:
           topic: /scan
           max_obstacle_height: 2.0
-          min_obstacle_range: 0.2     # 过滤 20cm 内自检（无人机机身）
+          min_obstacle_range: 0.3     # 30cm 内为无人机机身/安装柱
           clearing: true
           marking: true
           data_type: "LaserScan"

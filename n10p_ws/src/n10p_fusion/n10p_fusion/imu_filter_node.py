@@ -1,180 +1,254 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-n10p_imu_filter.py — 轻量 IMU+里程计互补滤波器
-================================================
-替代 robot_localization EKF (ARM64 有 NaN bug)。
+n10p_imu_filter.py — IMU+里程计互补滤波器
+============================================
+订阅: /imu (角速度+加速度+姿态) + /odom (速度)
+输出: /odometry/filtered + odom→base_link TF + /ekf_status
 
-功能: 订阅 /imu (角速度+加速度+姿态) + /odom (速度+姿态),
-      输出更平滑的 odom→base_link TF + /odometry/filtered。
-
-算法: 互补滤波 — 高频用 IMU 陀螺仪积分, 低频用飞控四元数修正。
+算法:
+  姿态 — 互补滤波: 高频 IMU 陀螺仪积分 + 低频飞控四元数修正 + 自适应 alpha
+  速度 — 互补滤波: 高频 IMU 加速度积分 + 低频飞控速度修正
 """
 
-import math
+import math, time as _time
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy, HistoryPolicy
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Imu
+from std_msgs.msg import String
 from geometry_msgs.msg import TransformStamped
 from tf2_ros import TransformBroadcaster
 
 
 class IMUFilterNode(Node):
-    """互补滤波器: IMU角速度积分 + 飞控四元数修正 → 平滑 odom→base_link TF"""
+    """互补滤波器: IMU角速度+加速度积分 + 飞控修正 → 平滑里程计 TF"""
 
     def __init__(self):
         super().__init__('n10p_imu_filter')
 
         # ── 参数 ──────────────────────────────────────
         self.declare_parameter('alpha_orientation', 0.02)
+        self.declare_parameter('alpha_velocity', 0.05)
         self.declare_parameter('publish_rate', 100.0)
         self.declare_parameter('publish_tf', True)
 
-        self.alpha = self.get_parameter('alpha_orientation').value
+        self.alpha_ori = self.get_parameter('alpha_orientation').value
+        self.alpha_vel = self.get_parameter('alpha_velocity').value
         self.publish_rate = self.get_parameter('publish_rate').value
         self.publish_tf = self.get_parameter('publish_tf').value
 
-        # ── 姿态缓存 ───────────────────────────────
-        self.q0, self.q1, self.q2, self.q3 = 1.0, 0.0, 0.0, 0.0
-        self.q0_raw, self.q1_raw, self.q2_raw, self.q3_raw = 1.0, 0.0, 0.0, 0.0
-        self.gyr = [0.0, 0.0, 0.0]
-        self.vel = [0.0, 0.0, 0.0]
-        self.last_imu_ts = None
-        self.imu_timeout = 3.0       # 3秒无IMU→回退透传模式
+        # ── 状态缓存 ───────────────────────────────
+        self.q0, self.q1, self.q2, self.q3 = 1.0, 0.0, 0.0, 0.0       # 滤波后姿态
+        self.q0_raw, self.q1_raw, self.q2_raw, self.q3_raw = 1.0,0.0,0.0,0.0  # FC 原始姿态
+        self.gyr = [0.0, 0.0, 0.0]              # 最新角速度 (rad/s)
+        self.acc = [0.0, 0.0, 0.0]              # 最新线加速度 (m/s²)
+        self.vel_fc = [0.0, 0.0, 0.0]           # FC 速度
+        self.vel_filt = [0.0, 0.0, 0.0]         # 滤波后速度
+        self.pos_x, self.pos_y, self.pos_z = 0.0, 0.0, 0.0  # 积分位置 (供 AMCL 平移先验)
+        self.last_imu_ts = None                  # 上一帧 IMU 时间
+        self.last_process_ts = 0.0               # 上次处理 IMU 的时间
+        self.process_min_dt = 0.01               # 最小处理间隔 (100Hz上限)
+        self.imu_timeout = 3.0                   # IMU 超时 (秒)
+        self.status = 'initializing'             # EKF 状态
+        self.status_updated = False
 
-        # ── QoS: 匹配 ano_bridge 的 Best Effort ─────
+        # ── QoS ────────────────────────────────────
         sensor_qos = QoSProfile(
             reliability=ReliabilityPolicy.BEST_EFFORT,
             durability=DurabilityPolicy.VOLATILE,
-            history=HistoryPolicy.KEEP_LAST,
-            depth=10,
-        )
+            history=HistoryPolicy.KEEP_LAST, depth=10)
 
-        # ── 发布者 (100Hz → Best Effort, 高频数据丢一帧无妨) ──
+        # ── 发布者 ─────────────────────────────────
         self.odom_pub = self.create_publisher(Odometry, '/odometry/filtered', sensor_qos)
+        self.status_pub = self.create_publisher(String, '/ekf_status', 10)
         self.tf_broadcaster = TransformBroadcaster(self)
 
-        # ── 订阅者 (QoS 必须匹配发布者!) ──────────────
+        # ── 订阅者 ─────────────────────────────────
         self.imu_sub = self.create_subscription(Imu, '/imu', self._on_imu, sensor_qos)
         self.odom_sub = self.create_subscription(Odometry, '/odom', self._on_odom, sensor_qos)
 
-        # ── 定时器: 固定频率发布 ─────────────────────
-        period = 1.0 / self.publish_rate
-        self._pub_timer = self.create_timer(period, self._publish)
+        # ── 定时器 ─────────────────────────────────
+        self._pub_timer = self.create_timer(1.0 / self.publish_rate, self._publish)
+        self._status_timer = self.create_timer(1.0, self._publish_status)
 
-        self.get_logger().info(f'IMU互补滤波器已启动 (alpha={self.alpha}, rate={self.publish_rate}Hz)')
+        self.get_logger().info(
+            f'IMU互补滤波器已启动 (alpha_ori={self.alpha_ori}, alpha_vel={self.alpha_vel}, rate={self.publish_rate}Hz)')
 
+    # ══════════════════════════════════════════════════
+    # 3.2 自适应 alpha: 旋转越快越信 IMU 陀螺仪, 静止时更信飞控
+    # ══════════════════════════════════════════════════
+    def _adaptive_alpha(self) -> float:
+        gyr_mag = math.sqrt(self.gyr[0]**2 + self.gyr[1]**2 + self.gyr[2]**2)
+        # 静止 (<0.1 rad/s≈6°/s): alpha=0.05 (更信飞控)
+        # 快速旋转 (>2.0 rad/s≈115°/s): alpha=0.005 (更信陀螺仪)
+        if gyr_mag < 0.1:
+            return 0.05
+        elif gyr_mag > 2.0:
+            return 0.005
+        else:
+            return 0.05 - 0.045 * (gyr_mag - 0.1) / 1.9
+
+    # ══════════════════════════════════════════════════
+    # IMU 回调: 姿态互补滤波 + 加速度积分
+    # ══════════════════════════════════════════════════
     def _on_imu(self, msg: Imu):
-        """IMU 回调: 缓存角速度 + 四元数 + 做互补滤波"""
-        # 飞控四元数 (绝对姿态, 67Hz, 低频修正用)
+        # 速率限制: IMU 帧 500Hz, 只处理 100Hz, 跳过冗余帧
+        now_mono = _time.monotonic()
+        if now_mono - self.last_process_ts < self.process_min_dt:
+            return  # 跳过, 保留最新缓存
+        self.last_process_ts = now_mono
+
         self.q0_raw = msg.orientation.w
         self.q1_raw = msg.orientation.x
         self.q2_raw = msg.orientation.y
         self.q3_raw = msg.orientation.z
 
-        # 陀螺仪角速度 (高频, 用于帧间积分)
         self.gyr = [msg.angular_velocity.x,
                      msg.angular_velocity.y,
                      msg.angular_velocity.z]
+
+        self.acc = [msg.linear_acceleration.x,
+                     msg.linear_acceleration.y,
+                     msg.linear_acceleration.z]
 
         now_sec = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9
 
         if self.last_imu_ts is not None:
             dt = now_sec - self.last_imu_ts
-            if 0.0 < dt < 0.1:  # 10ms 以内的合理间隔
-                # ── 步骤1: 用陀螺仪积分姿态 (高频预测) ──
+            if 0.0 < dt < 0.1:
+                # ── 姿态互补滤波 ──────────────────────
                 gx, gy, gz = self.gyr
-                # 小角度近似: 四元数增量 = [1, gx*dt/2, gy*dt/2, gz*dt/2]
                 half_dt = dt * 0.5
-                dq_w = 1.0
-                dq_x = gx * half_dt
-                dq_y = gy * half_dt
-                dq_z = gz * half_dt
-                # 归一化增量
+                dq_w, dq_x, dq_y, dq_z = 1.0, gx*half_dt, gy*half_dt, gz*half_dt
                 dq_norm = math.sqrt(dq_w*dq_w + dq_x*dq_x + dq_y*dq_y + dq_z*dq_z)
-                dq_w /= dq_norm
-                dq_x /= dq_norm
-                dq_y /= dq_norm
-                dq_z /= dq_norm
+                dq_w, dq_x, dq_y, dq_z = dq_w/dq_norm, dq_x/dq_norm, dq_y/dq_norm, dq_z/dq_norm
 
-                # 四元数乘法: q_pred = q_filtered ⊗ dq
                 pw, px, py, pz = self.q0, self.q1, self.q2, self.q3
-                q_pred_w = pw*dq_w - px*dq_x - py*dq_y - pz*dq_z
-                q_pred_x = pw*dq_x + px*dq_w + py*dq_z - pz*dq_y
-                q_pred_y = pw*dq_y - px*dq_z + py*dq_w + pz*dq_x
-                q_pred_z = pw*dq_z + px*dq_y - py*dq_x + pz*dq_w
+                qp_w = pw*dq_w - px*dq_x - py*dq_y - pz*dq_z
+                qp_x = pw*dq_x + px*dq_w + py*dq_z - pz*dq_y
+                qp_y = pw*dq_y - px*dq_z + py*dq_w + pz*dq_x
+                qp_z = pw*dq_z + px*dq_y - py*dq_x + pz*dq_w
 
-                # ── 步骤2: 用飞控四元数修正 (低频, 互补滤波) ──
-                # q_filtered = (1-α) * q_pred + α * q_raw   (球面线性插值近似)
-                alpha = self.alpha
-                q0_new = (1.0 - alpha) * q_pred_w + alpha * self.q0_raw
-                q1_new = (1.0 - alpha) * q_pred_x + alpha * self.q1_raw
-                q2_new = (1.0 - alpha) * q_pred_y + alpha * self.q2_raw
-                q3_new = (1.0 - alpha) * q_pred_z + alpha * self.q3_raw
-
-                # 归一化
-                norm = math.sqrt(q0_new*q0_new + q1_new*q1_new + q2_new*q2_new + q3_new*q3_new)
+                a = self._adaptive_alpha()
+                q0_n = (1.0-a)*qp_w + a*self.q0_raw
+                q1_n = (1.0-a)*qp_x + a*self.q1_raw
+                q2_n = (1.0-a)*qp_y + a*self.q2_raw
+                q3_n = (1.0-a)*qp_z + a*self.q3_raw
+                norm = math.sqrt(q0_n*q0_n + q1_n*q1_n + q2_n*q2_n + q3_n*q3_n)
                 if norm > 1e-9:
-                    self.q0, self.q1, self.q2, self.q3 = q0_new/norm, q1_new/norm, q2_new/norm, q3_new/norm
+                    self.q0,self.q1,self.q2,self.q3 = q0_n/norm, q1_n/norm, q2_n/norm, q3_n/norm
+
+                # ── 3.3 速度互补滤波 ──────────────────
+                # 1. 用当前姿态移除加速度计中的重力分量
+                #    四元数 q=(w,x,y,z) 代表 body→world 旋转
+                #    world 重力 (0,0,G) 在 body 系中的投影:
+                G = 9.80
+                qw, qx, qy, qz = self.q0, self.q1, self.q2, self.q3
+                gx = 2.0 * (qx*qz - qw*qy) * G
+                gy = 2.0 * (qw*qx + qy*qz) * G
+                gz = (qw*qw - qx*qx - qy*qy + qz*qz) * G
+                # 2. 移除重力后的纯运动加速度, 加死区过滤静止噪声
+                ax = self.acc[0] - gx
+                ay = self.acc[1] - gy
+                az = self.acc[2] - gz
+                DEAD_ZONE = 0.05   # m/s², 低于此阈值的加速度视为传感器噪声
+                if abs(ax) < DEAD_ZONE: ax = 0.0
+                if abs(ay) < DEAD_ZONE: ay = 0.0
+                # Z轴加速度噪声不积分 — 2D SLAM 不需要Z平移
+                dv_x = ax * dt
+                dv_y = ay * dt
+                # 3. 互补: (1-αv)*[旧速度+IMU增量] + αv*[FC速度]
+                b = self.alpha_vel
+                self.vel_filt[0] = (1.0-b)*(self.vel_filt[0] + dv_x) + b*self.vel_fc[0]
+                self.vel_filt[1] = (1.0-b)*(self.vel_filt[1] + dv_y) + b*self.vel_fc[1]
+                # vz 写 FC 速度 (飞控0x07帧), 不积分IMU加速度
+                self.vel_filt[2] = self.vel_fc[2]
+
+                # 积分XY位置 (用于 AMCL 粒子传播的平移先验)
+                self.pos_x += self.vel_filt[0] * dt
+                self.pos_y += self.vel_filt[1] * dt
+                self.pos_z = 0.0   # 2D SLAM 不需要Z
 
         self.last_imu_ts = now_sec
 
+    # ══════════════════════════════════════════════════
+    # /odom 回调: 缓存 FC 速度
+    # ══════════════════════════════════════════════════
     def _on_odom(self, msg: Odometry):
-        """/odom 回调: 缓存飞控线速度"""
-        self.vel = [msg.twist.twist.linear.x,
-                     msg.twist.twist.linear.y,
-                     msg.twist.twist.linear.z]
+        self.vel_fc = [msg.twist.twist.linear.x,
+                        msg.twist.twist.linear.y,
+                        msg.twist.twist.linear.z]
 
+    # ══════════════════════════════════════════════════
+    # 3.1 状态发布 (1Hz)
+    # ══════════════════════════════════════════════════
+    def _publish_status(self):
+        if self.last_imu_ts is None:
+            self.status = 'initializing'
+        elif _time.monotonic() - self.last_imu_ts > self.imu_timeout:
+            self.status = 'no_imu'
+        else:
+            gyr_mag = math.sqrt(self.gyr[0]**2 + self.gyr[1]**2 + self.gyr[2]**2)
+            alpha = self._adaptive_alpha()
+            self.status = f'running | alpha={alpha:.4f} | gyr_mag={gyr_mag:.3f} rad/s'
+
+        msg = String()
+        msg.data = self.status
+        self.status_pub.publish(msg)
+
+        if not self.status_updated:
+            self.get_logger().info(f'EKF 状态: {self.status}')
+            self.status_updated = (self.status.startswith('running'))
+
+    # ══════════════════════════════════════════════════
+    # 定时发布: /odometry/filtered + TF
+    # ══════════════════════════════════════════════════
     def _publish(self):
-        """定时发布: /odometry/filtered + odom→base_link TF"""
         now = self.get_clock().now()
 
-        # ── IMU 超时检测: 3秒无数据→回退透传模式 ──
-        import time as _time
+        # IMU 超时回退
         imu_alive = (self.last_imu_ts is not None and
                      _time.monotonic() - self.last_imu_ts < self.imu_timeout)
         if not imu_alive:
-            # 透传: 直接用飞控原始四元数 (来自 /odom 回调中的 /imu orientation)
-            self.q0, self.q1, self.q2, self.q3 = self.q0_raw, self.q1_raw, self.q2_raw, self.q3_raw
+            self.q0,self.q1,self.q2,self.q3 = self.q0_raw,self.q1_raw,self.q2_raw,self.q3_raw
+            self.vel_filt = list(self.vel_fc)
+            self.pos_x = self.pos_y = self.pos_z = 0.0
 
-        # ── Odometry 消息 ──────────────────────────
         odom = Odometry()
         odom.header.stamp = now.to_msg()
         odom.header.frame_id = 'odom'
         odom.child_frame_id = 'base_link'
-        # 位置: 保持为0 (飞控位置不可靠, 由 AMCL 修正)
-        odom.pose.pose.position.x = 0.0
-        odom.pose.pose.position.y = 0.0
-        odom.pose.pose.position.z = 0.0
-        # 姿态: 用滤波后的四元数
+        odom.pose.pose.position.x = self.pos_x
+        odom.pose.pose.position.y = self.pos_y
+        odom.pose.pose.position.z = self.pos_z
         odom.pose.pose.orientation.w = self.q0
         odom.pose.pose.orientation.x = self.q1
         odom.pose.pose.orientation.y = self.q2
         odom.pose.pose.orientation.z = self.q3
-        # 速度: 来自飞控
-        odom.twist.twist.linear.x = self.vel[0]
-        odom.twist.twist.linear.y = self.vel[1]
-        odom.twist.twist.linear.z = self.vel[2]
+        odom.twist.twist.linear.x = self.vel_filt[0]
+        odom.twist.twist.linear.y = self.vel_filt[1]
+        odom.twist.twist.linear.z = self.vel_filt[2]
         odom.twist.twist.angular.x = self.gyr[0]
         odom.twist.twist.angular.y = self.gyr[1]
         odom.twist.twist.angular.z = self.gyr[2]
-        # 协方差 (位置不信任, 姿态较信任)
-        odom.pose.covariance[0] = 1.0   # x
-        odom.pose.covariance[7] = 1.0   # y
-        odom.pose.covariance[14] = 1.0  # z
-        odom.pose.covariance[21] = 0.001  # roll
-        odom.pose.covariance[28] = 0.001  # pitch
-        odom.pose.covariance[35] = 0.01   # yaw (偏航不确定性略高)
+        odom.pose.covariance[0] = 1.0
+        odom.pose.covariance[7] = 1.0
+        odom.pose.covariance[14] = 1.0
+        odom.pose.covariance[21] = 0.001
+        odom.pose.covariance[28] = 0.001
+        odom.pose.covariance[35] = 0.01
         self.odom_pub.publish(odom)
 
-        # ── TF 广播 ────────────────────────────────
         if self.publish_tf:
             tf = TransformStamped()
             tf.header.stamp = now.to_msg()
             tf.header.frame_id = 'odom'
             tf.child_frame_id = 'base_link'
+            tf.transform.translation.x = self.pos_x
+            tf.transform.translation.y = self.pos_y
+            tf.transform.translation.z = self.pos_z
             tf.transform.rotation.w = self.q0
             tf.transform.rotation.x = self.q1
             tf.transform.rotation.y = self.q2
@@ -190,16 +264,11 @@ def main():
     except (KeyboardInterrupt, rclpy.executors.ExternalShutdownException):
         pass
     finally:
-        # 安全清理: 先销毁节点, 再 shutdown context (只调一次)
+        try: node.destroy_node()
+        except Exception: pass
         try:
-            node.destroy_node()
-        except Exception:
-            pass
-        try:
-            if rclpy.ok():
-                rclpy.shutdown()
-        except Exception:
-            pass
+            if rclpy.ok(): rclpy.shutdown()
+        except Exception: pass
 
 
 if __name__ == '__main__':

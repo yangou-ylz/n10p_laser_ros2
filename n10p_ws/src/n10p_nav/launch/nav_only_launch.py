@@ -6,6 +6,7 @@
 
 用法:
   ros2 launch n10p_nav nav_only_launch.py map:=/home/ylz/n10p_leishen/maps/n10p_map.yaml
+  ros2 launch n10p_nav nav_only_launch.py initial_x:=-9.38 initial_y:=-10.6 initial_yaw:=0.0
 """
 
 from ament_index_python.packages import get_package_share_directory
@@ -23,8 +24,15 @@ def generate_launch_description():
     map_yaml_arg = DeclareLaunchArgument('map', default_value='/home/ylz/n10p_leishen/maps/n10p_map.yaml',
                                          description='地图 yaml 路径')
     launch_rviz_arg = DeclareLaunchArgument('launch_rviz', default_value='false')
+    # 初始位姿 — 支持命令行覆盖, 无需重编 YAML
+    initial_x_arg = DeclareLaunchArgument('initial_x', default_value='0.0')
+    initial_y_arg = DeclareLaunchArgument('initial_y', default_value='0.0')
+    initial_yaw_arg = DeclareLaunchArgument('initial_yaw', default_value='0.0')
 
     map_yaml = LaunchConfiguration('map')
+    initial_x = LaunchConfiguration('initial_x')
+    initial_y = LaunchConfiguration('initial_y')
+    initial_yaw = LaunchConfiguration('initial_yaw')
 
     # ── 静态 TF: map → odom (bootstrap, AMCL 激活后自动覆盖) ──
     static_tf_map_odom = Node(
@@ -43,13 +51,17 @@ def generate_launch_description():
         parameters=[params_file, {'yaml_filename': map_yaml}],
     )
 
-    # ── AMCL 定位 ─────────────────────────────────────────
+    # ── AMCL 定位 — 初始位姿支持命令行覆盖 ──────────────
     amcl_node = Node(
         package='nav2_amcl',
         executable='amcl',
         name='amcl',
         output='screen',
-        parameters=[params_file],
+        parameters=[params_file, {
+            'initial_pose.x': initial_x,
+            'initial_pose.y': initial_y,
+            'initial_pose.yaw': initial_yaw,
+        }],
     )
 
     lifecycle_localization = Node(
@@ -134,5 +146,6 @@ def generate_launch_description():
     return LaunchDescription([
         map_yaml_arg,
         launch_rviz_arg,
+        initial_x_arg, initial_y_arg, initial_yaw_arg,
         OpaqueFunction(function=launch_setup),
     ])

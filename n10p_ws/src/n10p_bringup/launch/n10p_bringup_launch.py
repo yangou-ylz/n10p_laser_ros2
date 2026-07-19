@@ -13,7 +13,7 @@
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch_ros.actions import Node        # 普通节点（非生命周期管理）
-from launch.actions import DeclareLaunchArgument, ExecuteProcess
+from launch.actions import DeclareLaunchArgument, ExecuteProcess, TimerAction
 from launch.conditions import IfCondition, UnlessCondition
 from launch.substitutions import LaunchConfiguration, PythonExpression
 import os
@@ -23,100 +23,60 @@ def generate_launch_description():
 
     scan_source = LaunchConfiguration('scan_source', default='wired')
     is_wireless = PythonExpression(["'", scan_source, "' == 'wireless'"])
-
-    # ── EKF 融合开关 ─────────────────────────────────
     use_ekf = LaunchConfiguration('use_ekf', default='true')
 
-    # ── 节点 1：匿名凌霄飞控桥接 ─────────────────────────
-    # 作用：读取飞控串口 → 解析匿名协议 V7 → 发布 /odom + /imu + TF(odom→base_link)
-    # 当 use_ekf=true 时，禁用 ano_bridge 的 TF 发布（由 EKF 节点替代）
-    bridge_params = os.path.join(
-        get_package_share_directory('n10p_bringup'),
-        'params', 'ano_bridge.yaml')       # 指定飞控的串口号、波特率、scale 因子等
-
-    bridge_node = Node(
-        package='n10p_bringup',
-        executable='ano_bridge_node',      # 对应 setup.py 中注册的 entry_point
-        name='ano_bridge_node',
-        output='screen',
-        parameters=[bridge_params],        # 加载 YAML 参数文件
-    )
-
-    # ── 节点 2：N10P 激光雷达驱动 (有线/无线可选) ───────
-    # 作用：读取雷达数据 → 解析数据帧 → 发布 /scan（LaserScan）
-    # 有线模式: 串口直连 → lslidar_driver
-    # 无线模式: ESP32 WiFi TCP → n10p_wifi_bridge_node
-    driver_params = os.path.join(
-        get_package_share_directory('lslidar_driver'),
-        'params', 'lsx10.yaml')            # 指定雷达的串口号、型号(N10_P)、量程等
-
-    driver_node = Node(
-        package='lslidar_driver',
-        executable='lslidar_driver_node',  # C++ 编译产出的可执行文件
-        name='lslidar_driver_node',        # 节点运行时名字（发布 /scan 时发件人就是它）
-        output='screen',
-        parameters=[driver_params],
-        condition=UnlessCondition(is_wireless),
-    )
-
-    wifi_bridge_node = Node(
-        package='n10p_bringup',
-        executable='n10p_wifi_bridge_node',
-        name='n10p_wifi_bridge_node',
-        output='screen',
-        parameters=[{'host': '192.168.0.184', 'port': 8888}],
-        condition=IfCondition(is_wireless),
-    )
-
-    # ── 节点 3：静态 TF → base_link 到 laser_frame ─────
-    # 作用：告诉 TF 系统"雷达装在机器人正下方 10cm 处"，这个关系永远不变
-    # 参数格式：(x y z roll pitch yaw parent_frame child_frame)
-    #   (0, 0, -0.1) = 雷达在 base_link 正下方 10cm（真实无人机雷达吊装在下方）
-    #   base_link = 父坐标系（机器人本体）
-    #   laser_frame = 子坐标系（雷达）
-    # N10P 安装在无人机下方，坐标系: X前 Y左 Z上
-    static_tf_node = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        name='static_tf_laser',
-        arguments=['0', '0', '-0.1', '0', '0', '0', 'base_link', 'laser_frame'],
-    )
-
-    # ── 节点 4：EKF 里程计融合 (可选) ────────────────
-    # 当 use_ekf=true 时，ekf_filter_node 订阅 /imu + /odom，
-    # 发布过滤后的 odom→base_link TF 替代 ano_bridge 的原生 TF
-    ekf_config = os.path.join(
-        get_package_share_directory('n10p_fusion'),
-        'config', 'ekf.yaml')
-
-    ekf_node = Node(
-        package='n10p_fusion',
-        executable='imu_filter_node',
-        name='imu_filter_node',
-        output='screen',
-        parameters=[ekf_config],
-        condition=IfCondition(use_ekf),
-    )
-
-    # ── 返回：所有节点一起启动 ───────────────────────────
-    # ros2 launch 会同时启动这些节点，它们各自独立运行
-    # ── 启动前清理: 仅清理 DDS 共享内存和 daemon，不杀进程 (会误杀自身) ──
-    cleanup_dds = ExecuteProcess(
+    # ══════════════════════════════════════════════════
+    # 启动前强制清理 (先跑完, 节点延迟2秒再启动, 避免竞态)
+    # ══════════════════════════════════════════════════
+    cleanup_all = ExecuteProcess(
         cmd=['bash', '-c',
+             'for pid in $(lsof -t /dev/ttyUSB0 2>/dev/null); do kill -9 $pid 2>/dev/null; done;'
+             'for pid in $(lsof -t /dev/ttyACM0 2>/dev/null); do kill -9 $pid 2>/dev/null; done;'
              'rm -f /dev/shm/fastrtps_* 2>/dev/null;'
              'exit 0'],
-        name='cleanup_dds',
+        name='cleanup_pre_launch',
     )
 
+    # ══════════════════════════════════════════════════
+    # 所有节点 (延迟2秒, 确保 cleanup 已完成)
+    # ══════════════════════════════════════════════════
+    bridge_params = os.path.join(
+        get_package_share_directory('n10p_bringup'), 'params', 'ano_bridge.yaml')
+    # use_ekf=true 时 ano_bridge 不发 TF (由 EKF 节点发)，避免两个 TF 源冲突
+    bridge_node = TimerAction(period=2.0, actions=[Node(
+        package='n10p_bringup', executable='ano_bridge_node',
+        name='ano_bridge_node', output='screen',
+        parameters=[bridge_params, {'publish_tf': PythonExpression(["'", use_ekf, "' != 'true'"])}])])
+
+    driver_params = os.path.join(
+        get_package_share_directory('lslidar_driver'), 'params', 'lsx10.yaml')
+    driver_node = TimerAction(period=2.0, actions=[Node(
+        package='lslidar_driver', executable='lslidar_driver_node',
+        name='lslidar_driver_node', output='screen', parameters=[driver_params],
+        condition=UnlessCondition(is_wireless))])
+
+    wifi_bridge_node = TimerAction(period=2.0, actions=[Node(
+        package='n10p_bringup', executable='n10p_wifi_bridge_node',
+        name='n10p_wifi_bridge_node', output='screen',
+        parameters=[{'host': '192.168.0.184', 'port': 8888}],
+        condition=IfCondition(is_wireless))])
+
+    static_tf_node = TimerAction(period=2.0, actions=[Node(
+        package='tf2_ros', executable='static_transform_publisher',
+        name='static_tf_laser',
+        arguments=['0','0','+0.1','0','0','0','base_link','laser_frame'])])
+
+    ekf_config = os.path.join(get_package_share_directory('n10p_fusion'), 'config', 'ekf.yaml')
+    ekf_node = TimerAction(period=2.0, actions=[Node(
+        package='n10p_fusion', executable='imu_filter_node',
+        name='imu_filter_node', output='screen', parameters=[ekf_config],
+        condition=IfCondition(use_ekf))])
+
     return LaunchDescription([
-        cleanup_dds,           # ← 先清理 DDS (防止共享内存僵尸)
+        cleanup_all,
         DeclareLaunchArgument('scan_source', default_value='wired',
-                              description='雷达数据源: wired (有线串口) | wireless (ESP32 WiFi)'),
+                              description='雷达数据源: wired | wireless'),
         DeclareLaunchArgument('use_ekf', default_value='true',
-                              description='启用 EKF 融合 (默认=true, false=关闭回退原始)'),
-        bridge_node,
-        driver_node,
-        wifi_bridge_node,
-        static_tf_node,
-        ekf_node,
+                              description='启用 EKF 融合 (默认=true)'),
+        bridge_node, driver_node, wifi_bridge_node, static_tf_node, ekf_node,
     ])

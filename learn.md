@@ -2564,3 +2564,750 @@ flowchart LR
 > - 第四阶段：代码通用模式和修改指南（知道怎么改）
 >
 > **现在你可以独立阅读项目中的任何代码，理解它做什么，并修改它。** 如果在阅读某段具体代码时有疑问，随时问。
+
+---
+
+# 第五阶段：卡尔曼滤波与互补滤波原理
+
+> 目标：**彻底理解卡尔曼滤波在做什么、为什么有效、我们项目中实际怎么用的、EKF/UKF 的区别。**
+> 不讲公式推导，不讲代码实现（那是第六阶段）。只讲"它在干什么"和"为什么这样干"。
+
+---
+
+## 5.1 用一个比喻彻底搞懂卡尔曼滤波
+
+### 5.1.1 一个故事：盲人过马路
+
+你闭着眼睛站在马路中间。你不知道自己具体在哪。你有两个信息来源：
+
+**信息源 1 —— 你自己的"感觉"（IMU）**
+
+你记得刚才往前迈了三步。每步大约 0.5 米。你推算自己往前走了大约 1.5 米。
+
+但这个感觉**不精确**——你可能步子迈大了、迈小了、方向偏了。你只能说"我大概在起点前方 1.5 米，误差大概 ±0.3 米"。
+
+而且这个误差**会累积**。你继续往前走，每迈一步，误差在上一步的基础上继续放大。走了 100 步后，你根本不知道自己偏到哪去了。
+
+**信息源 2 —— 偶尔睁眼看一眼（激光雷达）**
+
+每隔几秒，你可以睁开眼睛看一眼。看到前面有一根电线杆——你知道电线杆在马路边缘，位置是确定的。
+
+但这个信息**有噪声**——睁眼的那一瞬间，你可能看歪了、光线不好、有人挡住了电线杆。而且睁眼的频率不高（10Hz，即 0.1 秒一次），不能连续依赖它。
+
+**问题**：你如何综合"感觉"和"偶尔睁眼"这两个信息，得出最准确的当前位置？
+
+**答案就是卡尔曼滤波。**
+
+### 5.1.2 卡尔曼滤波的核心思想：加权平均
+
+卡尔曼滤波做的事情可以用一句话概括：
+
+> **有两个来源告诉我同一个东西是多少，我知道每个来源有多不可靠，那我就用不可靠程度的倒数做权重，加权平均。**
+
+```mermaid
+flowchart LR
+    A["来源A: 我的感觉 (IMU积分)<br/>说我在 1.5m 处<br/>方差=0.09 (标准差±0.3m)"] --> C["融合: 加权平均<br/>更信方差小的那个"]
+    B["来源B: 睁眼看 (飞控四元数)<br/>说我在 1.2m 处<br/>方差=0.04 (标准差±0.2m)"] --> C
+    C --> D["结果: (1.5/0.09 + 1.2/0.04) / (1/0.09+1/0.04)<br/>= 1.29m<br/>融合后方差=0.028 (比两个来源都小!)"]
+```
+
+**关键洞察**：融合后的结果比任何一个单独的来源都更可靠。加权平均后的方差 0.028 小于 A 的 0.09 和 B 的 0.04。
+
+### 5.1.3 卡尔曼滤波的两步循环
+
+```mermaid
+flowchart TB
+    subgraph PREDICT["第1步: 预测 Predict (靠模型推)"]
+        P1["上一时刻的最优估计"]
+        P2["+ 控制输入 (我迈了一步)"]
+        P3["= 当前时刻的先验估计 (prior)"]
+        P1 --> P2 --> P3
+    end
+
+    subgraph UPDATE["第2步: 更新 Update (靠测量纠)"]
+        U1["收到新的测量值 (睁眼看)"]
+        U2["比较: 测量值 vs 预测值 → 残差 (innovation)"]
+        U3["按'谁更可信'分配权重 → 卡尔曼增益 K"]
+        U4["后验估计 (posterior) = 预测 + K × 残差"]
+        U1 --> U2 --> U3 --> U4
+    end
+
+    PREDICT --> UPDATE
+    UPDATE -->|"下一轮"| PREDICT
+```
+
+**每一步都在做两件事**：
+
+1. **预测**："如果上一拍我在这，这一拍我按模型应该走了多远 → 猜一个新位置"（这个猜的方差变大了，因为模型不完美）
+2. **更新**："传感器告诉我在另一个位置，我比较一下差多少 → 按可信度加权修正"（修正后方差变小了，因为有真实数据校准）
+
+**方差的含义**：
+- 预测之后 → 方差变大（"我猜的，我不太确定"）
+- 更新之后 → 方差变小（"有传感器告诉我了，我现在更确定了"）
+- 循环往复 → 方差在变大（预测）和变小（更新）之间波动，但总体可控
+
+### 5.1.4 卡尔曼滤波为什么叫"滤波"
+
+"滤波"（Filter）这个词来自信号处理——把噪声滤掉，留下真实信号。
+
+```
+原始数据: ▁▂▁▃▂▄▃▅▄▆▅▇▆█▇   ← 充满噪声, 剧烈抖动
+滤波后:   ───────╱──────╱───   ← 平滑, 保持了趋势
+```
+
+想象你有一根温度计，每秒报一次温度：36.2, 36.8, 35.1, 38.3, 37.0... 这些数字跳来跳去，因为温度计本身有噪声。但你知道**真实的温度不可能突变**——它只能连续慢慢地变。卡尔曼滤波利用这个"连续缓慢变化"的约束，把跳变滤掉，还原出最可能的真实温度。
+
+---
+
+## 5.2 结合我们项目的实际例子
+
+### 5.2.1 我们有两套传感器在测同一个东西：姿态
+
+```mermaid
+flowchart TB
+    subgraph S1["传感器1: IMU 陀螺仪 (高频, 会漂)"]
+        G1["角速度 500Hz<br/>gyr_z = 2.0 rad/s (正在旋转)"]
+        G2["积分: 角度 = 上一次角度 + gyr_z × dt"]
+        G3["优点: 500Hz, 每2ms更新一次, 极其灵敏"]
+        G4["缺点: 每个采样点有微小误差(零偏), 500次/秒累积→几秒后漂到不知道哪去了"]
+    end
+
+    subgraph S2["传感器2: 飞控四元数 (低频, 不漂)"]
+        Q1["姿态四元数 67Hz<br/>q = (0.999, 0.001, 0.002, 0.044)"]
+        Q2["优点: 飞控内部做了融合, 绝对准确, 不漂移"]
+        Q3["缺点: 67Hz有延迟, 快速旋转时有噪声, 精度~±2°"]
+    end
+
+    S1 --> FUSION["互补滤波器<br/>高频用陀螺积分<br/>低频用四元数修正"]
+    S2 --> FUSION
+    FUSION --> OUTPUT["平滑姿态<br/>100Hz 输出<br/>既灵敏又不漂"]
+```
+
+### 5.2.2 为什么这个融合让你的建图变好了——具体数值
+
+假设你在**手持飞机快速旋转 90°**。来看看原始方案和滤波方案的对比：
+
+```
+时间线: 0ms ──────────── 500ms ──────────── 1000ms
+        开始旋转          旋转中              转完
+
+原始方案 (只用飞控四元数, 67Hz):
+  t=0ms:   飞控说 yaw = 0.0°     ← 正确
+  t=15ms:  (没有新数据! 还是用旧的) yaw = 0.0°   ← 延迟!
+  t=30ms:  飞控说 yaw = 12.5°    ← 跳了12.5°!
+  t=45ms:  (没有新数据) yaw = 12.5°
+  t=60ms:  飞控说 yaw = 28.0°    ← 又跳了15.5°!
+  ...
+  问题: 67Hz意味着每15ms才更新一次。在0.5秒内转90°, 角速度=180°/s,
+        每15ms转2.7°。但飞控四元数有±2°的噪声。
+        → SLAM收到的姿态是一系列"跳跃+停顿"的阶梯状数据
+        → 扫描匹配: 两帧激光之间姿态跳了15°, 但实际可能只转了8°
+        → 匹配器在±86°窗口内搜索 → 可能匹配到错误的位置 → 地图变形!
+
+滤波方案 (IMU陀螺 500Hz + 飞控四元数 67Hz 融合):
+  t=0ms:   陀螺说 "没转",     滤波输出 yaw = 0.0°
+  t=2ms:   陀螺说 "转了0.36°", 滤波输出 yaw = 0.36°   ← 顺滑!
+  t=4ms:   陀螺说 "转了0.35°", 滤波输出 yaw = 0.71°
+  t=6ms:   陀螺说 "转了0.37°", 滤波输出 yaw = 1.08°
+  ...每2ms平滑更新, 像电影一样流畅...
+  t=15ms:  飞控说 "你现在的绝对角度应该是 2.8°"
+           滤波说 "我积分得到的是3.1°, 差0.3°, 按alpha=0.02微调"
+           滤波输出 yaw = 2.82° ← 既平滑又准确!
+  ...
+  500ms后: 滤波输出 yaw = 90.0°, 全程平滑无跳变
+  → SLAM收到的姿态是连续光滑的 → 扫描匹配精确 → 地图不变形!
+```
+
+**这就是你看到的效果差异的数学本质**：原始方案给 SLAM 的是"跳跃的阶梯"，滤波方案给 SLAM 的是"平滑的斜坡"。
+
+### 5.2.3 用我们实际测试的数据验证
+
+你之前测试自适应 alpha 时输出的数据：
+
+```
+静止时: gyr_mag = 0.004 rad/s, alpha = 0.0500
+        ↓ 几乎不动, 多信飞控四元数 (5%修正), 消除IMU噪声
+
+快速转: gyr_mag = 2.43 rad/s, alpha = 0.0050
+        ↓ 在转! 少信飞控(0.5%修正), 几乎全靠陀螺积分, 保证响应速度
+```
+
+alpha = 0.05 意味着：滤波输出 = 95% × 陀螺积分 + 5% × 飞控四元数。飞控的修正只占 5%，但足以防止漂移。快速旋转时 alpha 降到 0.005——只占 0.5%，几乎不修正，因为飞控四元数在快速旋转时噪声大，而陀螺积分此刻非常准。
+
+---
+
+## 5.3 我们实际上用的是什么：互补滤波 vs 卡尔曼滤波
+
+### 5.3.1 互补滤波是什么
+
+**我们项目实际用的算法叫"互补滤波"（Complementary Filter），而不是完整的卡尔曼滤波。**
+
+两者的关系不是"替代"，而是"互补滤波是卡尔曼滤波的一个特例"。
+
+```mermaid
+flowchart TB
+    subgraph KF["完整卡尔曼滤波"]
+        K1["需要: 状态转移矩阵 F (系统模型)"]
+        K2["需要: 观测矩阵 H (传感器模型)"]
+        K3["需要: 过程噪声 Q + 测量噪声 R"]
+        K4["每步: 计算卡尔曼增益 K"]
+        K5["K = P*H^T / (H*P*H^T + R)"]
+        K6["计算量大, 需要维护协方差矩阵 P"]
+    end
+
+    subgraph CF["互补滤波 (我们用的)"]
+        C1["只需要: 一个系数 alpha"]
+        C2["output = (1-alpha) × 高频预测 + alpha × 低频测量"]
+        C3["alpha 相当于固定的卡尔曼增益"]
+        C4["计算量极小, 只需几次乘除和加减"]
+    end
+```
+
+**为什么我们用互补滤波而不是完整的卡尔曼滤波？**
+
+1. **树莓派算力有限**：完整 KF 每步要维护 4×4 或 15×15 的协方差矩阵，做矩阵乘法和求逆。互补滤波每步只需几次四元数乘法——比 KF 快 100 倍以上。
+
+2. **我们的场景足够简单**：只有两路传感器（陀螺仪 + 飞控四元数），没有复杂的系统模型。互补滤波的"高频+低频互补"思想恰好匹配这个场景。
+
+3. **调试更直观**：alpha 只有一个数字，调大调小效果直观可见。KF 的 Q 和 R 矩阵有几十个参数，牵一发动全身。
+
+4. **我们试过标准的 robot_localization KF，ARM64 上直接 NaN**——这进一步证明了"够用就好"的原则。
+
+### 5.3.2 互补滤波的数学直觉
+
+```mermaid
+flowchart LR
+    HIGH["高频信号 (陀螺积分)<br/>优点: 响应快, 灵敏<br/>缺点: 会漂移<br/>━━━━━━<br/>像个带了噪声的速度表<br/>短时间很准, 长时间漂"] --> COMBINE["互补融合<br/>高通滤波 + 低通滤波<br/>= 全通 (不失真)"]
+    LOW["低频信号 (飞控四元数)<br/>优点: 绝对准确, 不漂<br/>缺点: 有噪声, 有延迟<br/>━━━━━━<br/>像个不准但不会偏的指南针<br/>长时间很准, 短时间噪声大"] --> COMBINE
+```
+
+**"互补"的含义**：高频部分用陀螺（它响应快），低频部分用飞控（它不漂）。两个信号在频域上互补——陀螺覆盖高频段，飞控覆盖低频段——合在一起覆盖了全频段，既快又准。
+
+---
+
+## 5.4 EKF（扩展卡尔曼滤波）vs 标准卡尔曼滤波 vs UKF
+
+### 5.4.1 标准卡尔曼滤波的局限
+
+标准卡尔曼滤波假设**系统是线性的**：
+
+```
+下一时刻状态 = A × 当前状态 + B × 控制输入
+传感器读数 = H × 当前状态
+```
+
+这两个都必须是**线性方程**——只能有"乘以常数再加起来"，不能有 sin、cos、平方这些。
+
+**但无人机的运动不是线性的。** 姿态用四元数表示，四元数的更新涉及旋转矩阵和三角函数——这是典型的非线性系统。标准 KF 不能直接处理。
+
+### 5.4.2 EKF 怎么解决的
+
+EKF（Extended Kalman Filter）的核心思路：
+
+> **把非线性的系统，在每个时刻用泰勒展开取一阶近似，当成局部线性的来处理。**
+
+```
+标准 KF:  y = H × x              ← 线性的, 直接算
+EKF:      y = h(x)               ← 非线性的!
+          ≈ h(x̂) + J × (x - x̂)   ← 在当前估计点 x̂ 附近, 用雅可比矩阵 J 线性近似
+```
+
+**打个比方**：地球是圆的（非线性），但你脚下这块地看起来是平的（局部线性近似）。EKF 就是在你当前估计的位置附近，把弯曲的地球面近似成平面，在这个平面上做标准 KF。每次你走到新位置，重新取一次近似。
+
+**EKF 的代价**：
+1. 需要计算雅可比矩阵（对状态向量的偏导数）——多了一些矩阵运算
+2. 线性近似在强非线性时可能偏离真实（比如姿态接近 ±90° 时的 gimbal lock 区域）
+3. 但计算量还是可控的，远小于 UKF
+
+### 5.4.3 为什么不用 UKF
+
+UKF（Unscented Kalman Filter，无迹卡尔曼滤波）是 EKF 的改进版：
+
+| | EKF | UKF |
+|----|-----|-----|
+| 处理非线性的方式 | 泰勒展开一阶近似 | 选几个 sigma 采样点，直接穿过非线性函数 |
+| 精度 | 一阶近似，强非线性时误差大 | 至少二阶精度，非线性越强优势越明显 |
+| 计算量 | 中等（算雅可比） | 较大（算多个采样点） |
+| 适用场景 | 中等非线性 | 强非线性（如 3D 旋转） |
+
+**为什么我们用互补滤波而不是 UKF？**
+
+```
+UKF 在树莓派上根本跑不动。每个状态向量需要 2n+1 = 31 个 sigma 点（15维状态），
+每个点都要做一次状态传播（四元数乘法+积分），100Hz 下 31×100 = 每秒 3100 次状态传播。
+再加上协方差更新等，CPU 占用率可能超过 50%。
+
+互补滤波每步只做: 四元数乘法(几次乘加) + 归一化(1次开方) + 线性插值
+100Hz 下 CPU 占用 < 1%。
+```
+
+**而更关键的是**：即使 UKF 精度在理论上略好于互补滤波，对于我们的实际场景（10Hz 激光 + 67Hz 飞控 + 100Hz IMU），互补滤波的精度已经**远超激光 SLAM 的分辨能力**。SLAM 的姿态更新频率是 10Hz（靠扫描匹配），你给它 100Hz 的平滑姿态已经绰绰有余——再用 UKF 提高姿态精度到小数点后 4 位，SLAM 根本感知不到差别。
+
+---
+
+## 5.5 从理论到实践：我们的参数怎么调的
+
+### 5.5.1 alpha 怎么选的
+
+```mermaid
+flowchart TB
+    subgraph TUNING["alpha 调参指南"]
+        A1["alpha=0.0: 全信陀螺积分 → 姿态快速漂移 → 几秒后偏到不知哪去"]
+        A2["alpha=0.5: 一半信陀螺一半信飞控 → 响应慢半拍, 像踩在棉花上"]
+        A3["alpha=1.0: 全信飞控 → 姿态有跳变(67Hz阶梯) → 地图变形"]
+        A4["alpha=0.02: 每帧2%来自飞控修正 → 响应快且稳定 ✅"]
+    end
+    
+    WHY["为什么0.02是对的?<br/>100Hz输出 → 每秒100次更新<br/>alpha=0.02 → 每秒有2次'完全修正'的机会<br/>飞控每秒67帧 → 大约每1.5次滤波就收到一次飞控数据<br/>→ 修正既不过度也不滞后"]
+```
+
+### 5.5.2 自适应 alpha 的原理
+
+`alpha = lerp(alpha_max, alpha_min, clamp(gyr_magnitude / threshold, 0, 1))`
+
+```python
+# 静止时:  gyr_mag=0.004 → ratio=0.008 → alpha=0.05 (多信飞控)
+# 旋转时:  gyr_mag=2.43  → ratio=4.86  → alpha=0.005 (多信陀螺)
+```
+
+**直觉**：旋转越快，飞控的数据越不可靠（噪声大+延迟大），所以 alpha 自动降低，更信陀螺。静止时飞控的数据非常稳定，alpha 增大，用飞控来消除陀螺的零偏累积。
+
+### 5.5.3 如果 alpha 调错了会发生什么
+
+| alpha 太大 | 现象 | 原因 |
+|-----------|------|------|
+| > 0.2 | 姿态像"踩棉花"，旋转响应迟钝 | 过度依赖飞控，飞控 67Hz 的延迟被放大 |
+| < 0.001 | 姿态持续漂移，几秒后 yaw 偏了几度 | 飞控修正力量不够，陀螺零偏没人管 |
+| 最佳 0.005~0.05 | 旋转跟手、静止不漂 | 平衡了响应速度和长期稳定性 |
+
+**你在 `/ekf_status` 里看到的 alpha 在 0.005~0.05 之间动态切换**——这就是自适应在起作用，不需要手动干预。
+
+---
+
+## 5.6 总结：三个层次的理解
+
+```mermaid
+mindmap
+  root((卡尔曼滤波<br/>三层次理解))
+    第一层: 概念
+      加权平均
+      谁方差小信谁
+      两个传感器比一个好
+    
+    第二层: 机制
+      预测-更新循环
+      预测增加不确定性
+      测量减少不确定性
+      卡尔曼增益 = 最优权重
+    
+    第三层: 实践
+      我们用互补滤波
+      高频陀螺 + 低频四元数
+      alpha 控制融合比例
+      自适应: 旋转快→alpha小
+      静止时→alpha大
+```
+
+**第一层**（你应该已经掌握）：卡尔曼滤波 = 给两个有噪声的传感器做加权平均，谁更可靠就给谁更大权重。
+
+**第二层**（理解了我们为什么需要它）：预测-更新的循环中，预测靠模型（IMU 积分）让方差变大，更新靠测量（飞控四元数）让方差变小。卡尔曼增益自动算出最优权重。
+
+**第三层**（知道怎么用和怎么调）：我们实际用的是互补滤波——卡尔曼滤波的一个轻量特例。只有一个参数 alpha（0.02），一个参数就能描述"我多信 IMU vs 多信飞控"。自适应 alpha 让系统在旋转和静止之间自动切换。
+
+---
+
+> **第五阶段理解确认**：你能用自己的话解释"卡尔曼滤波本质上是什么"吗？你能说清为什么加了滤波之后你的旋转建图就不变形了吗？你能说出互补滤波和标准卡尔曼滤波的区别吗？你知道 alpha=0.02 和 alpha=1.0 分别会导致什么后果吗？
+>
+> 如果理解了，我们进入第六阶段——代码实现详解。
+
+---
+
+# 第六阶段：EKF 互补滤波 — 代码实现详解
+
+> 目标：彻底理解 `imu_filter_node.py` 每一行在干什么。从数据流入到流出，从参数含义到调参方法。
+
+---
+
+## 6.1 完整数据流：从飞控 IMU 芯片到 SLAM 消费
+
+```mermaid
+flowchart TB
+    subgraph HARDWARE["🖥️ 硬件层"]
+        IMU_CHIP["飞控 IMU 芯片<br/>加速度计 + 陀螺仪"]
+        FC_FUSION["飞控内部姿态解算<br/>(算法未知, 输出四元数)"]
+    end
+
+    subgraph SERIAL["📡 串口传输"]
+        UART["UART5 总线<br/>500000 bps"]
+        FRAMES["匿名协议 V7 帧<br/>0x01 = IMU原始 (100Hz)<br/>0x04 = 四元数 (67Hz)<br/>0x07 = 速度 (50Hz)"]
+    end
+
+    subgraph ANO["ano_bridge_node (Python)"]
+        TRANSPORT["ano_transport.py<br/>串口读字节→帧同步→校验"]
+        DECODE["ano_protocol.py<br/>解码: s16→物理量"]
+        PUB_IMU["发布 /imu<br/>orientation(四元数)<br/>angular_velocity(角速度)<br/>linear_acceleration(加速度)"]
+        PUB_ODOM["发布 /odom<br/>twist.linear(飞控速度)<br/>pose.orientation(四元数)"]
+    end
+
+    subgraph FILTER["imu_filter_node (Python, ~240行) ← 我们的代码"]
+        SUB_IMU["订阅 /imu, Best Effort"]
+        SUB_ODOM["订阅 /odom, Best Effort"]
+        ORI_FILTER["姿态互补滤波<br/>_on_imu(): 陀螺积分 + 四元数修正"]
+        VEL_FILTER["速度互补滤波<br/>_on_imu(): 加速度积分 + FC修正"]
+        ADAPTIVE["自适应 alpha<br/>旋转快→小alpha→信陀螺<br/>静止→大alpha→信飞控"]
+        TIMEOUT["IMU超时回退<br/>3秒无IMU→透传模式"]
+        PUB_FILTERED["发布 /odometry/filtered<br/>+ odom→base_link TF<br/>+ /ekf_status"]
+    end
+
+    subgraph CONSUMER["🎯 下游消费者"]
+        SLAM["slam-toolbox / AMCL<br/>通过 tf2 查询 odom→base_link<br/>获得平滑姿态<br/>(不订阅 /odometry/filtered!)"]
+    end
+
+    IMU_CHIP --> FC_FUSION --> UART --> FRAMES --> TRANSPORT --> DECODE
+    DECODE --> PUB_IMU --> SUB_IMU
+    DECODE --> PUB_ODOM --> SUB_ODOM
+    SUB_IMU --> ORI_FILTER
+    SUB_IMU --> VEL_FILTER
+    SUB_ODOM --> VEL_FILTER
+    ORI_FILTER --> ADAPTIVE --> PUB_FILTERED
+    VEL_FILTER --> PUB_FILTERED
+    PUB_FILTERED --> SLAM
+```
+
+**关键事实**：slam-toolbox 和 AMCL **不订阅** `/odometry/filtered` 话题。它们通过 `tf2` 库查询 `odom→base_link` 这个 TF 变换来获取姿态。我们的滤波器同时发布 `/odometry/filtered` 话题（供调试监控）和 `odom→base_link` TF（供 SLAM 消费）。
+
+---
+
+## 6.2 n10p_fusion 包：文件编排与构建
+
+```
+n10p_fusion/                          ← 独立功能包, 零侵入现有代码
+├── package.xml                       ← 依赖: n10p_bringup
+├── setup.py                          ← entry_points 注册 + data_files 安装
+├── resource/n10p_fusion              ← ament 索引标记文件
+│
+├── config/
+│   └── ekf.yaml                      ← 滤波参数 (alpha, rate 等)
+│
+├── launch/
+│   └── ekf_odom_launch.py            ← 独立启动文件 (仅滤波, 不启动传感器)
+│
+└── n10p_fusion/                      ← Python 源码包
+    ├── __init__.py
+    └── imu_filter_node.py            ← 核心算法 (240行)
+```
+
+**为什么不放在 n10p_bringup 里面？**
+
+因为解耦。`n10p_fusion` 可以独立编译、独立删除、独立更新。如果滤波方案出问题，删除这个包，改一行 launch 参数（`use_ekf:=false`），系统回到原始状态。
+
+**setup.py 的作用**：
+
+```python
+# 1. 注册可执行节点: ros2 run n10p_fusion imu_filter_node
+entry_points={'console_scripts': [
+    'imu_filter_node = n10p_fusion.imu_filter_node:main',
+]}
+
+# 2. 安装配置和 launch 文件到 install/ 目录
+data_files=[
+    ('share/.../launch', glob('launch/*.py')),
+    ('share/.../config', glob('config/*.yaml')),
+]
+```
+
+---
+
+## 6.3 节点启动与协作
+
+### 6.3.1 谁启动谁
+
+```mermaid
+flowchart LR
+    subgraph LAUNCH["ros2 launch n10p_bringup n10p_bringup_launch.py"]
+        C1["cleanup_pre_launch<br/>(0.0s) 杀串口占用者"]
+        C2["ano_bridge_node<br/>(2.0s) 飞控→/odom+/imu"]
+        C3["lslidar_driver_node<br/>(2.0s) 雷达→/scan"]
+        C4["static_tf_laser<br/>(2.0s) base_link→laser_frame"]
+        C5["imu_filter_node<br/>(2.0s) 滤波→TF+/odometry/filtered"]
+    end
+
+    C1 --> C2 & C3 & C4 & C5
+```
+
+所有节点在 cleanup 完成 2 秒后同时启动。它们之间**没有启动依赖关系**——imu_filter_node 启动后会立即开始订阅 `/imu` 和 `/odom`，不管话题上有没有数据。数据来了自动开始处理。
+
+### 6.3.2 节点间的数据流动
+
+```
+ano_bridge_node                    imu_filter_node              slam-toolbox
+     │                                   │                          │
+     ├─ /imu (Best Effort, ~100Hz) ──→ _on_imu()                   │
+     ├─ /odom (Best Effort, ~160Hz)──→ _on_odom()                  │
+     │                                   │                          │
+     │                              _publish() (100Hz 定时器)       │
+     │                                   │                          │
+     │                         /odometry/filtered (监控用)          │
+     │                         odom→base_link TF ───────────→ tf2查询
+     │                                   │                          │
+     │                              _publish_status() (1Hz)         │
+     │                         /ekf_status (调试用)                 │
+```
+
+**注意**：imu_filter_node 的 `_on_imu()` 回调在收到 IMU 数据时**被 DDS 线程触发**，不是我们自己控制的。`_publish()` 是 ROS2 定时器回调，在主线程中执行，频率固定 100Hz。
+
+### 6.3.3 为什么不用主线程做计算
+
+```
+如果每收到一帧 IMU (100Hz) 就发布一次:
+  → 发布频率不稳定 (依赖飞控帧率, 抖动大)
+  → 下游 SLAM 期望稳定的 TF 频率
+
+解决方案: 用定时器固定 100Hz 发布
+  → 读缓存变量 (最新四元数), 不管缓存被更新了多少次
+  → 保证输出频率稳定
+```
+
+---
+
+## 6.4 逐函数拆解：数据怎么在代码里流动
+
+### 6.4.1 构造函数 `__init__()`：搭好框架
+
+```python
+# 1. 声明参数 (可从 YAML 或命令行覆盖)
+self.declare_parameter('alpha_orientation', 0.02)  # 姿态互补系数
+self.declare_parameter('alpha_velocity', 0.05)      # 速度互补系数
+self.declare_parameter('publish_rate', 100.0)        # 发布频率
+
+# 2. 初始化缓存变量 (滤波器的"记忆")
+self.q0..q3 = 1,0,0,0        # 滤波后姿态 (初始: 单位四元数, 水平朝前)
+self.q0_raw..q3_raw = 1,0,0,0 # 飞控原始姿态
+self.gyr = [0,0,0]            # 最新角速度
+self.acc = [0,0,0]            # 最新线加速度
+self.vel_fc = [0,0,0]         # 飞控速度
+self.vel_filt = [0,0,0]       # 滤波后速度
+
+# 3. 创建发布者 (输出)
+self.odom_pub    → /odometry/filtered
+self.status_pub  → /ekf_status
+self.tf_broadcaster → odom→base_link TF
+
+# 4. 创建订阅者 (输入)
+self.imu_sub  → /imu  → _on_imu()  回调
+self.odom_sub → /odom → _on_odom() 回调
+
+# 5. 创建定时器 (固定频率干活)
+self._pub_timer    → 每 10ms 调 _publish()
+self._status_timer → 每 1s 调 _publish_status()
+```
+
+### 6.4.2 `_on_imu()`：姿态互补滤波的核心（第93行）
+
+这是整个滤波器最核心的函数。每收到一帧 IMU 数据就执行一次（~100Hz）。
+
+```mermaid
+flowchart TB
+    INPUT["收到一帧 /imu 消息<br/>orientation: (w,x,y,z) 飞控四元数<br/>angular_velocity: (gx,gy,gz) 陀螺仪<br/>linear_acceleration: (ax,ay,az) 加速度计"] --> STEP1
+
+    subgraph STEP1["步骤1: 缓存原始值"]
+        CACHE["self.q0_raw..q3_raw = 飞控四元数<br/>self.gyr = 角速度<br/>self.acc = 线加速度<br/>self.status = 'running'"]
+    end
+
+    STEP1 --> STEP2
+
+    subgraph STEP2["步骤2: 计算时间差 dt"]
+        DT["now_sec = 当前时间<br/>dt = now_sec - last_imu_ts<br/>(首帧跳过, 因为没有上一帧)"]
+    end
+
+    STEP2 --> STEP3
+
+    subgraph STEP3["步骤3: 陀螺仪积分 — 算出'我转了多少'"]
+        QUAT["小角度近似: 四元数增量 dq<br/>dq_w=1, dq_x=gx*dt/2<br/>dq_y=gy*dt/2, dq_z=gz*dt/2<br/>归一化 dq"]
+        MUL["四元数乘法: q_predict = q_filtered ⊗ dq<br/>(把增量'施加'到当前姿态上)"]
+    end
+
+    STEP3 --> STEP4
+
+    subgraph STEP4["步骤4: 互补融合 — 飞控修正"]
+        ALPHA["a = _adaptive_alpha()<br/>静止: a=0.05, 旋转: a=0.005"]
+        BLEND["q_new = (1-a)×q_predict + a×q_raw<br/>归一化 → self.q0..q3"]
+    end
+
+    STEP4 --> STEP5
+
+    subgraph STEP5["步骤5: 速度互补滤波"]
+        ACC_INT["dv = acc × dt (IMU加速度积分)"]
+        VEL_BLEND["vel_filt = (1-αv)×(vel_filt+dv) + αv×vel_fc"]
+    end
+```
+
+**代码对应**：
+
+```python
+# 步骤2: dt (第109-111行)
+now_sec = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9
+if self.last_imu_ts is not None:
+    dt = now_sec - self.last_imu_ts
+    if 0.0 < dt < 0.1:  # 合理的 dt 范围 (10ms~100ms)
+
+        # 步骤3: 陀螺仪积分 (第113-123行)
+        half_dt = dt * 0.5
+        dq = [1.0, gx*half_dt, gy*half_dt, gz*half_dt]  # 小角度近似
+        dq /= norm(dq)  # 归一化
+        q_predict = q_filtered ⊗ dq  # 四元数乘法
+
+        # 步骤4: 互补融合 (第125-132行)
+        a = self._adaptive_alpha()
+        q_new = (1-a)*q_predict + a*q_raw
+        q_new /= norm(q_new)  # 归一化 → 这就是滤波后的姿态!
+
+        # 步骤5: 速度融合 (第134-143行)
+        dv = acc * dt
+        vel_filt = (1-alpha_vel)*(vel_filt + dv) + alpha_vel*vel_fc
+```
+
+### 6.4.3 四元数增量：为什么是 `dq = [1, gx*dt/2, gy*dt/2, gz*dt/2]`
+
+角速度 `gx` 的含义是"绕 X 轴每秒转 `gx` 弧度"。在极短的 `dt` 内，旋转角 = `gx × dt` 弧度。
+
+四元数表示旋转时，旋转轴 (gx, gy, gz) 和旋转角 θ = |gyr| × dt 的关系是：
+
+```
+dq = [cos(θ/2), sin(θ/2)×gx/|gyr|, sin(θ/2)×gy/|gyr|, sin(θ/2)×gz/|gyr|]
+```
+
+当 θ 非常小（dt = 0.01s，gyr < 5 rad/s → θ < 0.05 rad ≈ 2.8°）时：
+- cos(θ/2) ≈ 1.0
+- sin(θ/2) ≈ θ/2 = gx × dt / 2
+
+所以 `dq ≈ [1.0, gx*dt/2, gy*dt/2, gz*dt/2]`。这就是代码中 `half_dt = dt * 0.5` 的来历。
+
+**这是整个滤波器里唯一的"数学"**。剩下的全是加减乘除。
+
+### 6.4.4 `_adaptive_alpha()`：自适应系数（第79行）
+
+```python
+def _adaptive_alpha(self):
+    gyr_mag = sqrt(gx² + gy² + gz²)  # 角速度的"大小"
+
+    if gyr_mag < 0.1:       # 几乎静止 (< 6°/s)
+        return 0.05          # 5% 飞控修正 ← 消除 IMU 噪声
+    elif gyr_mag > 2.0:     # 快速旋转 (> 115°/s)
+        return 0.005         # 0.5% 飞控修正 ← 几乎全靠陀螺
+    else:                    # 中间态: 线性插值
+        return 0.05 - 0.045 * (gyr_mag - 0.1) / 1.9
+```
+
+```mermaid
+flowchart LR
+    subgraph RANGE["alpha 随角速度变化"]
+        S1["静止 0°/s<br/>alpha = 0.05<br/>━━━━━<br/>飞控修正 5%"] --> S2["缓慢 50°/s<br/>alpha = 0.03<br/>━━━━━<br/>飞控修正 3%"]
+        S2 --> S3["中速 100°/s<br/>alpha = 0.02<br/>━━━━━<br/>飞控修正 2%"]
+        S3 --> S4["快速 115°/s+<br/>alpha = 0.005<br/>━━━━━<br/>飞控修正 0.5%"]
+    end
+```
+
+### 6.4.5 `_publish()`：组装输出（第179行）
+
+每 10ms 执行一次（100Hz 定时器）。做的事很简单：**从缓存变量读值，填到消息里，发出去。**
+
+```python
+# 1. IMU超时检查: 3秒没收到IMU → 透传飞控原始值
+if not imu_alive:
+    q_filtered = q_raw     # 不滤波了, 直接用原始值
+    vel_filt = vel_fc
+
+# 2. 组装 Odometry 消息
+odom.header.frame_id = 'odom'
+odom.child_frame_id = 'base_link'
+odom.pose.pose.orientation = (q0,q1,q2,q3)  # 滤波后的四元数
+odom.twist.twist.linear = (vx,vy,vz)         # 滤波后的速度
+odom.twist.twist.angular = (gx,gy,gz)        # 原始角速度(给下游参考)
+
+# 3. 设置协方差矩阵
+odom.pose.covariance[0]    = 1.0    # X位置: 不信任 (飞控位置不可靠)
+odom.pose.covariance[21]   = 0.001  # roll: 较信任 (±1.8°)
+odom.pose.covariance[35]   = 0.01   # yaw: 中等信任 (±5.7°)
+
+# 4. 发布 TF: odom→base_link
+tf.transform.rotation = (q0,q1,q2,q3)
+self.tf_broadcaster.sendTransform(tf)
+```
+
+**协方差为什么这样设？**
+
+| 自由度 | 协方差 | 含义 |
+|--------|--------|------|
+| x, y, z 位置 | 1.0 (m²) | ±1m 的不确定度 → "飞控位置完全不可信，SLAM/AMCL 你自己看着办" |
+| roll, pitch 姿态 | 0.001 (rad²) | ±1.8° → "滤波后的姿态是准的，可以用" |
+| yaw 偏航 | 0.01 (rad²) | ±5.7° → "偏航比 roll/pitch 不确定一些，因为飞控偏航会漂" |
+
+---
+
+## 6.5 为什么这样设计比原始方案更好——直观对比
+
+```mermaid
+flowchart TB
+    subgraph OLD["原始方案: 只用飞控四元数"]
+        O1["67Hz 更新<br/>每15ms一帧"]
+        O2["两帧之间: 姿态冻结<br/>SLAM看到的是'阶梯'" ]
+        O3["旋转时: 跳变10-15°<br/>扫描匹配在±86°窗口搜<br/>可能匹配到错误位姿"]
+        O4["结果: 地图变形 ❌"]
+        O1 --> O2 --> O3 --> O4
+    end
+
+    subgraph NEW["滤波方案: 互补滤波"]
+        N1["IMU 陀螺 100Hz 积分<br/>每10ms平滑更新"]
+        N2["飞控四元数 67Hz 低频修正<br/>只做2%的微调"]
+        N3["旋转时: 每10ms变化1-2°<br/>扫描匹配搜索窗口小<br/>精确匹配正确位姿"]
+        N4["结果: 地图清晰 ✅"]
+        N1 --> N2 --> N3 --> N4
+    end
+```
+
+**本质差异**：
+- 原始方案：SLAM 每 100ms 收到一帧激光，但姿态是 15ms 前跳变过的——"我不知道这 100ms 内姿态怎么变的"
+- 滤波方案：SLAM 每 100ms 收到一帧激光，每 10ms 姿态更新一次——"我很清楚这 100ms 内姿态的每一小步"
+
+---
+
+## 6.6 参数速查：改什么、后果是什么
+
+| 参数 | 位置 | 默认值 | 改大 | 改小 |
+|------|------|--------|------|------|
+| `alpha_orientation` | ekf.yaml | 0.02 | 更信飞控→响应慢→像踩棉花 | 更信陀螺→更灵敏→但会漂 |
+| `alpha_velocity` | ekf.yaml | 0.05 | 更信飞控速度→延迟大 | 更信IMU加速度积分→噪声大 |
+| `publish_rate` | ekf.yaml | 100.0 | >100Hz CPU 升, 但 SLAM 10Hz 用不上 | <50Hz 输出太稀疏 |
+| `publish_tf` | ekf.yaml | true | — | false: 不发布 TF, SLAM 退化到原始方案 |
+| `gyr_offset_x/y/z` | ano_bridge.yaml | 0.0 | 补偿特定轴的零偏 | — |
+| `acc_scale` | ano_bridge.yaml | 0.007198 | — | — (已校准, 不动) |
+
+---
+
+## 6.7 调试方法：怎么确认滤波在工作
+
+```bash
+# 1. 确认滤波节点在运行
+ros2 node list | grep imu_filter
+
+# 2. 看实时状态 (alpha + 角速度)
+ros2 topic echo /ekf_status
+
+# 3. 看滤波输出
+ros2 topic echo /odometry/filtered --qos-reliability best_effort --once
+
+# 4. 对比原始 TF (ano_bridge) vs 滤波 TF (imu_filter)
+#    注意: 两个节点都在发布 odom→base_link TF!
+#    当 use_ekf=true 时, SLAM 用的是滤波后的版本
+ros2 run tf2_ros tf2_echo odom base_link
+
+# 5. 看看有没有 QoS 不匹配 (无此警告=正常)
+ros2 launch n10p_bringup n10p_bringup_launch.py 2>&1 | grep -i "incompatible"
+```
+
+---
+
+> **第六阶段理解确认**：你能画出从飞控 IMU 芯片到 SLAM 消费的完整数据流吗？你能说出 `_on_imu()` 里五个步骤各干了什么吗？你知道 `alpha=0.05`（静止）和 `alpha=0.005`（旋转）分别意味着什么吗？你能解释为什么滤波后的姿态是"每10ms平滑更新"而原始方案是"每15ms冻结跳变"吗？
+>
+> 如果理解了，整个 N10P 项目的学习就完成了。你可以独立阅读、修改、调试滤波代码，并能向别人解释它的工作原理。
