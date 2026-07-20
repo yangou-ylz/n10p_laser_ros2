@@ -182,6 +182,7 @@ class SlamCurSender:
         interval = 1.0 / rate
         end_t = time.monotonic() + duration
         tx_cnt = 0
+        next_t = time.monotonic()  # 基准发送时刻
         while time.monotonic() < end_t and self.running:
             cur_x, cur_y, cur_z = self.get_cur_cm()
             frame, flags = self.send_frame(cur_x, cur_y, cur_z, target_valid=False)
@@ -190,7 +191,14 @@ class SlamCurSender:
                 self.logger.info("[TX #%d] 0xF5 cur=(%s,%s,%s) flags=0x%02X hex=%s",
                                  tx_cnt, cur_x, cur_y, cur_z, flags,
                                  hex_dump(frame))
-            time.sleep(interval)
+            # 补偿工作时间：按绝对时刻调度，消除累积误差
+            next_t += interval
+            sleep_time = next_t - time.monotonic()
+            if sleep_time > 0:
+                time.sleep(sleep_time)
+            elif sleep_time < -interval:
+                # 落后超过一个周期，重置基准防止追赶螺旋
+                next_t = time.monotonic() + interval
         self.running = False
         th.join(timeout=2.0)
         self.ser.close()

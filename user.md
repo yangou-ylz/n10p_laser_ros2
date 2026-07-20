@@ -41,6 +41,10 @@ ros2 service call /slam_toolbox/save_map slam_toolbox/srv/SaveMap "{name: {data:
 python3 /home/ylz/n10p_leishen/scripts/pgm2png.py 输入.pgm 输出.png
 ```
 
+# 检测端口对应功能
+```bash
+python3 /home/ylz/n10p_leishen/n10p_ws/scripts/auto_detect_serial.py 
+```
 
 # 测试节点健康状态
 ```bash
@@ -58,6 +62,11 @@ python3 n10p_ws/scripts/n10p_health_check.py
 # 持续监控 (每5秒刷新)
 python3 n10p_ws/scripts/n10p_health_check.py --mode nav --watch
 
+```
+
+# 调试功能：发送位置给飞控，检验双向通信是否成功
+```bash
+python3 send_slam_cur_f5.py --rate 30 --duration 2000
 ```
 
 # 获取当前yaw朝向（单位：弧度rad)
