@@ -3,7 +3,13 @@
 阶段：SLAM 接入但不控飞 — tar=cur, TARGET_VALID=0, 仅回 ACK。
 
 用法:
-  python3 send_slam_cur_f5.py --port /dev/ttyUSB0 --rate 10 --duration 30
+  python3 send_slam_cur_f5.py --rate 10 --duration 30                    # 自动识别下行串口
+  python3 send_slam_cur_f5.py --port /dev/ttyUSB0 --rate 10 --duration 30 # 手动指定
+  python3 send_slam_cur_f5.py --rate 10 --duration 30 --log-file my.log
+
+自动识别规则:
+  两个 /dev/ttyUSB* → 0xAA 帧头少的为下行口（FC 数据口有大量 0xAA，下行口几乎为 0）
+  仅一个 /dev/ttyUSB* → 直接使用
 
 要求:
   - 需 AMCL 正在发布 /amcl_pose (先开导航)
@@ -13,6 +19,7 @@
 from __future__ import annotations
 
 import argparse
+import glob
 import logging
 import logging.handlers
 import math
@@ -35,6 +42,45 @@ from ano_protocol import (
     hex_dump,
 )
 from linux_serial import LinuxSerial
+
+
+def _auto_detect_downlink_port(baud: int = 500000, timeout: float = 1.5) -> str:
+    """自动识别飞控下行串口（无 0xAA 帧头的 /dev/ttyUSB*）。
+
+    两个 USB：一个发 IMU 数据帧（含大量 0xAA），一个用于下行通信（静默/仅 ACK）。
+    返回 0xAA 帧最少的那个端口。若只有一个 USB，直接返回。
+    """
+    import serial as pyserial
+    ports = sorted(glob.glob('/dev/ttyUSB*'))
+    if not ports:
+        raise FileNotFoundError("未找到 /dev/ttyUSB* 设备，请检查 USB 连接")
+    if len(ports) == 1:
+        print(f"[auto] 仅一个 USB 设备: {ports[0]}")
+        return ports[0]
+
+    scores = {}
+    for port in ports:
+        try:
+            s = pyserial.Serial(port, baud, timeout=0.1)
+            t0 = time.monotonic()
+            aa_count = 0
+            byte_count = 0
+            while time.monotonic() - t0 < timeout and byte_count < 1000:
+                chunk = s.read(256)
+                if chunk:
+                    aa_count += chunk.count(0xAA)
+                    byte_count += len(chunk)
+            s.close()
+            scores[port] = aa_count
+            print(f"[auto] {port}: {aa_count} 个 0xAA 帧头, {byte_count} 字节")
+        except Exception as e:
+            print(f"[auto] {port}: 无法打开 ({e})")
+            scores[port] = 999999  # 无法打开的排最后
+
+    # 0xAA 最少的 = 下行口（FC 数据口 0xAA 极多，下行口几乎为 0）
+    downlink = min(scores, key=scores.get)
+    print(f"[auto] 识别结果: 下行口 = {downlink}")
+    return downlink
 
 
 def _yaw_from_quat(w, x, y, z):
@@ -153,12 +199,15 @@ class SlamCurSender:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--port", required=True, help="/dev/ttyUSB0")
+    ap.add_argument("--port", default=None, help="飞控下行串口，默认自动识别 (如 /dev/ttyUSB0)")
     ap.add_argument("--baud", type=int, default=500000)
     ap.add_argument("--rate", type=float, default=10.0, help="Hz")
     ap.add_argument("--duration", type=float, default=30.0, help="seconds")
     ap.add_argument("--log-file", default="logs/slam_cur_static.log")
     args = ap.parse_args()
+
+    if args.port is None:
+        args.port = _auto_detect_downlink_port(args.baud)
 
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger("send_slam_cur")

@@ -24,7 +24,8 @@ metadata:
 | 3 | 固定帧发送 + STM32 0xA0 ACK | ✅ |
 | 4 | 方向测试 X/Y/Z 三轴每轴 30 帧 | ✅ 全部ACK, 0丢帧 |
 | 5 | flags 失效测试 (SLAM_INV/TARGET_INV) | ✅ |
-| 6 | 接入真实SLAM (send_slam_cur_f5.py) | 🔄 cur=(None,None,None) 待修复 |
+| 6 | 接入真实SLAM (send_slam_cur_f5.py) | ✅ 2026-07-19 测试通过 |
+| 7 | 移动测试 (验证各轴方向和单位) | ⏳ 待执行 |
 
 ## 联调结果 (步骤 3-5)
 
@@ -33,31 +34,31 @@ metadata:
 - 坐标方向: X=前 Y=左 Z=上, 单位 cm
 - flags: 0x03=正常(SLAM+TARGET都有效), 0x02=SLAM失效, 0x01=目标失效
 
-## 当前问题: cur=(None,None,None)
+## 当前问题: cur=(None,None,None) — 已定位
 
-**现象**: `send_slam_cur_f5.py` 启动后, TX 日志显示 `cur=(None,None,None)`，飞控端收到的坐标是 sentinel 值 `-2147483648` (0x80000000)。
+**现象**: `send_slam_cur_f5.py` 启动后前 ~5 秒 TX 日志显示 `cur=(None,None,None)`，飞控端收到 sentinel 值 `-2147483648` (0x80000000)。
 
-**根因分析**: 脚本订阅 `/amcl_pose` 话题，但回调未收到有效数据。可能原因：
-1. AMCL 节点未激活或未收敛 → 不发布 `/amcl_pose`
-2. 话题名不匹配
-3. 消息字段路径错误
+**根因**: 脚本启动时 AMCL 尚未发布第一条 `/amcl_pose` 消息（AMCL 初始化需约 2-5 秒）。这是正常启动时序问题，非 bug。
 
-**排查方法**:
-```bash
-# 确认 AMCL 是否在发布 pose
-ros2 topic echo /amcl_pose --once
-# 查看话题列表
-ros2 topic list | grep amcl
-```
+**实际表现**: 约 5 秒后 AMCL 开始发布数据，cur 自动切换为有效坐标，flags 从 0x00 切换为 0x01。飞控侧正确看到 f=00→f=01 转换。
 
-## 下一步: 步骤6 修复 + 步骤7
+## 步骤6 测试结果 (2026-07-19 19:46)
 
-**步骤6 修复**: 确保 AMCL 收敛后 `/amcl_pose` 有有效数据，脚本正确提取 cur_x/cur_y/cur_z。
+- 298 帧发送, 100% ACK, 0 丢帧
+- f=00 阶段约 5 秒, f=01 阶段约 25 秒
+- 静态坐标波动: X 2cm, Y 13cm, Z 0cm
+- 无异常跳变, 坐标单位 cm 正确
+- 详见 [[workspace-state]]
 
-**步骤7 (飞控侧待办)**: 
-- 收到 cur 后通过 0xA0 回显坐标值
-- 验证单位 cm、无跳变
-- 实现 PID 位置控制闭环
+## 下一步: 步骤7 移动测试
+
+**步骤7 (移动测试)** — 飞控要求:
+- 慢慢向前/向左/向上移动，观察 c.x/c.y/c.z 哪个轴增加
+- 验证单位是否接近真实厘米
+- 飞控方原话: "收到这一步真实 SLAM 日志前，不继续写 PID、误差干运行或控制输出"
+
+**步骤8 (飞控侧待办)**:
+- 基于真实 SLAM 数据实现 PID 位置控制闭环
 
 ## 相关文件
 

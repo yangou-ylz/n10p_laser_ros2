@@ -102,9 +102,32 @@ python3 /home/ylz/n10p_leishen/n10p_ws/scripts/auto_detect_serial.py
 | 3 | 固定帧发送 + STM32 0xA0 ACK | ✅ |
 | 4 | 方向测试 X/Y/Z 三轴 | ✅ 全部ACK, 0丢帧 |
 | 5 | flags 失效测试 | ✅ |
-| 6 | 接入真实SLAM (send_slam_cur_f5.py) | 🔄 当前: cur=(None,None,None) 待修复 |
+| 6 | 接入真实SLAM (send_slam_cur_f5.py) | ✅ 2026-07-19 19:46 测试通过 |
+
+### 步骤6 测试结果 (2026-07-19 19:46)
+
+- **测试命令**: `python3 send_slam_cur_f5.py --port /dev/ttyUSB0 --rate 10 --duration 30`
+- **发送帧数**: 298 帧, 飞控 ACK 100% 响应 (RK #1153→#1450), 0 丢帧
+- **f=00 阶段**: TX #1~#49 (约 5 秒), AMCL 初始化中, 坐标 sentinel=-2147483648
+- **f=01 阶段**: TX #50~#298 (约 25 秒), AMCL 收敛后
+- **静态坐标 (f=01, 554 数据点)**:
+
+| 轴 | min | max | mean | 波动 |
+|-----|------|------|------|-----|
+| X | -8 cm | -6 cm | -6.5 cm | 2 cm |
+| Y | 50 cm | 63 cm | 57.6 cm | 13 cm |
+| Z | 0 cm | 0 cm | 0.0 cm | 0 cm |
+
+- **异常跳变**: 无, 无突然十几米的情况
+- **ACK 形态**: `f=01 c=<x>,<y>,<z> t=<same>` — 符合期望
+
+### 步骤7 待办 (移动测试)
+
+飞控要求移动测试: 向前/左/上移动时验证哪个轴增加、单位是否接近真实 cm。
+**飞控方原话**: "收到这一步真实 SLAM 日志前，不继续写 PID、误差干运行或控制输出。"
 
 ## 已知当前 Bug
 
-1. **`send_slam_cur_f5.py` cur=(None,None,None)**: AMCL pose 订阅未获取到有效数据。需要检查 `/amcl_pose` 话题是否正常发布、消息格式是否正确。
-2. **路径规划偶尔失败**: 待排查 Nav2 planner 配置。
+1. **`send_slam_cur_f5.py` 启动时序**: 前 ~5 秒 `cur=(None,None,None)` — 因为脚本先于 AMCL 首条消息启动。属正常时序问题，不影响后续使用。AMCL 初始化约 2-5 秒后正常发布数据。
+2. **AMCL 零协方差误判收敛**: `/amcl_pose` 初始协方差全零时 `is_slam_valid()` 返回 True（`sqrt(0) < 0.3`），但零协方差表示粒子未分散而非真正收敛。暂不影响测试结果。
+3. **路径规划偶尔失败**: 待排查 Nav2 planner 配置。

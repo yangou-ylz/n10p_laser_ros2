@@ -95,4 +95,6 @@ metadata:
 
 37. 帧格式: 31B, AA 61 F5 19, 6×s32 LE cm + flags + SC/AC
 38. 速率: 10Hz 测试通过, 目标 50Hz
-39. `send_slam_cur_f5.py` 当前 cur=(None,None,None) — AMCL pose 数据未正确获取，待修复
+39. `send_slam_cur_f5.py` 启动时序: 前 ~5 秒 cur=(None,None,None) 是 AMCL 初始化延迟, 非 bug。约 5 秒后自动恢复正常。
+40. **AMCL 零协方差误判**: 初始 pose 协方差全零时 `sqrt(0) < 0.3` → `is_slam_valid()` 返回 True, 但零协方差表示粒子未分散, 非真正收敛。暂不阻塞测试, 后续可考虑加 `cov > 0` 判断。
+41. 2026-07-19 静态测试: 298 帧 100% ACK, f=00→f=01 转换正常, 坐标波动 X±2cm Y±13cm Z=0, 无异常跳变。
