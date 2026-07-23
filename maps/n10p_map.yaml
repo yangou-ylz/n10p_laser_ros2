@@ -1,7 +1,7 @@
 image: n10p_map.pgm
 mode: trinary
 resolution: 0.05
-origin: [-7.09, -10, 0]
+origin: [-8.99, -11.4, 0]
 negate: 0
 occupied_thresh: 0.65
 free_thresh: 0.25

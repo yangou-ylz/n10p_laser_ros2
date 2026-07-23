@@ -26,6 +26,29 @@ metadata:
 | 5 | flags 失效测试 (SLAM_INV/TARGET_INV) | ✅ |
 | 6 | 接入真实SLAM (send_slam_cur_f5.py) | ✅ 2026-07-19 测试通过 |
 | 7 | 移动测试 (验证各轴方向和单位) | ⏳ 待执行 |
+| 8 | 50Hz 速率验证 (send_slam_cur_f5.py) | ✅ 2026-07-20 测试通过 |
+
+## 步骤8 速率测试结果 (2026-07-20)
+
+修复了 `time.sleep(interval)` 不补偿工作时间的 bug。
+
+| 目标速率 | 修复前 | 修复后 | 方法 |
+|----------|--------|--------|------|
+| 10Hz | ~10.1 Hz | — | 误差可忽略 |
+| 30Hz | ~29.4 Hz | — | 误差可忽略 |
+| 50Hz | ~48.6 Hz (-2.8%) | **~50.0 Hz (±0.4%)** | 绝对时刻调度 |
+
+**根因**: `time.sleep(interval)` 忽略了 `send_frame()` 耗时（~0.5ms），累积后 50Hz 慢 2.8%。
+
+**修复**: 改为按绝对时刻 `next_t += interval` 调度，补偿工作时间：
+```python
+next_t += interval
+sleep_time = next_t - time.monotonic()
+if sleep_time > 0: time.sleep(sleep_time)
+elif sleep_time < -interval: next_t = time.monotonic() + interval  # 防追赶螺旋
+```
+
+**⚠️ 集成到导航时必须用相同方式**，不可用固定 `time.sleep()`。
 
 ## 联调结果 (步骤 3-5)
 
