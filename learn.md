@@ -1242,7 +1242,7 @@ flowchart TB
     MAIN -->|"while(rclcpp::ok()) 循环"| POLLING
     POLLING -->|"分配buffer(500B)→调receive_data"| RECEIVE
     RECEIVE -->|"读108字节+CRC8校验→返回帧长度"| DP2
-    DP2 -->|"16点×2(前后半圈)→scan_points_[i]和[i+3000]<br/>圈检测→角度回绕→notify_one()"| PUB_THREAD
+    DP2 -->|"16点×2(echo1/echo2双回波)→scan_points_[i]和[i+3000]<br/>圈检测→角度回绕→notify_one()"| PUB_THREAD
     PUB_THREAD -->|"阻塞等待→被唤醒→组装LaserScan(1058点)"| PUBLISH
 
     style MAIN fill:#ff9f43,color:#fff
@@ -1297,19 +1297,23 @@ uint8_t N10_CalCRC8(unsigned char *p, int len) {
 步骤4: 循环16个点:
         ├─ 读距离值 (小端序, mm→m: /1000.0)
         ├─ 读强度值
-        ├─ 存前半圈: scan_points_[idx].range, .degree, .intensity
-        └─ 存后半圈: scan_points_[idx+3000].range, .degree=前半圈+180°, .intensity
+        ├─ 存 echo1: scan_points_[idx].range, .degree, .intensity
+        └─ 存 echo2: scan_points_[idx+3000].range, .degree=同角度(0°偏移), .intensity
 步骤5: 圈检测: 如果当前角度<上次角度(角度回绕) → 一圈完整
         └─ 存储count_num, 通知pubScanThread()
 ```
 
-**N10_P 的双棱镜设计**：N10_P 有两个激光棱镜，180°对称安装。一转圈，每个棱镜各扫半圈。前半圈棱镜看0°~180°，后半圈棱镜看180°~360°。两个棱镜的数据交替存放在数组里：
+**⚠️ 重大认知修正 (2026-07-20)**：以下"双棱镜设计"是**错误认知**，已被修正。
+
+N10_P 实际是**双回波(Dual Echo)**：传统旋转电机单头扫描，每个记录6字节包含两个距离值，是**同一激光脉冲在相同角度先后收到的两次反射**（如先打到窗户玻璃→再打到玻璃后面的墙），**角度相同、距离不同**。不是两个棱镜180°对装。
+
+原代码错误地将 echo2 的角度设为 `point_deg + 180.0`，导致扫描点云180°镜像对称，SLAM建图产生幽灵L形障碍物。现已修复为 echo1 和 echo2 同角度，近距离优先。
 
 ```
-scan_points_[0]      ← 前半圈棱镜在0°的测量
-scan_points_[0+3000] ← 后半圈棱镜在180°的测量（0°的反方向）
-scan_points_[1]      ← 前半圈棱镜在0.34°的测量
-scan_points_[1+3000] ← 后半圈棱镜在180.34°的测量
+scan_points_[0]      ← echo1 在0°的测量 (第一反射, 通常更近)
+scan_points_[0+3000] ← echo2 在0°的测量 (第二反射, 同角度更远)
+scan_points_[1]      ← echo1 在0.34°的测量
+scan_points_[1+3000] ← echo2 在0.34°的测量
 ...
 ```
 
@@ -1363,11 +1367,11 @@ while (rclcpp::ok()) {
       ranges[1058] = inf (预填充)
       intensities[1058] = 0.0
     ↓
-    遍历前半圈 points[i]:
+    遍历 echo1 points[i] (双回波第一反射):
       idx = round(degree * 1058 / 360.0)
       ranges[idx] = points[i].range
       intensities[idx] = points[i].intensity
-    遍历后半圈 points[i+3000] (degree+180°):
+    遍历 echo2 points[i+3000] (双回波第二反射, 同角度):
       同上
     ↓
     scan_pub->publish(scan);            // 发布到 /scan 话题
@@ -1383,10 +1387,10 @@ while (rclcpp::ok()) {
 | ① | **angle_increment 错误** | L990 | SLAM丢弃所有扫描"1058 expected 529" | `2*PI/count_num` → `2*PI/scan_num`（分母翻倍） |
 | ② | **double free** | L718,862 | 启动崩溃 exit code -6 | 删除子函数内的delete，内存归polling统一管理 |
 | ③ | **delete vs delete[]** | L794,951,1379 | 内存破坏、随机崩溃 | `delete ptr` → `delete[] ptr`（数组必须用delete[]） |
-| ④ | **后半圈角度未设置** | L929-934 | 后半圈degree=0→角度映射崩溃 | 新增：`scan_points_[idx+3000].degree = point_deg + 180.0` |
+| ④ | ~~后半圈角度未设置~~ **认知错误已修正(2026-07-20)** | L929-934 | N10P是双回波非双棱镜，echo2角度不应+180° | 修复：echo1/echo2同角度，独立验证，近距离优先 |
 | ⑤ | **scan_num 浮动** | L1037 | 每帧 ranges 数组大小不同→建图变形 | 固定 `scan_num = 1058`，`angle_increment` 固定 |
 
-**Bug④是我们修的最有价值的一个**。原代码只存了前半圈的角度，后半圈 `points[i+3000].degree` 始终为0。当 pubScanThread 遍历后半圈点时，`idx = round(0 * 1058 / 360) = 0`——所有后半圈点全塞进 `ranges[0]`！这就是你之前看到的"挡板前方交替出现 inf"的根因之一。
+**⚠️ Bug④的历史分析已被推翻(2026-07-20)**。当时的"后半圈角度缺失"分析基于错误的前提(N10P双棱镜)。实际上N10P是双回波，echo2和echo1应在同一角度。原代码的+180°偏移才是造成180°镜像幽灵障碍物的真正根因。
 
 ## 2.2.8 关键参数 lsx10.yaml
 
@@ -1462,14 +1466,14 @@ ranges 全是 inf
 |------|------|
 | 它是官方驱动 | 从GitHub克隆，支持8种镭神雷达，通过lidar_name切换 |
 | 双线程模型 | 主线程收帧解析（~332fps）+ 发布线程组装LaserScan（~10Hz），条件变量通信 |
-| N10_P双棱镜 | 两个棱镜180°对装，一转圈各扫半圈，前后半圈交替存数组 |
+| N10_P双回波 | ~~双棱镜~~→双回波: 同一激光脉冲两次反射,角度相同,距离不同 | (2026-07-20修正)
 | 帧格式陷阱 | 角度用大端序`>H`，距离用小端序`<H`，同一帧内混用！ |
-| 5个Bug修复 | angle_increment、double free、delete→delete[]、后半圈角度缺失、scan_num浮动 |
+| 5个Bug修复 | angle_increment、double free、delete→delete[]、~~后半圈角度缺失~~→双回波认知修正、scan_num浮动 | (2026-07-20修正)
 | 固定scan_num=1058 | 保证每帧角度映射一致，SLAM帧间匹配不偏移 |
 
 ---
 
-> **第二阶段2.2理解确认**：你能画出从 `polling() → receive_data() → data_processing_2() → pubScanThread() → publish()` 的完整调用链吗？你能说清 N10_P 帧的108字节每个字段含义吗？你能解释"双棱镜双回波"为什么会导致 `inf` 和有效值交替出现吗？
+> **第二阶段2.2理解确认**：你能画出从 `polling() → receive_data() → data_processing_2() → pubScanThread() → publish()` 的完整调用链吗？你能说清 N10_P 帧的108字节每个字段含义吗？~~你能解释"双棱镜双回波"为什么会导致 `inf` 和有效值交替出现吗？~~ → N10P是双回波非双棱镜，inf交替是因echo1无效时echo2也被丢弃(已修复)
 >
 > 如果完全理解了，说"理解了，进下一节"。如果还有模糊的，指出具体哪里不清楚。
 

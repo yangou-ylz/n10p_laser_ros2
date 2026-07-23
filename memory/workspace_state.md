@@ -7,7 +7,7 @@ metadata:
 
 # 工作空间状态
 
-**更新**: 2026-07-19
+**更新**: 2026-07-20
 
 ## 当前阶段
 
@@ -19,7 +19,9 @@ Phase 8 — 飞控 0xF5 下行联调中。SLAM+Nav+EKF 全部验证通过，自�
 1. **N10P 扫描方向**: `idx = (360-deg) * 1058 / 360` — 必须保留 CW→CCW 反转
    - 原因: N10P 电机顺时针旋转, ROS 约定逆时针。去掉反转 = Y轴镜像。
    - 2026-07-14 实测验证: 正前方=X+, 左侧=Y+, 方向正确
-2. **后半圈角度**: `scan_points_[idx+3000].degree = point_deg + 180.0` — 不可删除
+2. **N10P 是双回波(Dual Echo)，不是双棱镜！** — 同一激光脉冲两次反射，角度相同、距离不同。
+   - 两个回波角度 offset **必须为 0°**（不是 180°）。
+   - 2026-07-20 修复: 错误认知曾导致 180° 镜像对称幽灵障碍物。
 3. **scan_num 固定 1058** — 不可改回 count_num*2
 4. **强度过滤 intensity>0** — 不可删除, 否则噪声点重新出现
 5. **odom 协方差 0.001** — 飞控四元数 A 级可信, 不可改回 1.0
@@ -33,7 +35,7 @@ Phase 8 — 飞控 0xF5 下行联调中。SLAM+Nav+EKF 全部验证通过，自�
 | 包 | 状态 |
 |----|:--:|
 | lslidar_msgs | ✅ |
-| lslidar_driver | ✅ (CW→CCW反转+180°偏移+强度过滤+固定1058) |
+| lslidar_driver | ✅ (CW→CCW反转+双回波同角度+强度过滤+固定1058) |
 | n10p_bringup | ✅ (ano_bridge: 50Hz, IMU限速100Hz, 协方差0.001, xyz=0) |
 | n10p_slam | ✅ (slam_ekf_launch, 自动串口识别, minimum_laser_range=0.3) |
 | n10p_nav | ✅ (nav_ekf_launch, 自动串口识别, AMCL动态粒子收敛) |
@@ -73,7 +75,7 @@ python3 /home/ylz/n10p_leishen/n10p_ws/scripts/auto_detect_serial.py
 |------|-----|------|
 | scan_num | 1058 固定 | lslidar_driver.cc |
 | 角度映射 | `idx=(360-deg)*1058/360` | lslidar_driver.cc |
-| 后半圈 | degree+180° | lslidar_driver.cc data_processing_2() |
+| 双回波角度 | echo1/echo2 同角度 (非 180°) | lslidar_driver.cc data_processing_2() |
 | 强度过滤 | intensity>0 | lslidar_driver.cc pubScan() |
 | minimum_laser_range | 0.3m (过滤无人机本体30cm) | mapper_params_online_async.yaml |
 | TF Z | +0.05 | bringup/slam/nav launch |

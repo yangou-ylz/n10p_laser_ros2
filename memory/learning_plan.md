@@ -49,7 +49,7 @@ metadata:
 
 2.2 **lslidar_driver 包** — N10P驱动从串口字节到/scan
   - 帧格式（108字节，每帧16个点）
-  - 前后半圈双回波拼接
+  - echo1/echo2 双回波同角度拼接 (2026-07-20 修正: 非双棱镜180°对装)
   - 函数调用链（main→polling→receive→data_processing→pubScanThread）
   - 关键参数lsx10.yaml
 
