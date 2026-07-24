@@ -42,8 +42,8 @@ amcl:
       yaw: 0.0                     # 起飞时机头朝向 (rad, 0=map的+X方向)
 
     # 更新阈值
-    update_min_d: 0.02             # 平移 2cm 触发 (高实时性)
-    update_min_a: 0.02             # 旋转 1° 触发 (高实时性)
+    update_min_d: 0.01             # 平移 1cm 触发 (更高实时性,配合FC速度死区)
+    update_min_a: 0.01             # 旋转 0.57° 触发 (更高实时性)
     transform_tolerance: 0.5
 
     # 似然场参数

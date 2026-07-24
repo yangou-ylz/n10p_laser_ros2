@@ -44,7 +44,7 @@ def cb_tf(msg):
 
 # 用 best_effort 订阅 /odom (避免 QoS 不匹配)
 node.create_subscription(Odometry, '/odom', cb_odom, best_effort)
-node.create_subscription(Odometry, '/odometry/filtered', cb_filt, 10)
+node.create_subscription(Odometry, '/odometry/filtered', cb_filt, best_effort)
 node.create_subscription(TFMessage, '/tf', cb_tf, 10)
 
 LOG_DIR.mkdir(parents=True, exist_ok=True)

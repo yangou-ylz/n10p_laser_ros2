@@ -153,14 +153,16 @@ class IMUFilterNode(Node):
                 ax = self.acc[0] - gx
                 ay = self.acc[1] - gy
                 az = self.acc[2] - gz
-                DEAD_ZONE = 0.05   # m/s², 低于此阈值的加速度视为传感器噪声
+                DEAD_ZONE = 0.10   # m/s², 提高阈值消除IMU噪声导致的零偏漂移
                 if abs(ax) < DEAD_ZONE: ax = 0.0
                 if abs(ay) < DEAD_ZONE: ay = 0.0
                 # Z轴加速度噪声不积分 — 2D SLAM 不需要Z平移
                 dv_x = ax * dt
                 dv_y = ay * dt
                 # 3. 互补: (1-αv)*[旧速度+IMU增量] + αv*[FC速度]
-                b = self.alpha_vel
+                #    静止时 (FC速度≈0) 用高 αv 快速归零, 防止速度残余持续积分
+                fc_speed = math.sqrt(self.vel_fc[0]**2 + self.vel_fc[1]**2)
+                b = 0.9 if fc_speed < 0.03 else self.alpha_vel
                 self.vel_filt[0] = (1.0-b)*(self.vel_filt[0] + dv_x) + b*self.vel_fc[0]
                 self.vel_filt[1] = (1.0-b)*(self.vel_filt[1] + dv_y) + b*self.vel_fc[1]
                 # vz 写 FC 速度 (飞控0x07帧), 不积分IMU加速度

@@ -320,10 +320,17 @@ class AnoBridgeNode(Node):
         msg.pose.pose.orientation.y = self.q2
         msg.pose.pose.orientation.z = self.q3
 
-        # 速度
-        msg.twist.twist.linear.x = self.vel_x
-        msg.twist.twist.linear.y = self.vel_y
-        msg.twist.twist.linear.z = self.vel_z
+        # 速度 — 加死区过滤 FC 静止噪声 (<0.02m/s 视为零)
+        FC_VEL_DEAD_ZONE = 0.02
+        vx = self.vel_x
+        vy = self.vel_y
+        vz = self.vel_z
+        if abs(vx) < FC_VEL_DEAD_ZONE: vx = 0.0
+        if abs(vy) < FC_VEL_DEAD_ZONE: vy = 0.0
+        if abs(vz) < FC_VEL_DEAD_ZONE: vz = 0.0
+        msg.twist.twist.linear.x = vx
+        msg.twist.twist.linear.y = vy
+        msg.twist.twist.linear.z = vz
         msg.twist.twist.angular.x = self.gyr[0]
         msg.twist.twist.angular.y = self.gyr[1]
         msg.twist.twist.angular.z = self.gyr[2]
