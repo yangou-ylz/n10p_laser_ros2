@@ -20,7 +20,7 @@ amcl:
     laser_max_range: 12.0          # N10P 最大量程
     laser_min_range: 0.02          # N10P 最小量程
     max_beams: 30                  # 树莓派: 砍半，16平小空间30条足够
-    laser_likelihood_max_dist: 2.0
+    laser_likelihood_max_dist: 0.5    # 室内: 0.3-0.5 (原2.0太模糊, AMCL无法区分小角度差异)
 
     # 粒子滤波器
     max_particles: 500            # 16平小空间 500 粒子足够
@@ -28,6 +28,8 @@ amcl:
     pf_err: 0.05
     pf_z: 0.99
     resample_interval: 1
+    alpha_slow: 0.01              # 慢速随机粒子注入 (探索未被覆盖的朝向)
+    alpha_fast: 0.1               # 快速随机粒子注入 (出错时快速恢复)
 
     # ── 自动初始位姿 (比赛模式，无需手点RViz) ──
     # 无人机固定在起飞点启动，设为地图原点附近。AMCL 启动时自动从此位置开始搜索。

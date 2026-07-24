@@ -70,18 +70,30 @@ def get_initial_yaw():
 
     如果 slam_yaw 文件不存在 (从未建图), 返回 0
     """
-    # === 修正公式 (2026-07-24) ===
-    # 原公式 initial_yaw = nav_yaw - slam_yaw 计算的是 FC 漂移量（约 -1°），
-    # 但 AMCL 的 initial_pose.yaw 需要的是机器人在 map 帧里的绝对 yaw。
-    # slam_toolbox 建图以 odometry 位姿为起点（包含 FC yaw），
-    # 导航时直接用 FC 当前 yaw 即可对齐地图。
+    # === 修正公式 + 校准偏移 (2026-07-24) ===
+    # initial_yaw = nav_yaw + calib_offset
+    # nav_yaw: FC 当前偏航角（大致正确，有 4-5° 固定偏差）
+    # calib_offset: 从校准文件读取的修正量，补偿 FC 与 map 的固定角度差
     nav_yaw = read_fc_yaw(timeout=6.0, samples=30)
     if nav_yaw is None:
         print('[初始位姿] ⚠ 无法读取 FC yaw, 使用 initial_yaw=0')
         return 0.0
 
-    print(f'[初始位姿] FC 当前 yaw = {math.degrees(nav_yaw):.1f}° → initial_yaw = {nav_yaw:.4f} rad')
-    return nav_yaw
+    calib_path = os.path.join(MAPS_DIR, 'calib_yaw_offset.txt')
+    calib_offset = 0.0
+    try:
+        with open(calib_path, 'r') as f:
+            calib_offset = float(f.readline().strip())
+        print(f'[初始位姿] 校准偏移 = {math.degrees(calib_offset):.1f}° (来自 {calib_path})')
+    except (FileNotFoundError, ValueError):
+        print(f'[初始位姿] ⚠ 未找到校准文件 {calib_path}, 偏移=0 (nav_yaw 直接使用)')
+
+    initial_yaw = nav_yaw + calib_offset
+    while initial_yaw > math.pi: initial_yaw -= 2*math.pi
+    while initial_yaw < -math.pi: initial_yaw += 2*math.pi
+
+    print(f'[初始位姿] FC yaw={math.degrees(nav_yaw):.1f}° + 偏移={math.degrees(calib_offset):.1f}° → initial_yaw={math.degrees(initial_yaw):.1f}° ({initial_yaw:.4f} rad)')
+    return initial_yaw
     # ======================================
 
     slam_yaw = load_slam_yaw()
