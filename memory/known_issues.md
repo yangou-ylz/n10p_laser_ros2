@@ -64,10 +64,12 @@ metadata:
 
 ## AMCL 初始姿态 (2026-07-19)
 
-26. **初始位置**: `nav_ekf_launch.py` 通过 `yaw_util.py` 自动从飞控获取 yaw 作为初始姿态
-    - 订阅 `/odom` 话题，取飞控四元数→欧拉→yaw
+26. **初始姿态公式 (2026-07-24 修正)**: `nav_ekf_launch.py` 通过 `yaw_util.py` 获取初始姿态。
+    - **旧公式 (错误)**: `initial_yaw = nav_yaw - slam_yaw` — 计算的是 FC 漂移量
+    - **新公式 (正确)**: `initial_yaw = nav_yaw` — 直接用 FC 当前 yaw
+    - **根因**: slam_toolbox 建图以 odometry 位姿为起点（已包含 FC yaw），
+      地图中机器人 yaw ≈ FC 当前值，不是 0°。减去 slam_yaw 反而把正确朝向减掉了。
     - 位置默认 (0,0)，由 AMCL 扫描匹配自动收敛
-    - 如飞控未连接(yaw=0)，AMCL 也能通过扫描匹配收敛（但较慢）
 27. **收敛监控**: `amcl_convergence.py` 实时显示粒子数、σ(X/Y/Yaw)、收敛状态
     - 收敛标准: σ<5cm 且 Yawσ<3° 持续 3 秒
 28. **不要用暴力粒子数(10000+)** — 树莓派跑不动，已回退。max_particles=2000, min=500
@@ -110,3 +112,11 @@ metadata:
 45. **180° 偏移是致命 bug**: 原代码 `scan_points_[idx+3000].degree = point_deg + 180.0` 将 echo2 放到相反方向，造成扫描点云 180° 镜像对称，SLAM 建图产生幽灵 L 形障碍物。修复: echo2 角度 = echo1 角度（同方向），保留近距离优先。
 46. **echo1/echo2 独立验证**: 原代码只检查 echo1 是否 0xFFFF，echo1 无效时连有效的 echo2 也丢弃，导致 ~50% 扫描点丢失（交替 inf 模式）。修复: 两个回波各自独立判断有效性。
 47. **历史教训**: 代码注释和记忆文件中"双棱镜"、"后半圈"、"前后半圈"等词都是错误认知的产物。看到这些词应立即联想到本次 bug。
+
+## AMCL 初始姿态公式修正 (2026-07-24)
+
+48. **`initial_yaw = nav_yaw - slam_yaw` 是错误公式！** 原以为 `initial_yaw` 是"偏移量"（FC 漂移了多少），实际 AMCL 的 `initial_pose.yaw` 接收的是机器人在 map 帧里的**绝对 yaw**。
+49. **为什么旧公式错**: slam_toolbox 建图时以**当前 odometry 位姿**为起点，地图建立时机器人 yaw 已经包含了 FC 的 yaw 值（~113°）。`nav_yaw - slam_yaw` 把 FC 的 yaw 减掉了，只留下 FC 漂移的那一点点（~-1°），相当于告诉 AMCL"机器人只转了 1°"，实际机器人转了 113°。
+50. **正确公式**: `initial_yaw = nav_yaw` — 直接用 FC 当前 yaw 值。建图和导航时机器人物理朝向不变 → FC 报的 yaw 也基本不变 → 直接用 nav_yaw 即对齐。
+51. **验证**: 硬编码 116.6°（≈FC 当时的 yaw）完美吻合，证明 nav_yaw 就是正确值。
+52. **教训**: 改任何公式前必须先搞清楚变量的物理含义——`initial_pose.yaw` 是绝对朝向，不是偏移量。
