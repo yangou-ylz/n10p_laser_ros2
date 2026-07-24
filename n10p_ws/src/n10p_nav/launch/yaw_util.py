@@ -70,6 +70,17 @@ def get_initial_yaw():
 
     如果 slam_yaw 文件不存在 (从未建图), 返回 0
     """
+    # === 临时硬编码 (2026-07-24) ===
+    # 自动计算 nav_yaw - slam_yaw 的结果（约 -1.1°）无法对齐地图。
+    # 在 RViz 中手动指定 2.035 rad (116.6°) 后扫描与地图完美吻合。
+    # 临时跳过自动计算，直接返回此值以推进后续联调。
+    # TODO: 找到自动计算错误的根本原因后移除本段。
+    HARDCODED_YAW = 2.035  # 116.6°, RViz 手动确认的正确初始偏航角
+    print(f'[初始位姿] ⚠ 使用硬编码 initial_yaw = {HARDCODED_YAW} rad ({math.degrees(HARDCODED_YAW):.1f}°)')
+    print(f'          跳过自动计算 nav_yaw - slam_yaw')
+    return HARDCODED_YAW
+    # ======================================
+
     nav_yaw = read_fc_yaw(timeout=6.0, samples=30)
     if nav_yaw is None:
         print('[初始位姿] ⚠ 无法读取 FC yaw, 使用 initial_yaw=0')

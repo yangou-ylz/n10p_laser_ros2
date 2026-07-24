@@ -34,15 +34,10 @@ def generate_launch_description():
     initial_y = LaunchConfiguration('initial_y')
     initial_yaw = LaunchConfiguration('initial_yaw')
 
-    # ── 静态 TF: map → odom (bootstrap, AMCL 激活后自动覆盖) ──
-    static_tf_map_odom = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        name='static_tf_map_odom',
-        arguments=['0', '0', '0', '0', '0', '0', 'map', 'odom'],
-    )
-
     # ── 地图服务 ──────────────────────────────────────────
+    # 注意: 不再发送静态 map→odom bootstrap TF。
+    # /tf_static 上的变换永不过期，会覆盖 AMCL 发布的动态变换，
+    # 导致机器人位姿在 RViz 中被扭偏。
     map_server_node = Node(
         package='nav2_map_server',
         executable='map_server',
@@ -130,7 +125,6 @@ def generate_launch_description():
 
     def launch_setup(context):
         nodes = [
-            static_tf_map_odom,
             TimerAction(period=1.0, actions=[map_server_node]),
             TimerAction(period=2.0, actions=[amcl_node]),
             TimerAction(period=3.0, actions=[lifecycle_localization]),
