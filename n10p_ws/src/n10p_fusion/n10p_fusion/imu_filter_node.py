@@ -161,10 +161,20 @@ class IMUFilterNode(Node):
                 dv_y = ay * dt
                 # 3. 互补: (1-αv)*[旧速度+IMU增量] + αv*[FC速度]
                 #    静止时 (FC速度≈0) 用高 αv 快速归零, 防止速度残余持续积分
-                fc_speed = math.sqrt(self.vel_fc[0]**2 + self.vel_fc[1]**2)
+                #    交叉轴抑制: 单轴主导时清零副轴的FC参考, 消除FC传感器轴间耦合
+                fc_vx = self.vel_fc[0]
+                fc_vy = self.vel_fc[1]
+                X_DOMINANT = 3.0  # 主轴/副轴比值阈值
+                if abs(fc_vx) > X_DOMINANT * abs(fc_vy):
+                    fc_vy = 0.0       # X主导 → 压制Y轴FC耦合
+                elif abs(fc_vy) > X_DOMINANT * abs(fc_vx):
+                    fc_vx = 0.0       # Y主导 → 压制X轴FC耦合
+                # 两轴速率相近时保留原始值 (真正的斜向飞行)
+
+                fc_speed = math.sqrt(fc_vx**2 + fc_vy**2)
                 b = 0.9 if fc_speed < 0.03 else self.alpha_vel
-                self.vel_filt[0] = (1.0-b)*(self.vel_filt[0] + dv_x) + b*self.vel_fc[0]
-                self.vel_filt[1] = (1.0-b)*(self.vel_filt[1] + dv_y) + b*self.vel_fc[1]
+                self.vel_filt[0] = (1.0-b)*(self.vel_filt[0] + dv_x) + b*fc_vx
+                self.vel_filt[1] = (1.0-b)*(self.vel_filt[1] + dv_y) + b*fc_vy
                 # vz 写 FC 速度 (飞控0x07帧), 不积分IMU加速度
                 self.vel_filt[2] = self.vel_fc[2]
 

@@ -1,10 +1,10 @@
 # CLAUDE.md — N10P ROS2 SLAM 项目最高指令
 
-> 版本: v3.1-f5 | 更新: 2026-07-19 | 此文件每次对话自动加载
+> 版本: v3.2-baseline | 更新: 2026-07-24 | 此文件每次对话自动加载
 >
 > 项目根目录: `/home/ylz/n10p_leishen/`
 >
-> **当前阶段**: Phase 8 — 飞控 0xF5 下行联调中 🔄
+> **当前阶段**: Phase 8 — 飞控 0xF5 下行联调中 | **⭐ 导航跟踪基线已验证 (2026-07-24)**
 
 ---
 
@@ -97,7 +97,7 @@ source /opt/ros/humble/setup.bash && source /home/ylz/n10p_leishen/n10p_ws/insta
 - **编译：`colcon build --parallel-workers 2`**（不允许不带此参数编译，会 OOM）
 - **SLAM 分辨率：0.1m**（不用 0.05m，地图数据量差 4 倍）
 - **SLAM 线程：`ceres_num_threads: 2`**（最多 2，不用 4）
-- **AMCL 粒子：`max_particles: 1000`**（不用 2000）
+- **AMCL 粒子：`max_particles: 500`**（不用 2000，当前基线 500 足够且已减半）
 - **controller_frequency：10Hz**（不用 20Hz）
 - **QoS：Best Effort + Keep Last，队列深度 5**（减少内存堆积）
 - **日志级别：INFO**（DEBUG 仅在排错时临时开启）
@@ -144,13 +144,28 @@ map → odom → base_link → laser_frame
 **无飞控（传统方案，保留）**：
 - `odom→base_link` 由 dummy_odom 发布（全零，SLAM 自估）
 
-### 4.3.1 EKF 互补滤波
+### 4.3.1 EKF 互补滤波 (导航跟踪基线 ⭐)
 
 - **节点**: `imu_filter_node` (n10p_fusion 包, Python)
-- **算法**: 互补滤波 — 高频 IMU 陀螺仪积分 + 低频飞控四元数修正 (alpha=0.02)
+- **算法**: 互补滤波 — 高频 IMU 陀螺仪积分 + 低频飞控四元数修正 (自适应 alpha=0.005~0.05)
 - **输入**: `/imu` + `/odom` (来自 ano_bridge)
 - **输出**: `/odometry/filtered` + `odom→base_link` TF (100Hz)
-- **验证**: 旋转建图测试通过，地图无变形，效果显著优于原始方案
+- **验证**: 导航跟踪基线验证通过 (2026-07-24)，三层速度防御体系确认有效
+
+### 4.3.1.1 四层速度防御体系 (不可回退)
+
+| 层 | 位置 | 参数 | 作用 |
+|----|------|------|------|
+| 1 | ano_bridge `_publish_odometry` | `FC_VEL_DEAD_ZONE=0.02` | FC 静止噪声归零 |
+| 2 | imu_filter `_on_imu` | `DEAD_ZONE=0.10` | IMU 加速度噪声归零 |
+| 3 | imu_filter `_on_imu` | `b=0.9` (静止) | 速度快速衰减到 FC 参考 |
+| **4** | **imu_filter `_on_imu`** | **X_DOMINANT=3.0** | **单轴主导时清零副轴FC参考** |
+
+**迭代历史**: DEAD_ZONE 0.05→0.10, b 0.05→0.5→0.9, +FC_VEL_DEAD_ZONE, +交叉轴抑制。
+静止漂移: 0.91 cm/s → 0.15 cm/s → ≈0 cm/s。
+单轴飞行副轴误差: 前飞Y偏 1.7cm→0.1cm (17倍), 右飞X偏 10.2cm→1.3cm (7.8倍)。
+
+ano_bridge `_on_velocity`: vy 经过光流传感器校正，`vel_y = -d['vel_y_cms']*0.01` 为正式逻辑。
 
 ### 4.3.2 推荐用法
 
@@ -167,6 +182,12 @@ python3 send_slam_cur_f5.py --port /dev/ttyUSB0 --rate 10 --duration 30 --log-fi
 
 # AMCL 收敛监控
 python3 /home/ylz/n10p_leishen/n10p_ws/scripts/amcl_convergence.py
+
+# 速度诊断 (验证三层防御体系)
+python3 /home/ylz/n10p_leishen/scripts/diag_velocity.py
+
+# 导航跟踪诊断 (验证 AMCL+TF+扫描匹配)
+python3 /home/ylz/n10p_leishen/scripts/diag_nav_tracking.py
 
 # 自动串口检测
 python3 /home/ylz/n10p_leishen/n10p_ws/scripts/auto_detect_serial.py
@@ -563,3 +584,4 @@ killall ros2
 | 2026-06-04 | v2.0-pi | 树莓派适配：更新路径/内存/性能红线/已知Bug/ADR/禁用Gazebo |
 | 2026-07-13 | v3.0-ekf | EKF 互补滤波集成：imu_filter_node + 7包编译验证 + 旋转建图通过 |
 | 2026-07-19 | v3.1-f5 | 坐标系验证通过 + AMCL自动初始姿态 + 自动串口检测 + 0xF5联调步骤1-5通过 |
+| 2026-07-24 | v3.2-baseline | **⭐ 导航跟踪基线验证通过**: 三层速度防御(FC死区0.02+IMU死区0.10+b=0.9), AMCL阈值0.01, vy临时取反 |

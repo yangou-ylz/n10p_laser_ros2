@@ -36,7 +36,7 @@ from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy, HistoryPolicy
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Imu, BatteryState
-from geometry_msgs.msg import TransformStamped
+from geometry_msgs.msg import TransformStamped, TwistStamped
 from tf2_ros import TransformBroadcaster
 
 from .ano_transport import SerialTransport
@@ -129,6 +129,7 @@ class AnoBridgeNode(Node):
 
         # ── 发布者 ────────────────────────────────────────
         self.odom_pub = self.create_publisher(Odometry, '/odom', sensor_qos)
+        self.vel_raw_pub = self.create_publisher(TwistStamped, '/fc_vel_raw', sensor_qos)  # 死区前原始速度 (诊断用)
         self.imu_pub = self.create_publisher(Imu, '/imu', sensor_qos)
         self._last_imu_pub_ts = 0.0               # IMU 限速: 上次发布时间
         self.battery_pub = self.create_publisher(BatteryState, '/battery', reliable_qos)
@@ -263,7 +264,7 @@ class AnoBridgeNode(Node):
         if 'error' in d:
             return
         self.vel_x = d['vel_x_cms'] * 0.01
-        self.vel_y = -d['vel_y_cms'] * 0.01   # FIXME: 临时取反, 光流传感器Y轴方向校正错误, 待明日校正后恢复
+        self.vel_y = -d['vel_y_cms'] * 0.01
         self.vel_z = d['vel_z_cms'] * 0.01
 
     def _on_position(self, d: dict) -> None:
@@ -319,6 +320,15 @@ class AnoBridgeNode(Node):
         msg.pose.pose.orientation.x = self.q1
         msg.pose.pose.orientation.y = self.q2
         msg.pose.pose.orientation.z = self.q3
+
+        # 诊断: 发布死区前的原始 FC 速度到 /fc_vel_raw
+        raw_twist = TwistStamped()
+        raw_twist.header.stamp = now.to_msg()
+        raw_twist.header.frame_id = self.frame_id
+        raw_twist.twist.linear.x = self.vel_x
+        raw_twist.twist.linear.y = self.vel_y
+        raw_twist.twist.linear.z = self.vel_z
+        self.vel_raw_pub.publish(raw_twist)
 
         # 速度 — 加死区过滤 FC 静止噪声 (<0.02m/s 视为零)
         FC_VEL_DEAD_ZONE = 0.02
