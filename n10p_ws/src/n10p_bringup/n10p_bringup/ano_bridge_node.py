@@ -263,7 +263,7 @@ class AnoBridgeNode(Node):
         if 'error' in d:
             return
         self.vel_x = d['vel_x_cms'] * 0.01
-        self.vel_y = d['vel_y_cms'] * 0.01
+        self.vel_y = -d['vel_y_cms'] * 0.01   # FIXME: 临时取反, 光流传感器Y轴方向校正错误, 待明日校正后恢复
         self.vel_z = d['vel_z_cms'] * 0.01
 
     def _on_position(self, d: dict) -> None:
