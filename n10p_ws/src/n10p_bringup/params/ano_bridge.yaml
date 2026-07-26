@@ -6,6 +6,8 @@
     odom_frame_id: odom                 # 里程计坐标系
     publish_tf: true                    # 是否发布 odom → base_link TF
     pub_rate: 50.0                      # 里程计发布频率 (Hz), AMCL/SLAM只需10Hz
+    vx_sign: 1.0                       # vx 方向: +1.0 或 -1.0 (FC坐标系可能每次上电不同)
+    vy_sign: 1.0                       # vy 方向: +1.0 或 -1.0 (FC坐标系可能每次上电不同)
     acc_scale: 0.007198                 # 加速度计 LSB → m/s² (2026-07 校准: Z轴静置9.807)
     gyr_scale: 0.001065                 # 陀螺仪 LSB → rad/s (±2000dps)
     gyr_offset_x: -0.000360             # 陀螺仪 X 轴零偏 (2026-07 静置标定)

@@ -63,6 +63,8 @@ class AnoBridgeNode(Node):
         self.declare_parameter('gyr_offset_y', 0.0)
         self.declare_parameter('gyr_offset_z', 0.0)
         self.declare_parameter('pub_rate', 20.0)           # 里程计发布频率 Hz
+        self.declare_parameter('vx_sign', -1.0)             # vx 符号: +1.0或-1.0, 匹配FC坐标系
+        self.declare_parameter('vy_sign', -1.0)             # vy 符号: +1.0或-1.0, 匹配FC坐标系
         # 位置下行参数 (0xF5 帧)
         self.declare_parameter('pos_downlink_enable', False) # 启用位置下行
         self.declare_parameter('pos_downlink_rate', 50.0)    # 下行频率 Hz
@@ -85,6 +87,8 @@ class AnoBridgeNode(Node):
             self.get_parameter('gyr_offset_z').value,
         ]
         pub_rate = self.get_parameter('pub_rate').value
+        self.vx_sign = self.get_parameter('vx_sign').value
+        self.vy_sign = self.get_parameter('vy_sign').value
 
         # ── 数据缓存（由传输层回调写入，ROS2 定时器读取） ──
         self.pos_x = 0.0       # m
@@ -194,6 +198,7 @@ class AnoBridgeNode(Node):
                 f'目标 STM32 UART2 (PD6 RX)')
 
         self.get_logger().info(f'凌霄飞控桥接节点已启动 ({port} @ {baud} bps)')
+        self.get_logger().info(f'速度方向: vx_sign={self.vx_sign}, vy_sign={self.vy_sign}')
 
     # ═══════════════════════════════════════════════════════════════
     # 帧回调（在传输层后台线程中执行，只做轻量数据更新）
@@ -263,8 +268,8 @@ class AnoBridgeNode(Node):
         """0x07 飞行速度 → 缓存线速度"""
         if 'error' in d:
             return
-        self.vel_x = d['vel_x_cms'] * 0.01
-        self.vel_y = -d['vel_y_cms'] * 0.01
+        self.vel_x = self.vx_sign * d['vel_x_cms'] * 0.01
+        self.vel_y = self.vy_sign * d['vel_y_cms'] * 0.01
         self.vel_z = d['vel_z_cms'] * 0.01
 
     def _on_position(self, d: dict) -> None:

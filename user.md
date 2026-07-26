@@ -41,6 +41,13 @@ ros2 service call /slam_toolbox/save_map slam_toolbox/srv/SaveMap "{name: {data:
 python3 /home/ylz/n10p_leishen/scripts/pgm2png.py 输入.pgm 输出.png
 ```
 
+# 雷达移动与现实相反的解决方法
+```bash
+ #如果方向反了，直接改ano_bridge.yaml 里的 vx_sign / vy_sign 从 -1.0 改成 +1.0重启导航,然后
+ colcon build --packages-select n10p_bringup --parallel-workers 2
+ source install/setup.bash
+```
+
 # 检测端口对应功能
 ```bash
 python3 /home/ylz/n10p_leishen/n10p_ws/scripts/auto_detect_serial.py 

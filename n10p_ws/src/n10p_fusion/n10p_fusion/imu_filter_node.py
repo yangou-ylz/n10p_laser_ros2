@@ -54,6 +54,12 @@ class IMUFilterNode(Node):
         self.status = 'initializing'             # EKF 状态
         self.status_updated = False
 
+        # ── Slew Rate Limiter 状态 ─────────────────
+        self.last_fc_vx = None                   # 上一帧 FC vx (经 slew 钳位后)
+        self.last_fc_vy = None                   # 上一帧 FC vy
+        self.MAX_SLEW = 3.0                       # 最大速度变化率 m/s² (只拦>0.3g极端异常)
+        self.INNOVATION_THRESH = 1.0              # FC跳变>1m/s → 降权
+
         # ── QoS ────────────────────────────────────
         sensor_qos = QoSProfile(
             reliability=ReliabilityPolicy.BEST_EFFORT,
@@ -81,14 +87,14 @@ class IMUFilterNode(Node):
     # ══════════════════════════════════════════════════
     def _adaptive_alpha(self) -> float:
         gyr_mag = math.sqrt(self.gyr[0]**2 + self.gyr[1]**2 + self.gyr[2]**2)
-        # 静止 (<0.1 rad/s≈6°/s): alpha=0.05 (更信飞控)
+        # 静止/慢转 (<0.1 rad/s≈6°/s): alpha=0.10 (加倍信任FC绝对四元数, 抑制陀螺零偏)
         # 快速旋转 (>2.0 rad/s≈115°/s): alpha=0.005 (更信陀螺仪)
         if gyr_mag < 0.1:
-            return 0.05
+            return 0.10
         elif gyr_mag > 2.0:
             return 0.005
         else:
-            return 0.05 - 0.045 * (gyr_mag - 0.1) / 1.9
+            return 0.10 - 0.095 * (gyr_mag - 0.1) / 1.9
 
     # ══════════════════════════════════════════════════
     # IMU 回调: 姿态互补滤波 + 加速度积分
@@ -156,10 +162,11 @@ class IMUFilterNode(Node):
                 DEAD_ZONE = 0.10   # m/s², 提高阈值消除IMU噪声导致的零偏漂移
                 if abs(ax) < DEAD_ZONE: ax = 0.0
                 if abs(ay) < DEAD_ZONE: ay = 0.0
-                # Z轴加速度噪声不积分 — 2D SLAM 不需要Z平移
-                dv_x = ax * dt
-                dv_y = ay * dt
-                # 3. 互补: (1-αv)*[旧速度+IMU增量] + αv*[FC速度]
+                # IMU加速度不用于平移速度 — 倾斜时重力泄漏无法完全消除 (PX4同理)
+                # 速度估计仅用FC做指数平滑, IMU只管姿态
+                dv_x = 0.0
+                dv_y = 0.0
+                # 3. 指数平滑: (1-αv)*旧速度 + αv*FC速度
                 #    静止时 (FC速度≈0) 用高 αv 快速归零, 防止速度残余持续积分
                 #    交叉轴抑制: 单轴主导时清零副轴的FC参考, 消除FC传感器轴间耦合
                 fc_vx = self.vel_fc[0]
@@ -169,16 +176,50 @@ class IMUFilterNode(Node):
                     fc_vy = 0.0       # X主导 → 压制Y轴FC耦合
                 elif abs(fc_vy) > X_DOMINANT * abs(fc_vx):
                     fc_vx = 0.0       # Y主导 → 压制X轴FC耦合
-                # 两轴速率相近时保留原始值 (真正的斜向飞行)
 
+                # ── Slew Rate Limiter: 限制FC速度变化率, 消除急停反向过冲 ──
+                if self.last_fc_vx is not None and dt > 0:
+                    max_delta = self.MAX_SLEW * dt
+                    dvx_fc = fc_vx - self.last_fc_vx
+                    if abs(dvx_fc) > max_delta:
+                        fc_vx = self.last_fc_vx + math.copysign(max_delta, dvx_fc)
+                    dvy_fc = fc_vy - self.last_fc_vy
+                    if abs(dvy_fc) > max_delta:
+                        fc_vy = self.last_fc_vy + math.copysign(max_delta, dvy_fc)
+                self.last_fc_vx = fc_vx
+                self.last_fc_vy = fc_vy
+
+                # ── 连续b值: FC速度越低b越大, 平滑过渡, 避免硬切换跳变 ──
                 fc_speed = math.sqrt(fc_vx**2 + fc_vy**2)
-                b = 0.9 if fc_speed < 0.03 else self.alpha_vel
-                self.vel_filt[0] = (1.0-b)*(self.vel_filt[0] + dv_x) + b*fc_vx
-                self.vel_filt[1] = (1.0-b)*(self.vel_filt[1] + dv_y) + b*fc_vy
+                B_HIGH = 0.9
+                B_LOW = 0.30             # 运动时指数平滑系数 (纯粹FC平滑, 无IMU参与)
+                SPD_HIGH = 0.10          # >0.10m/s → b=B_LOW (运动态)
+                SPD_LOW = 0.02           # <0.02m/s → b=B_HIGH (静止态)
+                if fc_speed > SPD_HIGH:
+                    b = B_LOW
+                elif fc_speed < SPD_LOW:
+                    b = B_HIGH
+                else:
+                    # 线性过渡: 0.02→0.10 对应 b=0.9→0.05
+                    ratio = (fc_speed - SPD_LOW) / (SPD_HIGH - SPD_LOW)
+                    b = B_HIGH + (B_LOW - B_HIGH) * ratio
+
+                # ── Innovation Gate: FC跳变过大时降权, 信任当前滤波状态 ──
+                b_x = b
+                b_y = b
+                innovation_x = abs(fc_vx - self.vel_filt[0])
+                innovation_y = abs(fc_vy - self.vel_filt[1])
+                if innovation_x > self.INNOVATION_THRESH:
+                    b_x = 0.9  # 大跳变 → 紧锁当前状态
+                if innovation_y > self.INNOVATION_THRESH:
+                    b_y = 0.9
+
+                self.vel_filt[0] = (1.0-b_x)*self.vel_filt[0] + b_x*fc_vx
+                self.vel_filt[1] = (1.0-b_y)*self.vel_filt[1] + b_y*fc_vy
                 # vz 写 FC 速度 (飞控0x07帧), 不积分IMU加速度
                 self.vel_filt[2] = self.vel_fc[2]
 
-                # 积分XY位置 (用于 AMCL 粒子传播的平移先验)
+                # 积分XY位置 — 提供高频运动预测, AMCL 负责低频绝对修正
                 self.pos_x += self.vel_filt[0] * dt
                 self.pos_y += self.vel_filt[1] * dt
                 self.pos_z = 0.0   # 2D SLAM 不需要Z
