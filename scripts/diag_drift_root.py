@@ -100,7 +100,7 @@ with open(log_path, 'w', newline='') as f:
     start_amcl = None
     start_filt_pos = None
 
-    while time.monotonic() - t0 < 80:
+    while time.monotonic() - t0 < 100:
         rclpy.spin_once(node, timeout_sec=0.01)
         now = time.monotonic()
         if now - last_sample < 0.2:

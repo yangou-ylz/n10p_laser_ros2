@@ -18,7 +18,8 @@ from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy, HistoryPo
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Imu
 from std_msgs.msg import String
-from geometry_msgs.msg import TransformStamped
+from geometry_msgs.msg import TransformStamped, PoseWithCovarianceStamped
+from tf2_msgs.msg import TFMessage
 from tf2_ros import TransformBroadcaster
 
 
@@ -51,6 +52,8 @@ class IMUFilterNode(Node):
         self.init_yaw_samples = []               # 初始偏航采样缓冲
         self.init_yaw_start = None               # 开始采样的时间
         self.INIT_YAW_DELAY = 2.0                # 等2秒让FC磁力计稳定
+        self.amcl_pos = None                     # AMCL 地图位姿 (x,y), 用于位置修正
+        self.map_odom_tf = None                  # map→odom TF (x,y), 用于帧转换
         self.last_imu_ts = None                  # 上一帧 IMU 时间
         self.last_process_ts = 0.0               # 上次处理 IMU 的时间
         self.process_min_dt = 0.01               # 最小处理间隔 (100Hz上限)
@@ -78,6 +81,9 @@ class IMUFilterNode(Node):
         # ── 订阅者 ─────────────────────────────────
         self.imu_sub = self.create_subscription(Imu, '/imu', self._on_imu, sensor_qos)
         self.odom_sub = self.create_subscription(Odometry, '/odom', self._on_odom, sensor_qos)
+        self.amcl_sub = self.create_subscription(PoseWithCovarianceStamped, '/amcl_pose',
+                                                  self._on_amcl, sensor_qos)
+        self.tf_sub = self.create_subscription(TFMessage, '/tf', self._on_tf, 10)
 
         # ── 定时器 ─────────────────────────────────
         self._pub_timer = self.create_timer(1.0 / self.publish_rate, self._publish)
@@ -226,6 +232,14 @@ class IMUFilterNode(Node):
                         msg.twist.twist.linear.y,
                         msg.twist.twist.linear.z]
 
+    def _on_amcl(self, msg: PoseWithCovarianceStamped):
+        self.amcl_pos = (msg.pose.pose.position.x, msg.pose.pose.position.y)
+
+    def _on_tf(self, msg: TFMessage):
+        for t in msg.transforms:
+            if t.header.frame_id == 'map' and t.child_frame_id == 'odom':
+                self.map_odom_tf = (t.transform.translation.x, t.transform.translation.y)
+
     # ══════════════════════════════════════════════════
     # 3.1 状态发布 (1Hz)
     # ══════════════════════════════════════════════════
@@ -260,6 +274,14 @@ class IMUFilterNode(Node):
             self.q0,self.q1,self.q2,self.q3 = self.q0_raw,self.q1_raw,self.q2_raw,self.q3_raw
             self.vel_filt = list(self.vel_fc)
             self.pos_x = self.pos_y = self.pos_z = 0.0
+
+        # AMCL位置修正: 将AMCL地图位姿转到odom帧, 慢速拉回积分位置
+        ALPHA_POS = 0.005  # 每帧0.5%修正, 100Hz→时间常数~2s (0.01太快导致正反馈)
+        if self.amcl_pos is not None and self.map_odom_tf is not None:
+            amcl_odom_x = self.amcl_pos[0] - self.map_odom_tf[0]
+            amcl_odom_y = self.amcl_pos[1] - self.map_odom_tf[1]
+            self.pos_x += ALPHA_POS * (amcl_odom_x - self.pos_x)
+            self.pos_y += ALPHA_POS * (amcl_odom_y - self.pos_y)
 
         odom = Odometry()
         odom.header.stamp = now.to_msg()
