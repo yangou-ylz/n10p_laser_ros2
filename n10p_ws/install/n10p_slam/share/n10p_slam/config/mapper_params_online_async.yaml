@@ -49,7 +49,7 @@ slam_toolbox:
     ceres_trust_strategy: LEVENBERG_MARQUARDT
     ceres_diagonal_type: CLUSTERED
     ceres_loss_function: None
-    ceres_num_threads: 4
+    ceres_num_threads: 2                        # 树莓派4核, 留2核给driver/imu_filter/TF
     ceres_max_num_iterations: 20
 
     # ── 地图保存 ────────────────────────────────

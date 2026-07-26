@@ -1,10 +1,10 @@
 # CLAUDE.md — N10P ROS2 SLAM 项目最高指令
 
-> 版本: v3.2-baseline | 更新: 2026-07-24 | 此文件每次对话自动加载
+> 版本: v4.0-nofcyaw | 更新: 2026-07-26 | 此文件每次对话自动加载
 >
 > 项目根目录: `/home/ylz/n10p_leishen/`
 >
-> **当前阶段**: Phase 8 — 飞控 0xF5 下行联调中 | **⭐ 导航跟踪基线已验证 (2026-07-24)**
+> **当前阶段**: Phase 8 — 飞控 0xF5 下行联调中 | **⭐ 基线 v4.0: FC偏航解耦+速度纯FC平滑+AMCL增强**
 
 ---
 
@@ -152,20 +152,30 @@ map → odom → base_link → laser_frame
 - **输出**: `/odometry/filtered` + `odom→base_link` TF (100Hz)
 - **验证**: 导航跟踪基线验证通过 (2026-07-24)，三层速度防御体系确认有效
 
-### 4.3.1.1 四层速度防御体系 (不可回退)
+### 4.3.1.1 速度处理链 (v4.0 基线)
 
-| 层 | 位置 | 参数 | 作用 |
-|----|------|------|------|
-| 1 | ano_bridge `_publish_odometry` | `FC_VEL_DEAD_ZONE=0.02` | FC 静止噪声归零 |
-| 2 | imu_filter `_on_imu` | `DEAD_ZONE=0.10` | IMU 加速度噪声归零 |
-| 3 | imu_filter `_on_imu` | `b=0.9` (静止) | 速度快速衰减到 FC 参考 |
-| **4** | **imu_filter `_on_imu`** | **X_DOMINANT=3.0** | **单轴主导时清零副轴FC参考** |
+```
+FC 0x07 → ano_bridge[vx/vy_sign YAML + 死区0.02 + 交叉轴3:1] → /odom
+    → imu_filter[FC指数平滑b=0.5 + 交叉轴双层 + 位置积分] → /odometry/filtered + TF
+```
 
-**迭代历史**: DEAD_ZONE 0.05→0.10, b 0.05→0.5→0.9, +FC_VEL_DEAD_ZONE, +交叉轴抑制。
-静止漂移: 0.91 cm/s → 0.15 cm/s → ≈0 cm/s。
-单轴飞行副轴误差: 前飞Y偏 1.7cm→0.1cm (17倍), 右飞X偏 10.2cm→1.3cm (7.8倍)。
+| 层 | 位置 | 功能 |
+|----|------|------|
+| 1 | ano_bridge YAML | vx_sign/vy_sign 参数化 (+1.0/+1.0) |
+| 2 | ano_bridge `_publish_odometry` | FC死区 0.02m/s |
+| 3 | ano_bridge `_publish_odometry` | 交叉轴抑制 (|主|>3×|副|→清零副) |
+| 4 | imu_filter `_on_imu` | FC指数平滑 b=0.5 (dv=0, IMU不参与) |
+| 5 | imu_filter `_on_imu` | 交叉轴抑制 (二次, 保留) |
 
-ano_bridge `_on_velocity`: vy 经过光流传感器校正，`vel_y = -d['vel_y_cms']*0.01` 为正式逻辑。
+**关键决策**: IMU加速度不参与速度估计(dv=0), 消除倾斜重力泄漏。速度完全由FC提供+指数平滑。
+
+### 4.3.1.2 偏航归零 (v4.0 新增)
+
+FC磁力计每次上电偏航随机(-100°~-150°), 不能在系统中用作绝对参考。
+- 启动后等2s让磁力计稳定, 取50采样平均为init_yaw
+- 对每个FC四元数乘init_yaw逆旋转, 使初始yaw≈0°
+- slam_ekf/nav_ekf launch不再依赖FC yaw
+- AMCL从(0,0,0°)启动, 用户在RViz标一次初始位姿
 
 ### 4.3.2 推荐用法
 
@@ -584,4 +594,5 @@ killall ros2
 | 2026-06-04 | v2.0-pi | 树莓派适配：更新路径/内存/性能红线/已知Bug/ADR/禁用Gazebo |
 | 2026-07-13 | v3.0-ekf | EKF 互补滤波集成：imu_filter_node + 7包编译验证 + 旋转建图通过 |
 | 2026-07-19 | v3.1-f5 | 坐标系验证通过 + AMCL自动初始姿态 + 自动串口检测 + 0xF5联调步骤1-5通过 |
-| 2026-07-24 | v3.2-baseline | **⭐ 导航跟踪基线验证通过**: 三层速度防御(FC死区0.02+IMU死区0.10+b=0.9), AMCL阈值0.01, vy临时取反 |
+| 2026-07-24 | v3.2-baseline | 导航跟踪基线验证通过: 三层速度防御, AMCL阈值0.01 |
+| 2026-07-26 | v4.0-nofcyaw | **FC偏航解耦+速度纯FC平滑+AMCL增强**: 输入端偏航归零, IMU dv=0, b=0.5, 交叉轴双层, AMCL参数增强, launch清除FC yaw依赖 |

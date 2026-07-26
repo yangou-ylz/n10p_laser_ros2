@@ -343,6 +343,9 @@ class AnoBridgeNode(Node):
         if abs(vx) < FC_VEL_DEAD_ZONE: vx = 0.0
         if abs(vy) < FC_VEL_DEAD_ZONE: vy = 0.0
         if abs(vz) < FC_VEL_DEAD_ZONE: vz = 0.0
+        # 交叉轴抑制: 单轴主导时清零副轴
+        if abs(vx) > 3.0 * abs(vy): vy = 0.0
+        elif abs(vy) > 3.0 * abs(vx): vx = 0.0
         msg.twist.twist.linear.x = vx
         msg.twist.twist.linear.y = vy
         msg.twist.twist.linear.z = vz

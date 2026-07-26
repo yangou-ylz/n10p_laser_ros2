@@ -11,6 +11,7 @@ amcl:
     global_frame_id: "map"
     odom_frame_id: "odom"
     scan_topic: /scan
+    # odom_topic 使用默认 /odom (交叉轴抑制已在 ano_bridge 中处理)
 
     # 全向运动模型 (无人机可在任意方向平移)
     robot_model_type: "nav2_amcl::OmniMotionModel"
@@ -19,17 +20,17 @@ amcl:
     laser_model_type: "likelihood_field"
     laser_max_range: 12.0          # N10P 最大量程
     laser_min_range: 0.02          # N10P 最小量程
-    max_beams: 30                  # 树莓派: 砍半，16平小空间30条足够
-    laser_likelihood_max_dist: 0.5    # 室内: 0.3-0.5 (原2.0太模糊, AMCL无法区分小角度差异)
+    max_beams: 60                  # 增加扫描点 (30→60, 提高匹配特征密度)
+    laser_likelihood_max_dist: 1.5    # 扩大到1.5m (给粒子更宽的似然吸引区)
 
     # 粒子滤波器
-    max_particles: 500            # 16平小空间 500 粒子足够
+    max_particles: 1000            # 1000粒子加速初始收敛
     min_particles: 100
     pf_err: 0.05
     pf_z: 0.99
     resample_interval: 1
-    alpha_slow: 0.01              # 慢速随机粒子注入 (探索未被覆盖的朝向)
-    alpha_fast: 0.1               # 快速随机粒子注入 (出错时快速恢复)
+    alpha_slow: 0.1               # 10%慢速随机注入 (飞行需更多探索防AMCL僵死)
+    alpha_fast: 0.3               # 30%快速随机注入 (加速初始收敛)
 
     # ── 自动初始位姿 (比赛模式，无需手点RViz) ──
     # 无人机固定在起飞点启动，设为地图原点附近。AMCL 启动时自动从此位置开始搜索。
@@ -42,8 +43,8 @@ amcl:
       yaw: 0.0                     # 起飞时机头朝向 (rad, 0=map的+X方向)
 
     # 更新阈值
-    update_min_d: 0.02             # 平移 2cm 触发 (高实时性)
-    update_min_a: 0.02             # 旋转 1° 触发 (高实时性)
+    update_min_d: 0.01             # 平移 1cm 触发 (更高实时性,配合FC速度死区)
+    update_min_a: 0.01             # 旋转 0.57° 触发 (更高实时性)
     transform_tolerance: 0.5
 
     # 似然场参数
@@ -51,11 +52,11 @@ amcl:
     z_rand: 0.5
     z_short: 0.05
     z_max: 0.05
-    sigma_hit: 0.2
+    sigma_hit: 0.4                  # 似然场高斯σ=0.4m (配合likelihood_max_dist=1.0, 扩大粒子吸引范围)
 
     # 如果初始位姿不准，AMCL 需快速恢复 — 增大快速恢复权重
     recovery_alpha_slow: 0.001
-    recovery_alpha_fast: 0.5       # 原0.1→0.5，出错时快速注入随机粒子
+    recovery_alpha_fast: 0.8       # 原0.5→0.8，检测到失锁时80%粒子随机注入
     tf_broadcast: true
 
 # ══════════════════════════════════════════════════

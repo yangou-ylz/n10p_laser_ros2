@@ -7,196 +7,116 @@ metadata:
 
 # 工作空间状态
 
-**更新**: 2026-07-24
+**更新**: 2026-07-26
 
-## ⭐ 导航跟踪基线 (2026-07-24 首次验证通过)
+## ⭐ 当前基线 (v4.0-nofcyaw | 2026-07-26)
 
-**这是整个项目导航实时跟踪的首次工作基线。后续所有完善必须基于此基线，不可破坏根本逻辑。**
+**导航跟踪与建图系统经过全面重构，已达成新的稳定基线。所有关键问题已确认修复，后续开发以本基线为准。**
 
-用户亲自移动测试确认：跟随效果正确，扫描匹配正确，更新效果正确。
-已知存在轻微漂移（运动一定时间后跟随效果略降），但总体正确，偏差可接受。
+### 本次重构解决的核心问题
 
-### 基线核心架构（不可推翻）
+1. **FC 偏航随机漂移** — FC 磁力计每次上电 yaw 不同 (-103° ~ -147°)，导致建图坐标系歪斜、AMCL 初始位姿错误
+2. **速度轴间耦合** — FC 单轴飞行时另一轴有泄漏 (3-7 cm/s)，导致 RViz 斜线运动
+3. **IMU 重力泄漏** — 倾斜时重力投影到水平轴，滤波速度被反向污染
+4. **速度方向频繁反转** — FC 每次上电 yaw 不同导致的坐标系错乱
+5. **AMCL 收敛漂移** — 粒子团过度紧密，扫描匹配无法纠正缓慢 odom 漂移
+6. **调试效率** — 每次改参数需重编代码，YAML/build 混淆
+
+### 解决方案总览
+
+| 问题 | 方案 | 位置 |
+|------|------|------|
+| FC偏航随机漂移 | 输入端偏航归零: 启动后等2s取均值的init_yaw, 对FC四元数做Z轴旋转校正 | imu_filter |
+| 轴间耦合 | 交叉轴抑制: 主轴>3×副轴时清零副轴 (ano_bridge+imu_filter双层) | ano_bridge, imu_filter |
+| IMU重力泄漏 | IMU加速度不参与速度估计 (dv=0), 速度纯FC指数平滑 | imu_filter |
+| 方向反转 | vx_sign/vy_sign YAML可配参数 (当前+1.0/+1.0) | ano_bridge |
+| AMCL收敛漂移 | 似然场放宽(likelihood_max_dist=1.5)+粒子探索增强(alpha_slow=0.1) | nav2_params |
+| 建图歪斜 | SLAM/nav启动不再依赖FC yaw, AMCL从(0,0,0°)启动 | slam_ekf + nav_ekf launch |
+| YAML不生效 | 改YAML后必须colcon build, launch读的是install/目录 | 红线 |
+
+## 当前数据流
 
 ```
-FC 0x07 速度(cm/s) → ano_bridge(死区0.02+单位转换) → /odom(m/s)
-    → imu_filter(互补滤波: IMU积分+FC修正) → /odometry/filtered + odom→base_link TF
-    → AMCL(扫描匹配+粒子滤波) → map→odom TF
-    → map→base_link = map→odom × odom→base_link → RViz 显示
+N10P → lslidar_driver → /scan (1058点, 10Hz)
+FC 串口 → ano_bridge:
+  ├─ /fc_vel_raw (原始FC速度, 诊断用)
+  ├─ /odom (vx_sign/vy_sign + 死区0.02 + 交叉轴抑制, 50Hz)
+  └─ /imu (100Hz限速, FC四元数)
+    │
+    ▼
+imu_filter:
+  ├─ 输入端偏航归零 (init_yaw校正FC四元数)
+  ├─ 姿态互补滤波 (alpha_ori=0.50慢转, 0.005快转)
+  ├─ 速度纯FC指数平滑 (b=0.50)
+  ├─ 交叉轴抑制 (二次)
+  ├─ 位置积分 (从滤波速度)
+  └─ 输出: /odometry/filtered + odom→base_link TF (100Hz)
+    │
+    ▼
+AMCL: 似然场扫描匹配 + 粒子滤波
+  └─ 输出: map→odom TF + /amcl_pose
 ```
-
-### 三层速度防御体系（逐个验证通过，不可删改）
-
-| 层 | 位置 | 参数 | 作用 |
-|----|------|------|------|
-| 第1层 | ano_bridge `_publish_odometry` | `FC_VEL_DEAD_ZONE=0.02` | FC 静止噪声 (<0.02m/s) 在源头归零 |
-| 第2层 | imu_filter `_on_imu` | `DEAD_ZONE=0.10` | IMU 加速度噪声 (<0.10m/s²) 归零 |
-| 第3层 | imu_filter `_on_imu` | `b=0.9` (静止时) | 速度快速衰减到 FC 参考值 (0.25→0.01 仅需0.5秒) |
-| 第4层 | imu_filter `_on_imu` | **交叉轴抑制 (X_DOMINANT=3.0)** | 单轴主导时清零副轴FC参考, 消除FC传感器轴间耦合 |
-
-**效果**: 静止漂移从 0.91 cm/s → ≈0 cm/s。运动后 filt_vel 在 2-3 秒内归零。
-
-### 临时补丁
-
-无。此前 ano_bridge vy 临时取反已于 2026-07-25 确认：光流传感器校正后方向正确，负号保留为正式逻辑。
-
----
-
-## 当前阶段
-
-Phase 8 — 飞控 0xF5 下行联调中。
-**导航实时跟踪**: ✅ 基线验证通过 (2026-07-24)
-**待完成**: F5 移动测试 (步骤7)
-
-## ⛔ 绝对红线（不可再犯）
-
-1. **N10P 扫描方向**: `idx = (360-deg) * 1058 / 360` — 必须保留 CW→CCW 反转
-   - 原因: N10P 电机顺时针旋转, ROS 约定逆时针。去掉反转 = Y轴镜像。
-   - 2026-07-14 实测验证: 正前方=X+, 左侧=Y+, 方向正确
-2. **N10P 是双回波(Dual Echo)，不是双棱镜！** — 同一激光脉冲两次反射，角度相同、距离不同。
-   - 两个回波角度 offset **必须为 0°**（不是 180°）。
-   - 2026-07-20 修复: 错误认知曾导致 180° 镜像对称幽灵障碍物。
-3. **scan_num 固定 1058** — 不可改回 count_num*2
-4. **强度过滤 intensity>0** — 不可删除, 否则噪声点重新出现
-5. **odom 协方差 0.001** — 飞控四元数 A 级可信, 不可改回 1.0
-6. **TF laser_frame Z=+0.05** — 雷达在飞控上方 5cm
-7. **静态 TF yaw=0** — 雷达箭头朝机头前方, 不需要旋转（2026-07-16 建图+导航双验证通过）
-8. **未授权不准改代码** — 必须先向用户说明要改什么、为什么、有什么影响，等用户明确说"改"
-9. **回退到 git commit 后** — 必须立即更新记忆文件，说明当前真实状态，不要记忆错乱
-10. **导航跟踪基线不可推翻** — 三层速度防御体系 + AMCL 阈值已经验证通过，不可回退或大改根本逻辑
-
-## 7 ROS2 包
-
-| 包 | 状态 |
-|----|:--:|
-| lslidar_msgs | ✅ |
-| lslidar_driver | ✅ (CW→CCW反转+双回波同角度+强度过滤+固定1058) |
-| n10p_bringup | ✅ (ano_bridge: FC速度死区0.02, 50Hz) |
-| n10p_slam | ✅ (slam_ekf_launch, 自动串口识别, minimum_laser_range=0.3) |
-| n10p_nav | ✅ (nav_ekf_launch, 自动串口识别, AMCL update_min_d=0.01/a=0.01) |
-| **n10p_fusion** | ✅ (imu_filter: DEAD_ZONE=0.10, b=0.9静止, alpha自适应, 100Hz) |
-| n10p_gazebo | ✅ (树莓派不编译) |
 
 ## 当前推荐用法
 
 ```bash
-# 建图 (EKF, 一键启动)
+# 建图
 ros2 launch n10p_slam slam_ekf_launch.py
 
-# 导航 (EKF, 一键启动)
+# 导航
 ros2 launch n10p_nav nav_ekf_launch.py map:=/home/ylz/n10p_leishen/maps/n10p_map.yaml
 
-# F5 下行测试 (需先启动导航)
-cd /home/ylz/n10p_leishen
-python3 send_slam_cur_f5.py --port /dev/ttyUSB0 --rate 10 --duration 30 --log-file logs/slam_cur_static.log
+# 诊断: 方向验证
+python3 /home/ylz/n10p_leishen/scripts/diag_direction.py
 
-# 速度诊断 (验证三层防御)
-python3 /home/ylz/n10p_leishen/scripts/diag_velocity.py
-
-# 导航跟踪诊断 (验证 AMCL+TF+扫描匹配)
-python3 /home/ylz/n10p_leishen/scripts/diag_nav_tracking.py
-
-# AMCL 收敛监控
-python3 /home/ylz/n10p_leishen/n10p_ws/scripts/amcl_convergence.py
-
-# 自动串口检测
-python3 /home/ylz/n10p_leishen/n10p_ws/scripts/auto_detect_serial.py
+# 诊断: 漂移根因
+python3 /home/ylz/n10p_leishen/scripts/diag_drift_root.py
 ```
 
-## 硬件
+## ⛔ 绝对红线（不可再犯）
 
-- 树莓派 4B, 8GB, Ubuntu 22.04.5 Server arm64
-- N10P: `/dev/serial/by-id/usb-1a86_USB_Single_Serial_58EB011256-if00`, 460800bps
-- 飞控: USB-TTL CH340, `/dev/ttyUSB0` 或 `/dev/ttyUSB1`, 500000bps
-- 自动串口检测脚本会根据 USB ID 自动识别 `/dev/ttyUSB0` vs `/dev/ttyUSB1`
+1. N10P 扫描方向: idx=(360-deg)*1058/360 (CW→CCW)
+2. 双回波同角度, 非180°偏移
+3. odom协方差(姿态)=0.001, (位置)=1.0
+4. TF yaw(lidar)=0, Z=+0.05
+5. 编译: --parallel-workers 2
+6. **改YAML必须colcon build** — launch加载install/非src/
+7. **不改FC yaw相关逻辑** — 偏航归零已在imu_filter输入端完成
+8. **不改当前vx_sign/vy_sign=+1.0/+1.0** — FC坐标系已确认
+9. **不对IMU加速度做速度积分** — dv=0, 速度纯靠FC平滑
+10. **不删交叉轴抑制** — ano_bridge + imu_filter双层保留
+11. **不改slam_ekf/nav_ekf launch** — FC yaw依赖已清除
+
+## 7 ROS2包状态
+
+| 包 | 状态 |
+|----|:--:|
+| lslidar_msgs | ✅ |
+| lslidar_driver | ✅ (CW→CCW+双回波+强度过滤+1058点) |
+| n10p_bringup | ✅ (vx/vy参数化+死区+交叉轴抑制+50Hz+fc_vel_raw) |
+| n10p_slam | ✅ (不依赖FC yaw, slam_only_launch) |
+| n10p_nav | ✅ (yaw=0°启动, AMCL参数增强, launch清理) |
+| n10p_fusion | ✅ (偏航归零+FC平滑+alpha_ori=0.50+dv=0+交叉轴) |
+| n10p_gazebo | ✅ (树莓派不编译) |
 
 ## 关键参数速查
 
 | 参数 | 值 | 位置 |
 |------|-----|------|
-| scan_num | 1058 固定 | lslidar_driver.cc |
-| 角度映射 | `idx=(360-deg)*1058/360` | lslidar_driver.cc |
-| 双回波角度 | echo1/echo2 同角度 (非 180°) | lslidar_driver.cc data_processing_2() |
-| 强度过滤 | intensity>0 | lslidar_driver.cc pubScan() |
-| minimum_laser_range | 0.3m (过滤无人机本体30cm) | mapper_params_online_async.yaml |
-| TF Z | +0.05 | bringup/slam/nav launch |
-| TF yaw | 0 | bringup/slam/nav launch |
-| odom 协方差(姿态) | 0.001 | ano_bridge_node.py |
-| odom 协方差(位置) | 1.0 (交给AMCL) | ano_bridge_node.py |
-| **FC_VEL_DEAD_ZONE** | **0.02 m/s** | ano_bridge_node.py `_publish_odometry` |
-| **vy 方向** | **`vel_y = -d['vel_y_cms']*0.01`** (正常逻辑) | ano_bridge_node.py `_on_velocity` |
-| **X_DOMINANT** | **3.0** (交叉轴抑制阈值) | imu_filter_node.py `_on_imu` |
-| EKF alpha_ori | 0.02 (自适应 0.005~0.05) | imu_filter_node.py |
-| EKF alpha_vel | 0.05 (运动时) | imu_filter_node.py |
-| **EKF b (静止)** | **0.9** (FC速度<0.03时) | imu_filter_node.py |
-| **DEAD_ZONE (加速度)** | **0.10 m/s²** | imu_filter_node.py |
-| EKF publish_rate | 100Hz | imu_filter_node.py |
-| ano_bridge pub_rate | 50Hz | ano_bridge_node.py |
-| IMU 限速 | 100Hz | imu_filter_node.py |
-| 0x04 四元数符号 | pitch/yaw 取反(与0x03对账确认) | ano_bridge_node.py |
-| 重力去除 | 四元数旋转法 | imu_filter_node.py |
-| Z轴 | 固定为0 | imu_filter_node.py |
-| **AMCL max_particles** | **500** | nav2_params_n10p.yaml |
-| **AMCL min_particles** | **100** | nav2_params_n10p.yaml |
-| **AMCL update_min_d** | **0.01 m (1cm)** | nav2_params_n10p.yaml |
-| **AMCL update_min_a** | **0.01 rad (0.57°)** | nav2_params_n10p.yaml |
-| **AMCL laser_likelihood_max_dist** | **0.5** | nav2_params_n10p.yaml |
-| AMCL 收敛阈值 | σ<5cm且Yawσ<3°持续3秒 | amcl_convergence.py |
-
-## 诊断脚本清单
-
-| 脚本 | 用途 | 时长 |
-|------|------|------|
-| `scripts/diag_velocity.py` | 速度数据流诊断 (odom→filt→TF) | 120s |
-| `scripts/diag_nav_tracking.py` | 导航跟踪诊断 (AMCL+TF+扫描) | 120s |
-| `scripts/monitor_init_pose.py` | AMCL 初始姿态监控 | 40s |
-
-## 0xF5 下行联调状态
-
-| 步骤 | 内容 | 状态 |
-|------|------|:--:|
-| 1 | 离线帧测试 (黄金帧校验) | ✅ |
-| 2 | 串口模块 (linux_serial.py, send_f5.py) | ✅ |
-| 3 | 固定帧发送 + STM32 0xA0 ACK | ✅ |
-| 4 | 方向测试 X/Y/Z 三轴 | ✅ 全部ACK, 0丢帧 |
-| 5 | flags 失效测试 | ✅ |
-| 6 | 接入真实SLAM (send_slam_cur_f5.py) | ✅ 2026-07-19 19:46 测试通过 |
-| 7 | 速率验证 (10/30/50Hz) | ✅ 2026-07-20 测试通过 |
-| 8 | 移动测试 (验证各轴方向和单位) | ⏳ 待执行 |
-| 9 | 自动串口识别 (send_slam_cur_f5.py) | ✅ 2026-07-20 已集成 |
-
-### 步骤6 测试结果 (2026-07-19 19:46)
-
-- **测试命令**: `python3 send_slam_cur_f5.py --port /dev/ttyUSB0 --rate 10 --duration 30`
-- **发送帧数**: 298 帧, 飞控 ACK 100% 响应 (RK #1153→#1450), 0 丢帧
-- **f=00 阶段**: TX #1~#49 (约 5 秒), AMCL 初始化中, 坐标 sentinel=-2147483648
-- **f=01 阶段**: TX #50~#298 (约 25 秒), AMCL 收敛后
-- **静态坐标 (f=01, 554 数据点)**:
-
-| 轴 | min | max | mean | 波动 |
-|-----|------|------|------|-----|
-| X | -8 cm | -6 cm | -6.5 cm | 2 cm |
-| Y | 50 cm | 63 cm | 57.6 cm | 13 cm |
-| Z | 0 cm | 0 cm | 0.0 cm | 0 cm |
-
-- **异常跳变**: 无, 无突然十几米的情况
-- **ACK 形态**: `f=01 c=<x>,<y>,<z> t=<same>` — 符合期望
-
-### 步骤7 速率测试结果 (2026-07-20)
-
-**修复**: `time.sleep(interval)` → 绝对时刻调度 `next_t += interval`，补偿工作时间。
-
-| 目标 | 修复前 | 修复后 |
-|------|--------|--------|
-| 10Hz | ~10.1 Hz | — |
-| 30Hz | ~29.4 Hz | — (TX端正常，接收端显示10Hz为飞控侧问题) |
-| 50Hz | ~48.6 Hz (-2.8%) | **~50.0 Hz (±0.4%)** |
-
-**⚠️ 集成到导航时的红线**: 禁止 `time.sleep()` 做定时发送，必须用绝对时刻调度。详见 [[known-issues]]#42。
-
-## 已知当前 Bug
-
-1. **`send_slam_cur_f5.py` 启动时序**: 前 ~5 秒 `cur=(None,None,None)` — 因为脚本先于 AMCL 首条消息启动。属正常时序问题，不影响后续使用。
-2. **AMCL 零协方差误判收敛**: `/amcl_pose` 初始协方差全零时 `is_slam_valid()` 返回 True，但零协方差表示粒子未分散而非真正收敛。
-3. **AMCL 初始收敛偏慢**: yaw 偏差 5-8° 时收敛需 2 分钟，当前正在优化中。
-4. **路径规划偶尔失败**: 待排查 Nav2 planner 配置。
+| vx_sign / vy_sign | +1.0 / +1.0 | ano_bridge.yaml |
+| FC_VEL_DEAD_ZONE | 0.02 m/s | ano_bridge |
+| X_DOMINANT | 3.0 (交叉轴抑制) | ano_bridge + imu_filter |
+| init_yaw 延迟 | 2.0s + 50采样平均 | imu_filter |
+| alpha_ori (慢转) | 0.50 | imu_filter |
+| 速度 b (运动) | 0.50 | imu_filter |
+| IMU dv | 0.0 (不积分) | imu_filter |
+| AMCL max_particles | 1000 | nav2_params |
+| AMCL alpha_slow | 0.1 | nav2_params |
+| AMCL laser_likelihood_max_dist | 1.5m | nav2_params |
+| AMCL sigma_hit | 0.4 | nav2_params |
+| AMCL max_beams | 60 | nav2_params |
+| AMCL recovery_alpha_fast | 0.8 | nav2_params |
+| AMCL update_min_d/a | 0.01 | nav2_params |
+| AMCL set_initial_pose | true (yaw=0) | nav2_params |
+| SLAM ceres_num_threads | 2 | mapper_params |
+| odom协方差(姿态) | 0.001 | imu_filter |

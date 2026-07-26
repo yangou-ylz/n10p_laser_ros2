@@ -47,6 +47,10 @@ class IMUFilterNode(Node):
         self.vel_fc = [0.0, 0.0, 0.0]           # FC 速度
         self.vel_filt = [0.0, 0.0, 0.0]         # 滤波后速度
         self.pos_x, self.pos_y, self.pos_z = 0.0, 0.0, 0.0  # 积分位置 (供 AMCL 平移先验)
+        self.init_yaw = None                     # 初始FC偏航 (启动时记录, 用于归零)
+        self.init_yaw_samples = []               # 初始偏航采样缓冲
+        self.init_yaw_start = None               # 开始采样的时间
+        self.INIT_YAW_DELAY = 2.0                # 等2秒让FC磁力计稳定
         self.last_imu_ts = None                  # 上一帧 IMU 时间
         self.last_process_ts = 0.0               # 上次处理 IMU 的时间
         self.process_min_dt = 0.01               # 最小处理间隔 (100Hz上限)
@@ -90,11 +94,11 @@ class IMUFilterNode(Node):
         # 静止/慢转 (<0.1 rad/s≈6°/s): alpha=0.10 (加倍信任FC绝对四元数, 抑制陀螺零偏)
         # 快速旋转 (>2.0 rad/s≈115°/s): alpha=0.005 (更信陀螺仪)
         if gyr_mag < 0.1:
-            return 0.10
+            return 0.50    # 慢转: 50%信任FC绝对四元数, 快速压制陀螺零偏
         elif gyr_mag > 2.0:
             return 0.005
         else:
-            return 0.10 - 0.095 * (gyr_mag - 0.1) / 1.9
+            return 0.50 - 0.495 * (gyr_mag - 0.1) / 1.9
 
     # ══════════════════════════════════════════════════
     # IMU 回调: 姿态互补滤波 + 加速度积分
@@ -106,10 +110,42 @@ class IMUFilterNode(Node):
             return  # 跳过, 保留最新缓存
         self.last_process_ts = now_mono
 
-        self.q0_raw = msg.orientation.w
-        self.q1_raw = msg.orientation.x
-        self.q2_raw = msg.orientation.y
-        self.q3_raw = msg.orientation.z
+        qw = msg.orientation.w
+        qx = msg.orientation.x
+        qy = msg.orientation.y
+        qz = msg.orientation.z
+
+        # 记录FC稳定偏航: 等2秒让磁力计稳定, 取0.5秒平均
+        if self.init_yaw is None:
+            if not (qw == 0.0 and qx == 0.0 and qy == 0.0 and qz == 0.0) and \
+               not (qw == 1.0 and qx == 0.0 and qy == 0.0 and qz == 0.0):
+                now = _time.monotonic()
+                if self.init_yaw_start is None:
+                    self.init_yaw_start = now
+                if now - self.init_yaw_start > self.INIT_YAW_DELAY:
+                    yaw = math.atan2(2*(qw*qz+qx*qy), 1-2*(qy*qy+qz*qz))
+                    self.init_yaw_samples.append(yaw)
+                    if len(self.init_yaw_samples) >= 50:  # 0.5秒@100Hz
+                        self.init_yaw = sum(self.init_yaw_samples) / len(self.init_yaw_samples)
+                        self.get_logger().info(f'初始FC偏航: {math.degrees(self.init_yaw):.1f}°, 已归零')
+                        # 同时把滤波器内部姿态归零, 避免从旧yaw收敛的延迟
+                        self.q0, self.q1, self.q2, self.q3 = 1.0, 0.0, 0.0, 0.0
+
+        # 偏航归零: 在输入端减去初始偏航, 使滤波器内部状态也是0基准
+        if self.init_yaw is not None:
+            half = self.init_yaw * 0.5
+            cw = math.cos(half); cz = -math.sin(half)
+            qw, qx, qy, qz = (
+                qw*cw - qz*cz,
+                qx*cw + qy*cz,
+                qy*cw - qx*cz,
+                qz*cw + qw*cz,
+            )
+
+        self.q0_raw = qw
+        self.q1_raw = qx
+        self.q2_raw = qy
+        self.q3_raw = qz
 
         self.gyr = [msg.angular_velocity.x,
                      msg.angular_velocity.y,
@@ -166,56 +202,12 @@ class IMUFilterNode(Node):
                 # 速度估计仅用FC做指数平滑, IMU只管姿态
                 dv_x = 0.0
                 dv_y = 0.0
-                # 3. 指数平滑: (1-αv)*旧速度 + αv*FC速度
-                #    静止时 (FC速度≈0) 用高 αv 快速归零, 防止速度残余持续积分
-                #    交叉轴抑制: 单轴主导时清零副轴的FC参考, 消除FC传感器轴间耦合
+                # 简单指数平滑 — 仅做FC速度低通滤波
                 fc_vx = self.vel_fc[0]
                 fc_vy = self.vel_fc[1]
-                X_DOMINANT = 3.0  # 主轴/副轴比值阈值
-                if abs(fc_vx) > X_DOMINANT * abs(fc_vy):
-                    fc_vy = 0.0       # X主导 → 压制Y轴FC耦合
-                elif abs(fc_vy) > X_DOMINANT * abs(fc_vx):
-                    fc_vx = 0.0       # Y主导 → 压制X轴FC耦合
-
-                # ── Slew Rate Limiter: 限制FC速度变化率, 消除急停反向过冲 ──
-                if self.last_fc_vx is not None and dt > 0:
-                    max_delta = self.MAX_SLEW * dt
-                    dvx_fc = fc_vx - self.last_fc_vx
-                    if abs(dvx_fc) > max_delta:
-                        fc_vx = self.last_fc_vx + math.copysign(max_delta, dvx_fc)
-                    dvy_fc = fc_vy - self.last_fc_vy
-                    if abs(dvy_fc) > max_delta:
-                        fc_vy = self.last_fc_vy + math.copysign(max_delta, dvy_fc)
-                self.last_fc_vx = fc_vx
-                self.last_fc_vy = fc_vy
-
-                # ── 连续b值: FC速度越低b越大, 平滑过渡, 避免硬切换跳变 ──
-                fc_speed = math.sqrt(fc_vx**2 + fc_vy**2)
-                B_HIGH = 0.9
-                B_LOW = 0.30             # 运动时指数平滑系数 (纯粹FC平滑, 无IMU参与)
-                SPD_HIGH = 0.10          # >0.10m/s → b=B_LOW (运动态)
-                SPD_LOW = 0.02           # <0.02m/s → b=B_HIGH (静止态)
-                if fc_speed > SPD_HIGH:
-                    b = B_LOW
-                elif fc_speed < SPD_LOW:
-                    b = B_HIGH
-                else:
-                    # 线性过渡: 0.02→0.10 对应 b=0.9→0.05
-                    ratio = (fc_speed - SPD_LOW) / (SPD_HIGH - SPD_LOW)
-                    b = B_HIGH + (B_LOW - B_HIGH) * ratio
-
-                # ── Innovation Gate: FC跳变过大时降权, 信任当前滤波状态 ──
-                b_x = b
-                b_y = b
-                innovation_x = abs(fc_vx - self.vel_filt[0])
-                innovation_y = abs(fc_vy - self.vel_filt[1])
-                if innovation_x > self.INNOVATION_THRESH:
-                    b_x = 0.9  # 大跳变 → 紧锁当前状态
-                if innovation_y > self.INNOVATION_THRESH:
-                    b_y = 0.9
-
-                self.vel_filt[0] = (1.0-b_x)*self.vel_filt[0] + b_x*fc_vx
-                self.vel_filt[1] = (1.0-b_y)*self.vel_filt[1] + b_y*fc_vy
+                b = 0.5
+                self.vel_filt[0] = (1.0-b)*self.vel_filt[0] + b*fc_vx
+                self.vel_filt[1] = (1.0-b)*self.vel_filt[1] + b*fc_vy
                 # vz 写 FC 速度 (飞控0x07帧), 不积分IMU加速度
                 self.vel_filt[2] = self.vel_fc[2]
 

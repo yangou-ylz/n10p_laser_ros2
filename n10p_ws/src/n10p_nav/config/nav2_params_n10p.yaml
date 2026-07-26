@@ -11,6 +11,7 @@ amcl:
     global_frame_id: "map"
     odom_frame_id: "odom"
     scan_topic: /scan
+    # odom_topic 使用默认 /odom (交叉轴抑制已在 ano_bridge 中处理)
 
     # 全向运动模型 (无人机可在任意方向平移)
     robot_model_type: "nav2_amcl::OmniMotionModel"

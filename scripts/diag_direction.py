@@ -63,7 +63,7 @@ with open(log_path, 'w', newline='') as f:
     t0 = time.monotonic()
     last_sample = t0
 
-    while time.monotonic() - t0 < 80:
+    while time.monotonic() - t0 < 30:
         rclpy.spin_once(node, timeout_sec=0.01)
         now = time.monotonic()
         if now - last_sample < 0.2:  # 5Hz
